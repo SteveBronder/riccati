@@ -1,8 +1,9 @@
 import numpy as np
 
-def coeffs2vals(coeffs):
+
+def coeffs2vals(coeffs : np.ndarray [float]):
     """
-    Convert the Chebyshev coefficient representation of a set of polynomials `P_j` to their 
+    Convert the Chebyshev coefficient representation of a set of polynomials `P_j` to their
     values at Chebyshev nodes of the second kind (ordered from +1 to -1). This function returns a
     matrix `V` such that for an input coefficient matrix `C`,
 
@@ -31,20 +32,21 @@ def coeffs2vals(coeffs):
     if n <= 1:
         values = coeffs
     else:
-        coeffs[1:n-1,:] /= 2.0
-        tmp = np.vstack((coeffs, coeffs[n-2:0:-1,:])) 
-        values = np.real(np.fft.fft(tmp, axis = 0))
-        values = values[:n,:]
+        coeffs[1 : n - 1, :] /= 2.0
+        tmp : np.ndarray[float]= np.vstack((coeffs, coeffs[n - 2 : 0 : -1, :]))
+        values : np.ndarray[float] = np.real(np.fft.fft(tmp, axis=0))
+        values = values[:n, :]
     return values
 
-def vals2coeffs(values):
+
+def vals2coeffs(values : np.ndarray[float]):
     """
     Convert a matrix of values of `m` polynomials evaluated at `n+1` Chebyshev
     nodes of the second kind, ordered from +1 to -1, to their interpolating
     Chebyshev coefficients. This function returns the coefficient matrix `C`
     such that for an input matrix of values `V`,
 
-    .. math:: F_j(x) = \sum_{k=0}^{n} C_{kj}T_k(x) 
+    .. math:: F_j(x) = \sum_{k=0}^{n} C_{kj}T_k(x)
 
     interpolates the values :math:`[V_{0j}, V_{1j}, \ldots, V_{nj}]` for :math:`j = 0..(m-1)`.
 
@@ -56,11 +58,11 @@ def vals2coeffs(values):
     ----------
     values: np.ndarray [float (real)]
         An array of size (n+1, m), with the (i, j)th element being the jth
-        polynomial evaluated at the ith Chebyshev node. 
+        polynomial evaluated at the ith Chebyshev node.
 
     Returns
     -------
-    coeffs: np.ndarray [float (real)] 
+    coeffs: np.ndarray [float (real)]
         An array of size (n+1, m) with the (i, j)th element being the
         coefficient multiplying the ith Chebyshev polynomial for interpolating
         the jth input polynomial.
@@ -70,13 +72,14 @@ def vals2coeffs(values):
     if n <= 1:
         coeffs = values
     else:
-        tmp = np.vstack((values[:n-1], values[n-1:0:-1]))
-        coeffs = np.real(np.fft.ifft(tmp, axis = 0))
-        coeffs = coeffs[0:n,:]
-        coeffs[1:n-1,:] *= 2
+        tmp = np.vstack((values[: n - 1], values[n - 1 : 0 : -1]))
+        coeffs : np.ndarray[float] = np.real(np.fft.ifft(tmp, axis=0))
+        coeffs = coeffs[0:n, :]
+        coeffs[1 : n - 1, :] *= 2
     return coeffs
 
-def integrationm(n):
+
+def integrationm(n : int):
     """
     Chebyshev integration matrix. It maps function values at n Chebyshev nodes
     of the second kind, ordered from +1 to -1, to values of the integral of the
@@ -96,25 +99,26 @@ def integrationm(n):
     Q: np.ndarray [float (real)]
         Integration matrix of size (n, n) that maps values of the integrand at
         the n Chebyshev nodes to values of the definite integral on the
-        interval, up to each of the Chebyshev nodes (the last value being zero by definition). 
+        interval, up to each of the Chebyshev nodes (the last value being zero by definition).
 
     """
     n -= 1
-    T = coeffs2vals(np.identity(n+1))
-    Tinv = vals2coeffs(np.identity(n+1))
+    T = coeffs2vals(np.identity(n + 1))
+    Tinv = vals2coeffs(np.identity(n + 1))
     k = np.linspace(1.0, n, n)
-    k2 = 2*(k-1)
+    k2 = 2 * (k - 1)
     k2[0] = 1
-    B = np.diag(1/(2*k), -1) - np.diag(1/k2, 1)
+    B = np.diag(1 / (2 * k), -1) - np.diag(1 / k2, 1)
     v = np.ones(n)
     v[1::2] = -1
-    B[0,:] = sum(np.diag(v) @ B[1:n+1,:], 0)
-    B[:,0] *= 2
-    Q = T @ B @ Tinv
-    Q[-1,:] = 0
+    B[0, :] = sum(np.diag(v) @ B[1 : n + 1, :], 0)
+    B[:, 0] *= 2
+    Q : np.ndarray[float] = T @ B @ Tinv
+    Q[-1, :] = 0
     return Q
 
-def quadwts(n):
+
+def quadwts(n : int):
     """
     Clenshaw-Curtis quadrature weights mapping function evaluations at
     (n+1) Chebyshev nodes of the second kind, ordered from +1 to -1, to value of the
@@ -124,7 +128,7 @@ def quadwts(n):
     Parameters
     ----------
     n: int
-        The (number of Chebyshev nodes - 1) for which the quadrature weights are to be computed. 
+        The (number of Chebyshev nodes - 1) for which the quadrature weights are to be computed.
 
     Returns
     -------
@@ -140,32 +144,32 @@ def quadwts(n):
     if n == 0:
         w = 0
     else:
-        a = np.linspace(0.0, np.pi, n+1)
-        w = np.zeros(n+1)
-        v = np.ones(n-1)
+        a = np.linspace(0.0, np.pi, n + 1)
+        w : np.ndarray[float] = np.zeros(n + 1)
+        v = np.ones(n - 1)
         if n % 2 == 0:
-            w[0] = 1.0/(n**2 - 1)
+            w[0] = 1.0 / (n**2 - 1)
             w[n] = w[0]
-            for k in range(1, n//2):
-                v = v - 2*np.cos(2*k*a[1:-1])/(4*k**2 - 1)
-            v -= np.cos(n*a[1:-1])/(n**2 - 1)
+            for k in range(1, n // 2):
+                v = v - 2 * np.cos(2 * k * a[1:-1]) / (4 * k**2 - 1)
+            v -= np.cos(n * a[1:-1]) / (n**2 - 1)
         else:
-            w[0] = 1.0/n**2
+            w[0] = 1.0 / n**2
             w[n] = w[0]
-            for k in range(1,(n+1)//2):
-                v -= 2*np.cos(2*k*a[1:-1])/(4*k**2 - 1)
-        w[1:-1] = 2*v/n
+            for k in range(1, (n + 1) // 2):
+                v -= 2 * np.cos(2 * k * a[1:-1]) / (4 * k**2 - 1)
+        w[1:-1] = 2 * v / n
     return w
 
 
-def cheb(n):
+def cheb(n : int) -> (np.ndarray[float], np.ndarray[float]):
     """
     Returns a differentiation matrix D of size (n+1, n+1) and (n+1) Chebyshev
     nodes x for the standard 1D interval [-1, 1]. The matrix multiplies a
     vector of function values at these nodes to give an approximation to the
     vector of derivative values. Nodes are output in descending order from 1 to
     -1. The nodes are given by
-    
+
     .. math:: x_p = \cos \left( \\frac{\pi n}{p} \\right), \quad n = 0, 1, \ldots p.
 
     Parameters
@@ -185,19 +189,20 @@ def cheb(n):
         D = 0
         w = 0
     else:
-        a = np.linspace(0.0, np.pi, n+1)
-        x = np.cos(a)
-        b = np.ones_like(x)
+        a = np.linspace(0.0, np.pi, n + 1)
+        x : np.ndarray[float] = np.cos(a)
+        b : np.ndarray[float] = np.ones_like(x)
         b[0] = 2
         b[-1] = 2
         d = np.ones_like(b)
         d[1::2] = -1
-        c = b*d
-        X = np.outer(x, np.ones(n+1))
+        c = b * d
+        X = np.outer(x, np.ones(n + 1))
         dX = X - X.T
-        D = np.outer(c, 1/c) / (dX + np.identity(n+1))
+        D = np.outer(c, 1 / c) / (dX + np.identity(n + 1))
         D = D - np.diag(D.sum(axis=1))
     return D, x
+
 
 def interp(s, t):
     """
@@ -227,10 +232,11 @@ def interp(s, t):
     V = np.ones((r, r))
     R = np.ones((q, r))
     for j in range(1, r):
-        V[:, j] = V[:, j-1]*s
-        R[:, j] = R[:, j-1]*t
+        V[:, j] = V[:, j - 1] * s
+        R[:, j] = R[:, j - 1] * t
     L = np.linalg.solve(V.T, R.T).T
     return L
+
 
 def spectral_cheb(info, x0, h, y0, dy0, niter):
     """
@@ -271,24 +277,24 @@ def spectral_cheb(info, x0, h, y0, dy0, niter):
 
     """
     D, x = info.Ds[niter], info.nodes[niter]
-    xscaled = h/2*x + x0 + h/2
+    xscaled = h / 2 * x + x0 + h / 2
     ws = info.w(xscaled)
     gs = info.g(xscaled)
     w2 = ws**2
-    D2 = 4/h**2*(D @ D) + 4/h*(np.diag(gs) @ D) + np.diag(w2)
+    D2 = 4 / h**2 * (D @ D) + 4 / h * (np.diag(gs) @ D) + np.diag(w2)
     n = round(info.ns[niter])
-    ic = np.zeros(n+1, dtype=complex)
-    ic[-1] = 1 # Because nodes are ordered backwards, [1, -1]
-    D2ic = np.zeros((n+3, n+1), dtype=complex)
-    D2ic[:n+1] = D2
-    D2ic[-2] = 2/h*D[-1] 
+    ic = np.zeros(n + 1, dtype=complex)
+    ic[-1] = 1  # Because nodes are ordered backwards, [1, -1]
+    D2ic = np.zeros((n + 3, n + 1), dtype=complex)
+    D2ic[: n + 1] = D2
+    D2ic[-2] = 2 / h * D[-1]
     D2ic[-1] = ic
-    rhs = np.zeros(n+3, dtype=complex)
+    rhs = np.zeros(n + 3, dtype=complex)
     rhs[-2] = dy0
     rhs[-1] = y0
-    y1, res, rank, sing = np.linalg.lstsq(D2ic, rhs) # NumPy solve only works for square matrices
-    dy1 = 2/h*(D @ y1)
-    info.increase(LS = 1)
+    y1, res, rank, sing = np.linalg.lstsq(
+        D2ic, rhs
+    )  # NumPy solve only works for square matrices
+    dy1 = 2 / h * (D @ y1)
+    info.increase(LS=1)
     return y1, dy1, xscaled
-
-

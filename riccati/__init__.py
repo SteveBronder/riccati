@@ -46,7 +46,8 @@ from riccati.stepsize import choose_nonosc_stepsize, choose_osc_stepsize
 from riccati.solversetup import solversetup
 
 from . import _version
-__version__ = _version.get_versions()['version']
+
+__version__ = _version.get_versions()["version"]
 __uri__ = "https://riccati.readthedocs.io"
 __author__ = "F. J. Agocs and A. H. Barnett"
 __email__ = "fagocs@flatironinstitute.org"

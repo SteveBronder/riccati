@@ -1,5 +1,7 @@
 import numpy as np
+import typing as tp
 from riccati.chebutils import cheb, interp, quadwts
+
 
 class Solverinfo:
     """
@@ -19,14 +21,14 @@ class Solverinfo:
         Chebyshev collocation steps. The step will use `nmax` nodes or the
         minimum number of nodes necessary to achieve the required local error,
         whichever is smaller. If `nmax` > 2`nini`, collocation steps will be
-        attempted with :math:`2^i` `nini` nodes at the ith iteration. 
+        attempted with :math:`2^i` `nini` nodes at the ith iteration.
     n: int
         (Number of Chebyshev nodes - 1) to use for computing Riccati steps.
     p: int
         (Number of Chebyshev nodes - 1) to use for estimating Riccati stepsizes.
     denseout: bool
         Defines whether or not dense output is required for the current run.
-    h: float 
+    h: float
         Current stepsize.
     y: np.ndarray [complex]
         Current state vector of size (2,), containing the numerical solution and its derivative.
@@ -41,10 +43,10 @@ class Solverinfo:
     nodes: list [np.ndarray [float]]
         List containing vectors of Chebyshev nodes over the standard interval, ordered from +1 to -1, of sizes
         :math:`(2^i n_{\mathrm{ini}} + 1,)` for :math:`i = 0, 1, \ldots, \lfloor \log_2 \\frac{n_{\mathrm{max}}}{n_{\mathrm{ini}}} \\rfloor.`
-    ns: np.ndarray [int] 
+    ns: np.ndarray [int]
         Vector of lengths of node vectors stored in `nodes`, i.e. the integers
         :math:`2^i n_{\mathrm{ini}} + 1` for :math:`i = 0, 1, \ldots, \lfloor \log_2 \\frac{n_{\mathrm{max}}}{n_{\mathrm{ini}}} \\rfloor.`
-    xn: np.ndarray [float] 
+    xn: np.ndarray [float]
         Values of the independent variable evaluated at (`n` + 1) Chebyshev
         nodes over the interval [x, x + `h`], where x is the value of the
         independent variable at the start of the current step and `h` is the
@@ -55,17 +57,17 @@ class Solverinfo:
         independent variable at the start of the current step and `h` is the
         current stepsize.
     xpinterp: np.ndarray [float]
-        Values of the independent variable evaluated at `p` points 
+        Values of the independent variable evaluated at `p` points
         over the interval [x, x + `h`] lying in between Chebyshev nodes, where x is the value of the
         independent variable at the start of the current step and `h` is the
         current stepsize. The in-between points :math:`\\tilde{x}_p` are defined by
-        
+
         .. math: \\tilde{x}_p = \cos\left( \\frac{(2k + 1)\pi}{2p} \\right), \quad k = 0, 1, \ldots p-1.
 
-    L: np.ndarray [float]    
+    L: np.ndarray [float]
         Interpolation matrix of size (`p`+1, `p`), used for interpolating a
         function between the nodes `xp` and `xpinterp` (for computing Riccati
-        stepsizes). 
+        stepsizes).
     quadwts: np.ndarray [float]
         Vector of size (`n` + 1,) containing Clenshaw-Curtis quadrature weights.
     n_chebnodes: int
@@ -92,8 +94,16 @@ class Solverinfo:
 
     """
 
-    def __init__(self, w, g, h, nini, nmax, n, p):
-
+    def __init__(
+        self,
+        w: tp.Callable[[float], complex],
+        g: tp.Callable[[float], complex],
+        h : float,
+        nini : int,
+        nmax : int,
+        n : int,
+        p : int,
+    ):
         # Parameters
         self.w = w
         self.g = g
@@ -105,44 +115,47 @@ class Solverinfo:
         self.denseout = False
 
         # Run statistics
-        self.n_chebnodes = 0
-        self.n_chebstep = 0
-        self.n_chebits = 0
-        self.n_LS = 0
-        self.n_riccstep = 0
+        self.n_chebnodes : int = 0
+        self.n_chebstep : int= 0
+        self.n_chebits : int= 0
+        self.n_LS : int = 0
+        self.n_riccstep : int = 0
 
         self.h = self.h0
-        self.y = np.zeros(2, dtype = complex)
-        self.wn, self.gn = np.zeros(n + 1), np.zeros(n + 1)
-        Dlength = int(np.log2(self.nmax/self.nini)) + 1
-        self.Ds, self.nodes = [], []
+        self.y : np.ndarray[complex] = np.zeros(2, dtype=complex)
+        self.wn, self.gn : (np.ndarray[complex], np.ndarray[complex])  = np.zeros(n + 1), np.zeros(n + 1)
+        Dlength = int(np.log2(self.nmax / self.nini)) + 1
+        self.Ds, self.nodes : (list[np.ndarray[float]], list[np.ndarray[float]]) = [], []
         lognini = np.log2(self.nini)
-        self.ns = np.logspace(lognini, lognini + Dlength - 1, num = Dlength, base = 2.0)#, dtype=int)
+        self.ns : np.ndarray[int] = np.logspace(
+            lognini, lognini + Dlength - 1, num=Dlength, base=2.0
+        )  # , dtype=int)
 
         for i in range(Dlength):
-            D, x = cheb(self.nini*2**i)
-            self.increase(chebnodes = 1)
+            D, x : (np.ndarray[float], np.ndarray[float])= cheb(self.nini * 2**i)
+            self.increase(chebnodes=1)
             self.Ds.append(D)
             self.nodes.append(x)
         if self.n in self.ns:
             i = np.where(self.ns == self.n)[0][0]
-            self.Dn, self.xn = self.Ds[i], self.nodes[i]
+            self.Dn, self.xn : (np.ndarray[float], np.ndarray[float]) = self.Ds[i], self.nodes[i]
         else:
-            self.Dn, self.xn = cheb(self.n)
-            self.increase(chebnodes = 1)
+            self.Dn, self.xn : (np.ndarray[float], np.ndarray[float]) = cheb(self.n)
+            self.increase(chebnodes=1)
         if self.p in self.ns:
             i = np.where(self.ns == self.p)[0][0]
             self.xp = self.nodes[i]
         else:
             self.xp = cheb(self.p)[1]
-            self.increase(chebnodes = 1)
-        self.xpinterp = np.cos(np.linspace(np.pi/(2*self.p), np.pi*(1 - 1/(2*self.p)), self.p))
+            self.increase(chebnodes=1)
+        self.xpinterp = np.cos(
+            np.linspace(np.pi / (2 * self.p), np.pi * (1 - 1 / (2 * self.p)), self.p)
+        )
         self.L = interp(self.xp, self.xpinterp)
-        self.increase(LS = 1)
+        self.increase(LS=1)
         self.quadwts = quadwts(n)
 
-    def increase(self, chebnodes = 0, chebstep = 0, chebits = 0,
-                 LS = 0, riccstep = 0):
+    def increase(self, chebnodes=0, chebstep=0, chebits=0, LS=0, riccstep=0):
         """
         Increases the relevant attribute of the class (a counter for a specific
         arithmetic operation) by a given number. Used for generating performance statistics.
@@ -169,7 +182,7 @@ class Solverinfo:
         self.n_chebits += chebits
         self.n_LS += LS
         self.n_riccstep += riccstep
-    
+
     def output(self, steptypes):
         """
         Creates a dictionary of the counter-like attributes of `Solverinfo`,
@@ -192,11 +205,11 @@ class Solverinfo:
         -------
         statdict: dict
             Dictionary with the following keywords:
-            
-            cheb steps: tuple [int] 
+
+            cheb steps: tuple [int]
                 (n, m), where n is the total number of attempted Chebyshev steps out of which m were successful.
             cheb iterations: int
-                Total number of iterations of the Chebyshev collocation method. 
+                Total number of iterations of the Chebyshev collocation method.
             ricc steps: tuple [int]
                 (n, m), where n is the total number of attempted Chebyshev steps out of which m were successful.
             linear solves: int
@@ -204,19 +217,21 @@ class Solverinfo:
             cheb nodes: int
                 Total number of times a call to compute Chebyshev nodes has been made.
         """
-        statdict = {"cheb steps": (self.n_chebstep, sum(np.array(steptypes) == 0) - 1), 
-                    "cheb iterations": self.n_chebits, 
-                    "ricc steps": (self.n_riccstep, sum(np.array(steptypes) == 1)), 
-                    "linear solves": self.n_LS, 
-                    "cheb nodes": self.n_chebnodes}
+        statdict = {
+            "cheb steps": (self.n_chebstep, sum(np.array(steptypes) == 0) - 1),
+            "cheb iterations": self.n_chebits,
+            "ricc steps": (self.n_riccstep, sum(np.array(steptypes) == 1)),
+            "linear solves": self.n_LS,
+            "cheb nodes": self.n_chebnodes,
+        }
         return statdict
 
 
-def solversetup(w, g, h0 = 0.1, nini = 16, nmax = 32, n = 16, p = 16):
+def solversetup(w, g, h0=0.1, nini=16, nmax=32, n=16, p=16):
     """
     Sets up the solver by generating differentiation matrices based on an
     increasing number of Chebyshev gridpoints (see `riccati.solversetup.Solverinfo`).  Needs to be called
-    before the first time the solver is ran or if nini or nmax are changed. 
+    before the first time the solver is ran or if nini or nmax are changed.
 
     Parameters
     ----------
@@ -245,5 +260,3 @@ def solversetup(w, g, h0 = 0.1, nini = 16, nmax = 32, n = 16, p = 16):
     """
     info = Solverinfo(w, g, h0, nini, nmax, n, p)
     return info
-
-
