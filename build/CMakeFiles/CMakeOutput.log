@@ -1,0 +1,1635 @@
+The system is: Linux - 4.18.0-477.27.1.el8_8.x86_64 - x86_64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /usr/lib64/ccache/cc 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+
+The C compiler identification is GNU, found in "/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/3.20.2/CompilerIdC/a.out"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /usr/lib64/ccache/c++ 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+
+The CXX compiler identification is GNU, found in "/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/3.20.2/CompilerIdCXX/a.out"
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_365ae/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_365ae.dir/build.make CMakeFiles/cmTC_365ae.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o
+/usr/lib64/ccache/cc   -v -o CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c
+Using built-in specs.
+COLLECT_GCC=/usr/bin/cc
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-redhat-linux
+Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
+Thread model: posix
+gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) 
+COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o' '-mtune=generic' '-march=x86-64'
+ /usr/libexec/gcc/x86_64-redhat-linux/8/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccVLll8D.s
+GNU C17 (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)
+	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18), GMP version 6.1.2, MPFR version 3.1.6-p2, MPC version 1.1.0, isl version isl-0.16.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/include-fixed"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/../../../../x86_64-redhat-linux/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include
+ /mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include
+ /mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include
+ /cm/shared/apps/slurm/current/include
+ /usr/lib/gcc/x86_64-redhat-linux/8/include
+ /usr/local/include
+ /usr/include
+End of search list.
+GNU C17 (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)
+	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18), GMP version 6.1.2, MPFR version 3.1.6-p2, MPC version 1.1.0, isl version isl-0.16.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 1961588c2afb29533505243f0395b819
+COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o /tmp/ccVLll8D.s
+GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-119.el8_8.2
+COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/
+LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o' '-mtune=generic' '-march=x86-64'
+Linking C executable cmTC_365ae
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_365ae.dir/link.txt --verbose=1
+/usr/lib64/ccache/cc  -v CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o -o cmTC_365ae 
+Using built-in specs.
+COLLECT_GCC=/usr/bin/cc
+COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-redhat-linux
+Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
+Thread model: posix
+gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) 
+COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/
+LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_365ae' '-mtune=generic' '-march=x86-64'
+ /usr/libexec/gcc/x86_64-redhat-linux/8/collect2 -plugin /usr/libexec/gcc/x86_64-redhat-linux/8/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper -plugin-opt=-fresolution=/tmp/ccYSMiSA.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_365ae /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o -L/cm/shared/apps/slurm/current/lib64/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib -L/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib -L/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib -L/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib -L/cm/shared/apps/slurm/current/lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../.. CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib/gcc/x86_64-redhat-linux/8/crtend.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_365ae' '-mtune=generic' '-march=x86-64'
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed C implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include]
+    add: [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include]
+    add: [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include]
+    add: [/cm/shared/apps/slurm/current/include]
+    add: [/usr/lib/gcc/x86_64-redhat-linux/8/include]
+    add: [/usr/local/include]
+    add: [/usr/include]
+  end of search list found
+  collapse include dir [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include] ==> [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include]
+  collapse include dir [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include] ==> [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include]
+  collapse include dir [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include] ==> [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include]
+  collapse include dir [/cm/shared/apps/slurm/current/include] ==> [/cm/shared/apps/slurm/current/include]
+  collapse include dir [/usr/lib/gcc/x86_64-redhat-linux/8/include] ==> [/usr/lib/gcc/x86_64-redhat-linux/8/include]
+  collapse include dir [/usr/local/include] ==> [/usr/local/include]
+  collapse include dir [/usr/include] ==> [/usr/include]
+  implicit include dirs: [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include;/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include;/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include;/cm/shared/apps/slurm/current/include;/usr/lib/gcc/x86_64-redhat-linux/8/include;/usr/local/include;/usr/include]
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_365ae/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_365ae.dir/build.make CMakeFiles/cmTC_365ae.dir/build]
+  ignore line: [gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building C object CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/usr/lib64/ccache/cc   -v -o CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake/Modules/CMakeCCompilerABI.c]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/bin/cc]
+  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
+  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+  ignore line: [Target: x86_64-redhat-linux]
+  ignore line: [Configured with: ../configure --enable-bootstrap --enable-languages=c c++ fortran lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /usr/libexec/gcc/x86_64-redhat-linux/8/cc1 -quiet -v /usr/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccVLll8D.s]
+  ignore line: [GNU C17 (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)]
+  ignore line: [	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18)  GMP version 6.1.2  MPFR version 3.1.6-p2  MPC version 1.1.0  isl version isl-0.16.1-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/include-fixed"]
+  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/../../../../x86_64-redhat-linux/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include]
+  ignore line: [ /mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include]
+  ignore line: [ /mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include]
+  ignore line: [ /cm/shared/apps/slurm/current/include]
+  ignore line: [ /usr/lib/gcc/x86_64-redhat-linux/8/include]
+  ignore line: [ /usr/local/include]
+  ignore line: [ /usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C17 (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)]
+  ignore line: [	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18)  GMP version 6.1.2  MPFR version 3.1.6-p2  MPC version 1.1.0  isl version isl-0.16.1-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: 1961588c2afb29533505243f0395b819]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o /tmp/ccVLll8D.s]
+  ignore line: [GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-119.el8_8.2]
+  ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/]
+  ignore line: [LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking C executable cmTC_365ae]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_365ae.dir/link.txt --verbose=1]
+  ignore line: [/usr/lib64/ccache/cc  -v CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o -o cmTC_365ae ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/bin/cc]
+  ignore line: [COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper]
+  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
+  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+  ignore line: [Target: x86_64-redhat-linux]
+  ignore line: [Configured with: ../configure --enable-bootstrap --enable-languages=c c++ fortran lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) ]
+  ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/]
+  ignore line: [LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_365ae' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/libexec/gcc/x86_64-redhat-linux/8/collect2 -plugin /usr/libexec/gcc/x86_64-redhat-linux/8/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper -plugin-opt=-fresolution=/tmp/ccYSMiSA.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_365ae /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o -L/cm/shared/apps/slurm/current/lib64/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib -L/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib -L/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib -L/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib -L/cm/shared/apps/slurm/current/lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../.. CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib/gcc/x86_64-redhat-linux/8/crtend.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o]
+    arg [/usr/libexec/gcc/x86_64-redhat-linux/8/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/usr/libexec/gcc/x86_64-redhat-linux/8/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccYSMiSA.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [--build-id] ==> ignore
+    arg [--no-add-needed] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [--hash-style=gnu] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_365ae] ==> ignore
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o]
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o]
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o]
+    arg [-L/cm/shared/apps/slurm/current/lib64/../lib64] ==> dir [/cm/shared/apps/slurm/current/lib64/../lib64]
+    arg [-L/usr/lib/gcc/x86_64-redhat-linux/8] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/8]
+    arg [-L/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib] ==> dir [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib]
+    arg [-L/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib] ==> dir [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib]
+    arg [-L/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib] ==> dir [/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib]
+    arg [-L/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib] ==> dir [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib]
+    arg [-L/cm/shared/apps/slurm/current/lib64] ==> dir [/cm/shared/apps/slurm/current/lib64]
+    arg [-L/usr/lib/gcc/x86_64-redhat-linux/8/../../..] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../..]
+    arg [CMakeFiles/cmTC_365ae.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [-lc] ==> lib [c]
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/crtend.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/crtend.o]
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o]
+  collapse obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o] ==> [/usr/lib64/crt1.o]
+  collapse obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o] ==> [/usr/lib64/crti.o]
+  collapse obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o] ==> [/usr/lib64/crtn.o]
+  collapse library dir [/cm/shared/apps/slurm/current/lib64/../lib64] ==> [/cm/shared/apps/slurm/current/lib64]
+  collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/8] ==> [/usr/lib/gcc/x86_64-redhat-linux/8]
+  collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64] ==> [/usr/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib] ==> [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib]
+  collapse library dir [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib] ==> [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib]
+  collapse library dir [/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib] ==> [/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib]
+  collapse library dir [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib] ==> [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib]
+  collapse library dir [/cm/shared/apps/slurm/current/lib64] ==> [/cm/shared/apps/slurm/current/lib64]
+  collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../..] ==> [/usr/lib]
+  implicit libs: [gcc;gcc_s;c;gcc;gcc_s]
+  implicit objs: [/usr/lib64/crt1.o;/usr/lib64/crti.o;/usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o;/usr/lib/gcc/x86_64-redhat-linux/8/crtend.o;/usr/lib64/crtn.o]
+  implicit dirs: [/cm/shared/apps/slurm/current/lib64;/usr/lib/gcc/x86_64-redhat-linux/8;/usr/lib64;/lib64;/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib;/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib;/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib;/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib;/usr/lib]
+  implicit fwks: []
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_cf669/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_cf669.dir/build.make CMakeFiles/cmTC_cf669.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o
+/usr/lib64/ccache/c++   -v -o CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+Using built-in specs.
+COLLECT_GCC=/usr/bin/c++
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-redhat-linux
+Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
+Thread model: posix
+gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) 
+COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/libexec/gcc/x86_64-redhat-linux/8/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccwlmXL7.s
+GNU C++14 (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)
+	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18), GMP version 6.1.2, MPFR version 3.1.6-p2, MPC version 1.1.0, isl version isl-0.16.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/include-fixed"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/../../../../x86_64-redhat-linux/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include
+ /mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include
+ /mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include
+ /cm/shared/apps/slurm/current/include
+ /usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8
+ /usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8/x86_64-redhat-linux
+ /usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8/backward
+ /usr/lib/gcc/x86_64-redhat-linux/8/include
+ /usr/local/include
+ /usr/include
+End of search list.
+GNU C++14 (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)
+	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18), GMP version 6.1.2, MPFR version 3.1.6-p2, MPC version 1.1.0, isl version isl-0.16.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 5fff5568034dc3b480d38ad647f6abb8
+COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccwlmXL7.s
+GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-119.el8_8.2
+COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/
+LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+Linking CXX executable cmTC_cf669
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cf669.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -v CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_cf669 
+Using built-in specs.
+COLLECT_GCC=/usr/bin/c++
+COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-redhat-linux
+Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
+Thread model: posix
+gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) 
+COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/
+LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_cf669' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/libexec/gcc/x86_64-redhat-linux/8/collect2 -plugin /usr/libexec/gcc/x86_64-redhat-linux/8/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFQrJXO.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_cf669 /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o -L/cm/shared/apps/slurm/current/lib64/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib -L/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib -L/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib -L/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib -L/cm/shared/apps/slurm/current/lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../.. CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-redhat-linux/8/crtend.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_cf669' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed CXX implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include]
+    add: [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include]
+    add: [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include]
+    add: [/cm/shared/apps/slurm/current/include]
+    add: [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8]
+    add: [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8/x86_64-redhat-linux]
+    add: [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8/backward]
+    add: [/usr/lib/gcc/x86_64-redhat-linux/8/include]
+    add: [/usr/local/include]
+    add: [/usr/include]
+  end of search list found
+  collapse include dir [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include] ==> [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include]
+  collapse include dir [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include] ==> [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include]
+  collapse include dir [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include] ==> [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include]
+  collapse include dir [/cm/shared/apps/slurm/current/include] ==> [/cm/shared/apps/slurm/current/include]
+  collapse include dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8] ==> [/usr/include/c++/8]
+  collapse include dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8/x86_64-redhat-linux] ==> [/usr/include/c++/8/x86_64-redhat-linux]
+  collapse include dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8/backward] ==> [/usr/include/c++/8/backward]
+  collapse include dir [/usr/lib/gcc/x86_64-redhat-linux/8/include] ==> [/usr/lib/gcc/x86_64-redhat-linux/8/include]
+  collapse include dir [/usr/local/include] ==> [/usr/local/include]
+  collapse include dir [/usr/include] ==> [/usr/include]
+  implicit include dirs: [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include;/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include;/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include;/cm/shared/apps/slurm/current/include;/usr/include/c++/8;/usr/include/c++/8/x86_64-redhat-linux;/usr/include/c++/8/backward;/usr/lib/gcc/x86_64-redhat-linux/8/include;/usr/local/include;/usr/include]
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_cf669/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_cf669.dir/build.make CMakeFiles/cmTC_cf669.dir/build]
+  ignore line: [gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building CXX object CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/usr/lib64/ccache/c++   -v -o CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/bin/c++]
+  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
+  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+  ignore line: [Target: x86_64-redhat-linux]
+  ignore line: [Configured with: ../configure --enable-bootstrap --enable-languages=c c++ fortran lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /usr/libexec/gcc/x86_64-redhat-linux/8/cc1plus -quiet -v -D_GNU_SOURCE /usr/share/cmake/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccwlmXL7.s]
+  ignore line: [GNU C++14 (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)]
+  ignore line: [	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18)  GMP version 6.1.2  MPFR version 3.1.6-p2  MPC version 1.1.0  isl version isl-0.16.1-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/include-fixed"]
+  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/../../../../x86_64-redhat-linux/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include]
+  ignore line: [ /mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include]
+  ignore line: [ /mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include]
+  ignore line: [ /cm/shared/apps/slurm/current/include]
+  ignore line: [ /usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8]
+  ignore line: [ /usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8/x86_64-redhat-linux]
+  ignore line: [ /usr/lib/gcc/x86_64-redhat-linux/8/../../../../include/c++/8/backward]
+  ignore line: [ /usr/lib/gcc/x86_64-redhat-linux/8/include]
+  ignore line: [ /usr/local/include]
+  ignore line: [ /usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C++14 (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)]
+  ignore line: [	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18)  GMP version 6.1.2  MPFR version 3.1.6-p2  MPC version 1.1.0  isl version isl-0.16.1-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: 5fff5568034dc3b480d38ad647f6abb8]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccwlmXL7.s]
+  ignore line: [GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-119.el8_8.2]
+  ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/]
+  ignore line: [LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking CXX executable cmTC_cf669]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cf669.dir/link.txt --verbose=1]
+  ignore line: [/usr/lib64/ccache/c++  -v CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_cf669 ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/bin/c++]
+  ignore line: [COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper]
+  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
+  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+  ignore line: [Target: x86_64-redhat-linux]
+  ignore line: [Configured with: ../configure --enable-bootstrap --enable-languages=c c++ fortran lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) ]
+  ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/]
+  ignore line: [LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_cf669' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/libexec/gcc/x86_64-redhat-linux/8/collect2 -plugin /usr/libexec/gcc/x86_64-redhat-linux/8/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper -plugin-opt=-fresolution=/tmp/ccFQrJXO.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_cf669 /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o -L/cm/shared/apps/slurm/current/lib64/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib -L/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib -L/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib -L/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib -L/cm/shared/apps/slurm/current/lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../.. CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-redhat-linux/8/crtend.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o]
+    arg [/usr/libexec/gcc/x86_64-redhat-linux/8/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/usr/libexec/gcc/x86_64-redhat-linux/8/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccFQrJXO.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [--build-id] ==> ignore
+    arg [--no-add-needed] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [--hash-style=gnu] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_cf669] ==> ignore
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o]
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o]
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o]
+    arg [-L/cm/shared/apps/slurm/current/lib64/../lib64] ==> dir [/cm/shared/apps/slurm/current/lib64/../lib64]
+    arg [-L/usr/lib/gcc/x86_64-redhat-linux/8] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/8]
+    arg [-L/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib] ==> dir [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib]
+    arg [-L/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib] ==> dir [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib]
+    arg [-L/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib] ==> dir [/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib]
+    arg [-L/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib] ==> dir [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib]
+    arg [-L/cm/shared/apps/slurm/current/lib64] ==> dir [/cm/shared/apps/slurm/current/lib64]
+    arg [-L/usr/lib/gcc/x86_64-redhat-linux/8/../../..] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../..]
+    arg [CMakeFiles/cmTC_cf669.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [-lstdc++] ==> lib [stdc++]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/crtend.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/crtend.o]
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o]
+  collapse obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o] ==> [/usr/lib64/crt1.o]
+  collapse obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o] ==> [/usr/lib64/crti.o]
+  collapse obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o] ==> [/usr/lib64/crtn.o]
+  collapse library dir [/cm/shared/apps/slurm/current/lib64/../lib64] ==> [/cm/shared/apps/slurm/current/lib64]
+  collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/8] ==> [/usr/lib/gcc/x86_64-redhat-linux/8]
+  collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64] ==> [/usr/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib] ==> [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib]
+  collapse library dir [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib] ==> [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib]
+  collapse library dir [/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib] ==> [/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib]
+  collapse library dir [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib] ==> [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib]
+  collapse library dir [/cm/shared/apps/slurm/current/lib64] ==> [/cm/shared/apps/slurm/current/lib64]
+  collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../..] ==> [/usr/lib]
+  implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
+  implicit objs: [/usr/lib64/crt1.o;/usr/lib64/crti.o;/usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o;/usr/lib/gcc/x86_64-redhat-linux/8/crtend.o;/usr/lib64/crtn.o]
+  implicit dirs: [/cm/shared/apps/slurm/current/lib64;/usr/lib/gcc/x86_64-redhat-linux/8;/usr/lib64;/lib64;/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib;/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib;/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib;/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib;/usr/lib]
+  implicit fwks: []
+
+
+Determining if the include file pthread.h exists passed with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_fd3e4/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_fd3e4.dir/build.make CMakeFiles/cmTC_fd3e4.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_fd3e4.dir/CheckIncludeFile.c.o
+/usr/lib64/ccache/cc    -o CMakeFiles/cmTC_fd3e4.dir/CheckIncludeFile.c.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_fd3e4
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fd3e4.dir/link.txt --verbose=1
+/usr/lib64/ccache/cc CMakeFiles/cmTC_fd3e4.dir/CheckIncludeFile.c.o -o cmTC_fd3e4 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the function pthread_create exists in the pthread passed with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_0af6d/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_0af6d.dir/build.make CMakeFiles/cmTC_0af6d.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_0af6d.dir/CheckFunctionExists.c.o
+/usr/lib64/ccache/cc   -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_0af6d.dir/CheckFunctionExists.c.o -c /usr/share/cmake/Modules/CheckFunctionExists.c
+Linking C executable cmTC_0af6d
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0af6d.dir/link.txt --verbose=1
+/usr/lib64/ccache/cc  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_0af6d.dir/CheckFunctionExists.c.o -o cmTC_0af6d  -lpthread 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+
+Performing C++ SOURCE FILE Test EIGEN_COMPILER_SUPPORT_CPP11 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_f1075/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_f1075.dir/build.make CMakeFiles/cmTC_f1075.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_f1075.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DEIGEN_COMPILER_SUPPORT_CPP11  -std=c++11 -std=c++14 -o CMakeFiles/cmTC_f1075.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_f1075
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f1075.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_f1075.dir/src.cxx.o -o cmTC_f1075 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_25211/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_25211.dir/build.make CMakeFiles/cmTC_25211.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_25211.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_25211.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_25211
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_25211.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_25211.dir/src.cxx.o -o cmTC_25211 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test standard_math_library_linked_to_automatically succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_696ec/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_696ec.dir/build.make CMakeFiles/cmTC_696ec.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_696ec.dir/src.cxx.o
+/usr/lib64/ccache/c++ -Dstandard_math_library_linked_to_automatically  -std=c++03  -std=c++14 -o CMakeFiles/cmTC_696ec.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_696ec
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_696ec.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03  CMakeFiles/cmTC_696ec.dir/src.cxx.o -o cmTC_696ec 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+#include<cmath>
+int main(int argc, char **){
+  return int(std::sin(double(argc)) + std::log(double(argc)));
+}
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_WERROR succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_7c0e9/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_7c0e9.dir/build.make CMakeFiles/cmTC_7c0e9.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_7c0e9.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_WERROR  -std=c++03    -Werror -std=c++14 -o CMakeFiles/cmTC_7c0e9.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_7c0e9
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7c0e9.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03  CMakeFiles/cmTC_7c0e9.dir/src.cxx.o -o cmTC_7c0e9 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_pedantic succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_8070e/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_8070e.dir/build.make CMakeFiles/cmTC_8070e.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_8070e.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_pedantic  -std=c++03 -Werror   -pedantic -std=c++14 -o CMakeFiles/cmTC_8070e.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_8070e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8070e.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -Werror CMakeFiles/cmTC_8070e.dir/src.cxx.o -o cmTC_8070e 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wall succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_87e49/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_87e49.dir/build.make CMakeFiles/cmTC_87e49.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_87e49.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wall  -std=c++03 -pedantic -Werror   -Wall -std=c++14 -o CMakeFiles/cmTC_87e49.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_87e49
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_87e49.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Werror CMakeFiles/cmTC_87e49.dir/src.cxx.o -o cmTC_87e49 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wextra succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_5a062/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_5a062.dir/build.make CMakeFiles/cmTC_5a062.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_5a062.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wextra  -std=c++03 -pedantic -Wall -Werror   -Wextra -std=c++14 -o CMakeFiles/cmTC_5a062.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_5a062
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5a062.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Werror CMakeFiles/cmTC_5a062.dir/src.cxx.o -o cmTC_5a062 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wundef succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_ba407/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_ba407.dir/build.make CMakeFiles/cmTC_ba407.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_ba407.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wundef  -std=c++03 -pedantic -Wall -Wextra -Werror   -Wundef -std=c++14 -o CMakeFiles/cmTC_ba407.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_ba407
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ba407.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Werror CMakeFiles/cmTC_ba407.dir/src.cxx.o -o cmTC_ba407 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wcastalign succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_26945/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_26945.dir/build.make CMakeFiles/cmTC_26945.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_26945.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wcastalign  -std=c++03 -pedantic -Wall -Wextra -Wundef -Werror   -Wcast-align -std=c++14 -o CMakeFiles/cmTC_26945.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_26945
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_26945.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Werror CMakeFiles/cmTC_26945.dir/src.cxx.o -o cmTC_26945 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wcharsubscripts succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_135ce/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_135ce.dir/build.make CMakeFiles/cmTC_135ce.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_135ce.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wcharsubscripts  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Werror   -Wchar-subscripts -std=c++14 -o CMakeFiles/cmTC_135ce.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_135ce
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_135ce.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Werror CMakeFiles/cmTC_135ce.dir/src.cxx.o -o cmTC_135ce 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wnonvirtualdtor succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_c273f/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_c273f.dir/build.make CMakeFiles/cmTC_c273f.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_c273f.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wnonvirtualdtor  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Werror   -Wnon-virtual-dtor -std=c++14 -o CMakeFiles/cmTC_c273f.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_c273f
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c273f.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Werror CMakeFiles/cmTC_c273f.dir/src.cxx.o -o cmTC_c273f 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wunusedlocaltypedefs succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_2e6c2/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_2e6c2.dir/build.make CMakeFiles/cmTC_2e6c2.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_2e6c2.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wunusedlocaltypedefs  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Werror   -Wunused-local-typedefs -std=c++14 -o CMakeFiles/cmTC_2e6c2.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_2e6c2
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2e6c2.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Werror CMakeFiles/cmTC_2e6c2.dir/src.cxx.o -o cmTC_2e6c2 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wpointerarith succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_90b22/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_90b22.dir/build.make CMakeFiles/cmTC_90b22.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_90b22.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wpointerarith  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Werror   -Wpointer-arith -std=c++14 -o CMakeFiles/cmTC_90b22.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_90b22
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_90b22.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Werror CMakeFiles/cmTC_90b22.dir/src.cxx.o -o cmTC_90b22 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wwritestrings succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_281bc/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_281bc.dir/build.make CMakeFiles/cmTC_281bc.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_281bc.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wwritestrings  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Werror   -Wwrite-strings -std=c++14 -o CMakeFiles/cmTC_281bc.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_281bc
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_281bc.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Werror CMakeFiles/cmTC_281bc.dir/src.cxx.o -o cmTC_281bc 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wformatsecurity succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_0cc3b/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_0cc3b.dir/build.make CMakeFiles/cmTC_0cc3b.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_0cc3b.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wformatsecurity  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Werror   -Wformat-security -std=c++14 -o CMakeFiles/cmTC_0cc3b.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_0cc3b
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0cc3b.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Werror CMakeFiles/cmTC_0cc3b.dir/src.cxx.o -o cmTC_0cc3b 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wlogicalop succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_75fa5/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_75fa5.dir/build.make CMakeFiles/cmTC_75fa5.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_75fa5.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wlogicalop  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Werror   -Wlogical-op -std=c++14 -o CMakeFiles/cmTC_75fa5.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_75fa5
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_75fa5.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Werror CMakeFiles/cmTC_75fa5.dir/src.cxx.o -o cmTC_75fa5 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wdoublepromotion succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_5eae5/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_5eae5.dir/build.make CMakeFiles/cmTC_5eae5.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_5eae5.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wdoublepromotion  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Werror   -Wdouble-promotion -std=c++14 -o CMakeFiles/cmTC_5eae5.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_5eae5
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5eae5.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Werror CMakeFiles/cmTC_5eae5.dir/src.cxx.o -o cmTC_5eae5 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wshadow succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_39ee1/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_39ee1.dir/build.make CMakeFiles/cmTC_39ee1.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_39ee1.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wshadow  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Werror   -Wshadow -std=c++14 -o CMakeFiles/cmTC_39ee1.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_39ee1
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_39ee1.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Werror CMakeFiles/cmTC_39ee1.dir/src.cxx.o -o cmTC_39ee1 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wnopsabi succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_509ee/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_509ee.dir/build.make CMakeFiles/cmTC_509ee.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_509ee.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wnopsabi  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Werror   -Wno-psabi -std=c++14 -o CMakeFiles/cmTC_509ee.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_509ee
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_509ee.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Werror CMakeFiles/cmTC_509ee.dir/src.cxx.o -o cmTC_509ee 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wnovariadicmacros succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_b633c/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_b633c.dir/build.make CMakeFiles/cmTC_b633c.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_b633c.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wnovariadicmacros  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Werror   -Wno-variadic-macros -std=c++14 -o CMakeFiles/cmTC_b633c.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_b633c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b633c.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Werror CMakeFiles/cmTC_b633c.dir/src.cxx.o -o cmTC_b633c 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_Wnolonglong succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_c5037/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_c5037.dir/build.make CMakeFiles/cmTC_c5037.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_c5037.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_Wnolonglong  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Werror   -Wno-long-long -std=c++14 -o CMakeFiles/cmTC_c5037.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_c5037
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c5037.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Werror CMakeFiles/cmTC_c5037.dir/src.cxx.o -o cmTC_c5037 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_fnochecknew succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_c8923/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_c8923.dir/build.make CMakeFiles/cmTC_c8923.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_c8923.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_fnochecknew  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -Werror   -fno-check-new -std=c++14 -o CMakeFiles/cmTC_c8923.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_c8923
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c8923.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -Werror CMakeFiles/cmTC_c8923.dir/src.cxx.o -o cmTC_c8923 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_fnocommon succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_ae37a/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_ae37a.dir/build.make CMakeFiles/cmTC_ae37a.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_ae37a.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_fnocommon  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -Werror   -fno-common -std=c++14 -o CMakeFiles/cmTC_ae37a.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_ae37a
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ae37a.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -Werror CMakeFiles/cmTC_ae37a.dir/src.cxx.o -o cmTC_ae37a 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_fstrictaliasing succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_48aaa/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_48aaa.dir/build.make CMakeFiles/cmTC_48aaa.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_48aaa.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_fstrictaliasing  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -Werror   -fstrict-aliasing -std=c++14 -o CMakeFiles/cmTC_48aaa.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_48aaa
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_48aaa.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -Werror CMakeFiles/cmTC_48aaa.dir/src.cxx.o -o cmTC_48aaa 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_ansi succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_9887c/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_9887c.dir/build.make CMakeFiles/cmTC_9887c.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_9887c.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_ansi  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -fstrict-aliasing -Werror   -ansi -std=c++14 -o CMakeFiles/cmTC_9887c.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_9887c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9887c.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -fstrict-aliasing -Werror CMakeFiles/cmTC_9887c.dir/src.cxx.o -o cmTC_9887c 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_OPENMP succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_4ebc5/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_4ebc5.dir/build.make CMakeFiles/cmTC_4ebc5.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_4ebc5.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_OPENMP  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -fstrict-aliasing -ansi    -fopenmp -std=c++14 -o CMakeFiles/cmTC_4ebc5.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_4ebc5
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4ebc5.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -fstrict-aliasing -ansi  CMakeFiles/cmTC_4ebc5.dir/src.cxx.o -o cmTC_4ebc5 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Looking for a Fortran compiler passed with the following output:
+-- The Fortran compiler identification is GNU 8.5.0
+-- Detecting Fortran compiler ABI info
+-- Detecting Fortran compiler ABI info - done
+-- Check for working Fortran compiler: /usr/bin/f95 - skipped
+-- Checking whether /usr/bin/f95 supports Fortran 90
+-- Checking whether /usr/bin/f95 supports Fortran 90 - yes
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /mnt/home/sbronder/opensource/riccati/build/_deps/eigen-build/test/CMakeFiles/CheckFortran
+
+Compiling the Fortran compiler identification source file "CMakeFortranCompilerId.F" succeeded.
+Compiler: /usr/bin/f95 
+Build flags: 
+Id flags: -v 
+
+The output was:
+0
+Driving: /usr/bin/f95 -v CMakeFortranCompilerId.F -l gfortran -l m -shared-libgcc
+Using built-in specs.
+COLLECT_GCC=/usr/bin/f95
+COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-redhat-linux
+Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
+Thread model: posix
+gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) 
+COLLECT_GCC_OPTIONS='-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/libexec/gcc/x86_64-redhat-linux/8/f951 CMakeFortranCompilerId.F -ffixed-form -cpp=/tmp/ccEnDzRf.f90 -quiet -v CMakeFortranCompilerId.F -quiet -dumpbase CMakeFortranCompilerId.F -mtune=generic -march=x86-64 -auxbase CMakeFortranCompilerId -version -fintrinsic-modules-path /usr/lib/gcc/x86_64-redhat-linux/8/finclude -o /tmp/cc0oKuX8.s
+GNU Fortran (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)
+	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18), GMP version 6.1.2, MPFR version 3.1.6-p2, MPC version 1.1.0, isl version isl-0.16.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/include-fixed"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/../../../../x86_64-redhat-linux/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /usr/lib/gcc/x86_64-redhat-linux/8/finclude
+ /mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include
+ /mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include
+ /mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include
+ /cm/shared/apps/slurm/current/include
+ /usr/lib/gcc/x86_64-redhat-linux/8/include
+ /usr/local/include
+ /usr/include
+End of search list.
+GNU Fortran2008 (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)
+	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18), GMP version 6.1.2, MPFR version 3.1.6-p2, MPC version 1.1.0, isl version isl-0.16.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+COLLECT_GCC_OPTIONS='-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o /tmp/cc9XDLPx.o /tmp/cc0oKuX8.s
+GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-119.el8_8.2
+Reading specs from /usr/lib/gcc/x86_64-redhat-linux/8/libgfortran.spec
+rename spec lib to liborig
+COLLECT_GCC_OPTIONS='-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/
+LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/libexec/gcc/x86_64-redhat-linux/8/collect2 -plugin /usr/libexec/gcc/x86_64-redhat-linux/8/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper -plugin-opt=-fresolution=/tmp/ccHahg1V.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lquadmath -plugin-opt=-pass-through=-lm -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o -L/cm/shared/apps/slurm/current/lib64/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib -L/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib -L/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib -L/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib -L/cm/shared/apps/slurm/current/lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../.. /tmp/cc9XDLPx.o -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-redhat-linux/8/crtend.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+
+
+Compilation of the Fortran compiler identification source "CMakeFortranCompilerId.F" produced "a.out"
+
+The Fortran compiler identification is GNU, found in "/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/3.20.2/CompilerIdFortran/a.out"
+
+Detecting Fortran compiler ABI info compiled with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_1cc81/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_1cc81.dir/build.make CMakeFiles/cmTC_1cc81.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building Fortran object CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o
+/usr/bin/f95   -v -c /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o
+Using built-in specs.
+COLLECT_GCC=/usr/bin/f95
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-redhat-linux
+Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
+Thread model: posix
+gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) 
+COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o' '-mtune=generic' '-march=x86-64'
+ /usr/libexec/gcc/x86_64-redhat-linux/8/f951 /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -ffixed-form -cpp=/tmp/ccwuUvim.f90 -quiet -v /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -quiet -dumpbase CMakeFortranCompilerABI.F -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o -version -fintrinsic-modules-path /usr/lib/gcc/x86_64-redhat-linux/8/finclude -o /tmp/ccRdpcO7.s
+GNU Fortran (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)
+	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18), GMP version 6.1.2, MPFR version 3.1.6-p2, MPC version 1.1.0, isl version isl-0.16.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/include-fixed"
+ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/../../../../x86_64-redhat-linux/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /usr/lib/gcc/x86_64-redhat-linux/8/finclude
+ /mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include
+ /mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include
+ /mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include
+ /cm/shared/apps/slurm/current/include
+ /usr/lib/gcc/x86_64-redhat-linux/8/include
+ /usr/local/include
+ /usr/include
+End of search list.
+GNU Fortran2008 (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)
+	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18), GMP version 6.1.2, MPFR version 3.1.6-p2, MPC version 1.1.0, isl version isl-0.16.1-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o /tmp/ccRdpcO7.s
+GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-119.el8_8.2
+COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/
+LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o' '-mtune=generic' '-march=x86-64'
+Linking Fortran executable cmTC_1cc81
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1cc81.dir/link.txt --verbose=1
+/usr/bin/f95  -v CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o -o cmTC_1cc81 
+Driving: /usr/bin/f95 -v CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o -o cmTC_1cc81 -l gfortran -l m -shared-libgcc
+Using built-in specs.
+COLLECT_GCC=/usr/bin/f95
+COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-redhat-linux
+Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux
+Thread model: posix
+gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) 
+Reading specs from /usr/lib/gcc/x86_64-redhat-linux/8/libgfortran.spec
+rename spec lib to liborig
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_1cc81' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/
+LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_1cc81' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/libexec/gcc/x86_64-redhat-linux/8/collect2 -plugin /usr/libexec/gcc/x86_64-redhat-linux/8/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper -plugin-opt=-fresolution=/tmp/ccqOuwaU.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lquadmath -plugin-opt=-pass-through=-lm -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_1cc81 /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o -L/cm/shared/apps/slurm/current/lib64/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib -L/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib -L/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib -L/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib -L/cm/shared/apps/slurm/current/lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../.. CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-redhat-linux/8/crtend.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_1cc81' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed Fortran implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/usr/lib/gcc/x86_64-redhat-linux/8/finclude]
+    add: [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include]
+    add: [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include]
+    add: [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include]
+    add: [/cm/shared/apps/slurm/current/include]
+    add: [/usr/lib/gcc/x86_64-redhat-linux/8/include]
+    add: [/usr/local/include]
+    add: [/usr/include]
+  end of search list found
+  collapse include dir [/usr/lib/gcc/x86_64-redhat-linux/8/finclude] ==> [/usr/lib/gcc/x86_64-redhat-linux/8/finclude]
+  collapse include dir [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include] ==> [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include]
+  collapse include dir [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include] ==> [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include]
+  collapse include dir [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include] ==> [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include]
+  collapse include dir [/cm/shared/apps/slurm/current/include] ==> [/cm/shared/apps/slurm/current/include]
+  collapse include dir [/usr/lib/gcc/x86_64-redhat-linux/8/include] ==> [/usr/lib/gcc/x86_64-redhat-linux/8/include]
+  collapse include dir [/usr/local/include] ==> [/usr/local/include]
+  collapse include dir [/usr/include] ==> [/usr/include]
+  implicit include dirs: [/usr/lib/gcc/x86_64-redhat-linux/8/finclude;/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include;/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include;/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include;/cm/shared/apps/slurm/current/include;/usr/lib/gcc/x86_64-redhat-linux/8/include;/usr/local/include;/usr/include]
+
+
+Parsed Fortran implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_1cc81/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_1cc81.dir/build.make CMakeFiles/cmTC_1cc81.dir/build]
+  ignore line: [gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building Fortran object CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o]
+  ignore line: [/usr/bin/f95   -v -c /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -o CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/bin/f95]
+  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
+  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+  ignore line: [Target: x86_64-redhat-linux]
+  ignore line: [Configured with: ../configure --enable-bootstrap --enable-languages=c c++ fortran lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /usr/libexec/gcc/x86_64-redhat-linux/8/f951 /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -ffixed-form -cpp=/tmp/ccwuUvim.f90 -quiet -v /usr/share/cmake/Modules/CMakeFortranCompilerABI.F -quiet -dumpbase CMakeFortranCompilerABI.F -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o -version -fintrinsic-modules-path /usr/lib/gcc/x86_64-redhat-linux/8/finclude -o /tmp/ccRdpcO7.s]
+  ignore line: [GNU Fortran (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)]
+  ignore line: [	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18)  GMP version 6.1.2  MPFR version 3.1.6-p2  MPC version 1.1.0  isl version isl-0.16.1-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/include-fixed"]
+  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/8/../../../../x86_64-redhat-linux/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /usr/lib/gcc/x86_64-redhat-linux/8/finclude]
+  ignore line: [ /mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/include]
+  ignore line: [ /mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/include]
+  ignore line: [ /mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/include]
+  ignore line: [ /cm/shared/apps/slurm/current/include]
+  ignore line: [ /usr/lib/gcc/x86_64-redhat-linux/8/include]
+  ignore line: [ /usr/local/include]
+  ignore line: [ /usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU Fortran2008 (GCC) version 8.5.0 20210514 (Red Hat 8.5.0-18) (x86_64-redhat-linux)]
+  ignore line: [	compiled by GNU C version 8.5.0 20210514 (Red Hat 8.5.0-18)  GMP version 6.1.2  MPFR version 3.1.6-p2  MPC version 1.1.0  isl version isl-0.16.1-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o /tmp/ccRdpcO7.s]
+  ignore line: [GNU assembler version 2.30 (x86_64-redhat-linux) using BFD version version 2.30-119.el8_8.2]
+  ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/]
+  ignore line: [LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-c' '-o' 'CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking Fortran executable cmTC_1cc81]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1cc81.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/f95  -v CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o -o cmTC_1cc81 ]
+  ignore line: [Driving: /usr/bin/f95 -v CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o -o cmTC_1cc81 -l gfortran -l m -shared-libgcc]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/usr/bin/f95]
+  ignore line: [COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper]
+  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none]
+  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+  ignore line: [Target: x86_64-redhat-linux]
+  ignore line: [Configured with: ../configure --enable-bootstrap --enable-languages=c c++ fortran lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugs.rockylinux.org/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl --disable-libmpx --enable-offload-targets=nvptx-none --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-arch_32=x86-64 --build=x86_64-redhat-linux]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.5.0 20210514 (Red Hat 8.5.0-18) (GCC) ]
+  ignore line: [Reading specs from /usr/lib/gcc/x86_64-redhat-linux/8/libgfortran.spec]
+  ignore line: [rename spec lib to liborig]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_1cc81' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/8/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/]
+  ignore line: [LIBRARY_PATH=/cm/shared/apps/slurm/current/lib64/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib/:/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib/:/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib/:/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib/:/cm/shared/apps/slurm/current/lib64/:/usr/lib/gcc/x86_64-redhat-linux/8/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_1cc81' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/libexec/gcc/x86_64-redhat-linux/8/collect2 -plugin /usr/libexec/gcc/x86_64-redhat-linux/8/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper -plugin-opt=-fresolution=/tmp/ccqOuwaU.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lquadmath -plugin-opt=-pass-through=-lm -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_1cc81 /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o -L/cm/shared/apps/slurm/current/lib64/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib -L/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib -L/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib -L/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib -L/cm/shared/apps/slurm/current/lib64 -L/usr/lib/gcc/x86_64-redhat-linux/8/../../.. CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o -lgfortran -lm -lgcc_s -lgcc -lquadmath -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-redhat-linux/8/crtend.o /usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o]
+    arg [/usr/libexec/gcc/x86_64-redhat-linux/8/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/usr/libexec/gcc/x86_64-redhat-linux/8/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/8/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccqOuwaU.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lquadmath] ==> ignore
+    arg [-plugin-opt=-pass-through=-lm] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [--build-id] ==> ignore
+    arg [--no-add-needed] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [--hash-style=gnu] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_1cc81] ==> ignore
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o]
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o]
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o]
+    arg [-L/cm/shared/apps/slurm/current/lib64/../lib64] ==> dir [/cm/shared/apps/slurm/current/lib64/../lib64]
+    arg [-L/usr/lib/gcc/x86_64-redhat-linux/8] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/8]
+    arg [-L/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib] ==> dir [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib]
+    arg [-L/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib] ==> dir [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib]
+    arg [-L/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib] ==> dir [/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib]
+    arg [-L/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib] ==> dir [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib]
+    arg [-L/cm/shared/apps/slurm/current/lib64] ==> dir [/cm/shared/apps/slurm/current/lib64]
+    arg [-L/usr/lib/gcc/x86_64-redhat-linux/8/../../..] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../..]
+    arg [CMakeFiles/cmTC_1cc81.dir/CMakeFortranCompilerABI.F.o] ==> ignore
+    arg [-lgfortran] ==> lib [gfortran]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lquadmath] ==> lib [quadmath]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/crtend.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/crtend.o]
+    arg [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o]
+  collapse obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crt1.o] ==> [/usr/lib64/crt1.o]
+  collapse obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crti.o] ==> [/usr/lib64/crti.o]
+  collapse obj [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64/crtn.o] ==> [/usr/lib64/crtn.o]
+  collapse library dir [/cm/shared/apps/slurm/current/lib64/../lib64] ==> [/cm/shared/apps/slurm/current/lib64]
+  collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/8] ==> [/usr/lib/gcc/x86_64-redhat-linux/8]
+  collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../../../lib64] ==> [/usr/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib] ==> [/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib]
+  collapse library dir [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib] ==> [/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib]
+  collapse library dir [/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib] ==> [/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib]
+  collapse library dir [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib] ==> [/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib]
+  collapse library dir [/cm/shared/apps/slurm/current/lib64] ==> [/cm/shared/apps/slurm/current/lib64]
+  collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/8/../../..] ==> [/usr/lib]
+  implicit libs: [gfortran;m;gcc_s;gcc;quadmath;m;gcc_s;gcc;c;gcc_s;gcc]
+  implicit objs: [/usr/lib64/crt1.o;/usr/lib64/crti.o;/usr/lib/gcc/x86_64-redhat-linux/8/crtbegin.o;/usr/lib/gcc/x86_64-redhat-linux/8/crtend.o;/usr/lib64/crtn.o]
+  implicit dirs: [/cm/shared/apps/slurm/current/lib64;/usr/lib/gcc/x86_64-redhat-linux/8;/usr/lib64;/lib64;/mnt/sw/nix/store/i613v246n7m0f6k22a8bwxsj51d1z6gb-llvm-11.1.0/lib;/mnt/sw/nix/store/b4q5asj8flwlgmaijgj1r6wbmnls5x8k-python-3.9.15-view/lib;/mnt/sw/nix/store/wxp5xscxcqq0l1nlrv8k136qs5wqaln6-vscode-1.73.1/lib;/mnt/sw/nix/store/hayjz1l94cb2ky37bhcv71aygjzq7fci-openblas-0.3.21/lib;/usr/lib]
+  implicit fwks: []
+
+
+Determining if the Fortran compiler supports Fortran 90 passed with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_f6d00/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_f6d00.dir/build.make CMakeFiles/cmTC_f6d00.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building Fortran object CMakeFiles/cmTC_f6d00.dir/testFortranCompilerF90.f90.o
+/usr/bin/f95    -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/testFortranCompilerF90.f90 -o CMakeFiles/cmTC_f6d00.dir/testFortranCompilerF90.f90.o
+Linking Fortran executable cmTC_f6d00
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f6d00.dir/link.txt --verbose=1
+/usr/bin/f95 CMakeFiles/cmTC_f6d00.dir/testFortranCompilerF90.f90.o -o cmTC_f6d00 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_FASTMATH succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_42995/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_42995.dir/build.make CMakeFiles/cmTC_42995.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_42995.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_FASTMATH  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -fstrict-aliasing -ansi    -ffast-math -std=c++14 -o CMakeFiles/cmTC_42995.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_42995
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_42995.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++  -std=c++03 -pedantic -Wall -Wextra -Wundef -Wcast-align -Wchar-subscripts -Wnon-virtual-dtor -Wunused-local-typedefs -Wpointer-arith -Wwrite-strings -Wformat-security -Wlogical-op -Wdouble-promotion -Wshadow -Wno-psabi -Wno-variadic-macros -Wno-long-long -fno-check-new -fno-common -fstrict-aliasing -ansi  CMakeFiles/cmTC_42995.dir/src.cxx.o -o cmTC_42995 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_bd1a1/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_bd1a1.dir/build.make CMakeFiles/cmTC_bd1a1.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_bd1a1.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_bd1a1.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_bd1a1
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bd1a1.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_bd1a1.dir/src.cxx.o -o cmTC_bd1a1 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_24712/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_24712.dir/build.make CMakeFiles/cmTC_24712.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_24712.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_24712.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_24712
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_24712.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_24712.dir/src.cxx.o -o cmTC_24712 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_92374/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_92374.dir/build.make CMakeFiles/cmTC_92374.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_92374.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_92374.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_92374
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_92374.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_92374.dir/src.cxx.o -o cmTC_92374 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_79a0f/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_79a0f.dir/build.make CMakeFiles/cmTC_79a0f.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_79a0f.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_79a0f.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_79a0f
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_79a0f.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_79a0f.dir/src.cxx.o -o cmTC_79a0f 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_adad3/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_adad3.dir/build.make CMakeFiles/cmTC_adad3.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_adad3.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_adad3.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_adad3
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_adad3.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_adad3.dir/src.cxx.o -o cmTC_adad3 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_97812/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_97812.dir/build.make CMakeFiles/cmTC_97812.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_97812.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_97812.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_97812
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_97812.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_97812.dir/src.cxx.o -o cmTC_97812 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_358c8/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_358c8.dir/build.make CMakeFiles/cmTC_358c8.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_358c8.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_358c8.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_358c8
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_358c8.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_358c8.dir/src.cxx.o -o cmTC_358c8 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_9ded1/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_9ded1.dir/build.make CMakeFiles/cmTC_9ded1.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_9ded1.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_9ded1.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_9ded1
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9ded1.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_9ded1.dir/src.cxx.o -o cmTC_9ded1 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_6ff34/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_6ff34.dir/build.make CMakeFiles/cmTC_6ff34.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_6ff34.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_6ff34.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_6ff34
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6ff34.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_6ff34.dir/src.cxx.o -o cmTC_6ff34 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_bfa49/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_bfa49.dir/build.make CMakeFiles/cmTC_bfa49.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_bfa49.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_bfa49.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_bfa49
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bfa49.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_bfa49.dir/src.cxx.o -o cmTC_bfa49 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_7b563/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_7b563.dir/build.make CMakeFiles/cmTC_7b563.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_7b563.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_7b563.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_7b563
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7b563.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_7b563.dir/src.cxx.o -o cmTC_7b563 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_cad55/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_cad55.dir/build.make CMakeFiles/cmTC_cad55.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_cad55.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_cad55.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_cad55
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cad55.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_cad55.dir/src.cxx.o -o cmTC_cad55 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_c1c7e/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_c1c7e.dir/build.make CMakeFiles/cmTC_c1c7e.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_c1c7e.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_c1c7e.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_c1c7e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c1c7e.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_c1c7e.dir/src.cxx.o -o cmTC_c1c7e 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_aea35/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_aea35.dir/build.make CMakeFiles/cmTC_aea35.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_aea35.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_aea35.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_aea35
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_aea35.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_aea35.dir/src.cxx.o -o cmTC_aea35 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_52798/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_52798.dir/build.make CMakeFiles/cmTC_52798.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_52798.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_52798.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_52798
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_52798.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_52798.dir/src.cxx.o -o cmTC_52798 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_b0c34/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_b0c34.dir/build.make CMakeFiles/cmTC_b0c34.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_b0c34.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_b0c34.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_b0c34
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b0c34.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_b0c34.dir/src.cxx.o -o cmTC_b0c34 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_60c76/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_60c76.dir/build.make CMakeFiles/cmTC_60c76.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_60c76.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_60c76.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_60c76
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_60c76.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_60c76.dir/src.cxx.o -o cmTC_60c76 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_db5e5/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_db5e5.dir/build.make CMakeFiles/cmTC_db5e5.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_db5e5.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_db5e5.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_db5e5
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_db5e5.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_db5e5.dir/src.cxx.o -o cmTC_db5e5 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_5a912/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_5a912.dir/build.make CMakeFiles/cmTC_5a912.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_5a912.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_5a912.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_5a912
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5a912.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_5a912.dir/src.cxx.o -o cmTC_5a912 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_26a23/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_26a23.dir/build.make CMakeFiles/cmTC_26a23.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_26a23.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_26a23.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_26a23
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_26a23.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_26a23.dir/src.cxx.o -o cmTC_26a23 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_9bf67/fast && gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_9bf67.dir/build.make CMakeFiles/cmTC_9bf67.dir/build
+gmake[2]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_9bf67.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_9bf67.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_9bf67
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9bf67.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_9bf67.dir/src.cxx.o -o cmTC_9bf67 
+gmake[2]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_2a0da/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_2a0da.dir/build.make CMakeFiles/cmTC_2a0da.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_2a0da.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_2a0da.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_2a0da
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2a0da.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_2a0da.dir/src.cxx.o -o cmTC_2a0da 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_194b9/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_194b9.dir/build.make CMakeFiles/cmTC_194b9.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_194b9.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_194b9.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_194b9
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_194b9.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_194b9.dir/src.cxx.o -o cmTC_194b9 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_5b5b3/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_5b5b3.dir/build.make CMakeFiles/cmTC_5b5b3.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_5b5b3.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_5b5b3.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_5b5b3
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5b5b3.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_5b5b3.dir/src.cxx.o -o cmTC_5b5b3 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_f758e/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_f758e.dir/build.make CMakeFiles/cmTC_f758e.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_f758e.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_f758e.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_f758e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f758e.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_f758e.dir/src.cxx.o -o cmTC_f758e 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_3dd43/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_3dd43.dir/build.make CMakeFiles/cmTC_3dd43.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_3dd43.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_3dd43.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_3dd43
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3dd43.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_3dd43.dir/src.cxx.o -o cmTC_3dd43 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_57fd4/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_57fd4.dir/build.make CMakeFiles/cmTC_57fd4.dir/build
+gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_57fd4.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_57fd4.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_57fd4
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_57fd4.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_57fd4.dir/src.cxx.o -o cmTC_57fd4 
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORT_std=cpp03 succeeded with the following output:
+Change Dir: /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_357f1/fast && gmake[1]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_357f1.dir/build.make CMakeFiles/cmTC_357f1.dir/build
+gmake[2]: Entering directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_357f1.dir/src.cxx.o
+/usr/lib64/ccache/c++ -DCOMPILER_SUPPORT_std=cpp03  -std=c++03 -std=c++14 -o CMakeFiles/cmTC_357f1.dir/src.cxx.o -c /mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_357f1
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_357f1.dir/link.txt --verbose=1
+/usr/lib64/ccache/c++ CMakeFiles/cmTC_357f1.dir/src.cxx.o -o cmTC_357f1 
+gmake[2]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/mnt/home/sbronder/opensource/riccati/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
