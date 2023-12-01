@@ -1,18 +1,23 @@
 #ifndef INCLUDE_riccati_EVOLVE_HPP
 #define INCLUDE_riccati_EVOLVE_HPP
 
-#include <complex>
+#include <riccati/solver.hpp>
+#include <riccati/step.hpp>
+#include <riccati/stepsize.hpp>
 #include <riccati/utils.hpp>
+#include <complex>
 #include <type_traits>
+
+
 
 namespace riccati {
 template <typename SolverInfo, typename Scalar, typename Y0>
 auto osc_evolve(SolverInfo &&info, Scalar x0, Scalar x1, Scalar h, Y0 y0,
-                Scalar epsres, Scalar epsh) {
-  auto sign = std::sign(h);
+                Scalar epsres, Scalar epsilon_h) {
+  auto sign = std::signbit(h) ? -1 : 1;
   if (sign * (x0 + h) > sign * x1) {
     h = x1 - x0;
-    auto xscaled = h / 2.0 * info.xn + xc0 + h / 2.0;
+    auto xscaled = h / 2.0 * info.xn + x0 + h / 2.0;
     info.wn = info.w(xscaled);
     info.gn = info.g(xscaled);
   }
@@ -26,7 +31,7 @@ auto osc_evolve(SolverInfo &&info, Scalar x0, Scalar x1, Scalar h, Y0 y0,
  * This function solves the differential equation on the interval (xi, xf),
  * starting from the initial conditions y(xi) = yi and y'(xi) = dyi. It keeps
  * the residual of the ODE below eps, and returns an interpolated solution
- * (dense output) at the points specified in xeval.
+ * (dense output) at the points specified in x_eval.
  *
  * @tparam SolverInfo Type of the solver info object containing differentiation
  * matrices, etc.
@@ -42,9 +47,9 @@ auto osc_evolve(SolverInfo &&info, Scalar x0, Scalar x1, Scalar h, Y0 y0,
  * @param[in] dyi Initial derivative of the dependent variable at xi.
  * @param[in] eps Relative tolerance for the local error of both Riccati and
  * Chebyshev type steps.
- * @param[in] epsh Relative tolerance for choosing the stepsize of Riccati
+ * @param[in] epsilon_h Relative tolerance for choosing the stepsize of Riccati
  * steps.
- * @param[in] xeval List of x-values where the solution is to be interpolated
+ * @param[in] x_eval List of x-values where the solution is to be interpolated
  * (dense output) and returned.
  * @param[in] hard_stop If true, forces the solver to have a potentially smaller
  * last stepsize to stop exactly at xf.
@@ -63,106 +68,126 @@ auto osc_evolve(SolverInfo &&info, Scalar x0, Scalar x1, Scalar h, Y0 y0,
  * step (phases).
  *         - Vector indicating the types of successful steps taken (1 for
  * Riccati, 0 for Chebyshev).
- *         - Vector of interpolated values of the solution at xeval (yeval).
+ *         - Vector of interpolated values of the solution at x_eval (yeval).
  */
 template <typename SolverInfo, typename Scalar, typename Vec>
 auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
-           std::complex<Scalar> dyi, Scalar eps, Scalar epsh, Vec &&xeval,
+           std::complex<Scalar> dyi, Scalar eps, Scalar epsilon_h, Vec &&x_eval,
            bool hard_stop = false, bool warn = false) {
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
+  using matrixc_t = matrix_t<complex_t>;
   using vectord_t = vector_t<Scalar>;
-
-  Scalar intdir = (xf - xi > 0) ? 1 : -1;
-  if (intdir * info.h0 < 0) {
+  using stdvecd_t = std::vector<Scalar>;
+  using stdvecc_t = std::vector<complex_t>;
+  Scalar intdir = std::signbit(info.h0_) ? -1 : 1;
+  if (intdir * (xf - xi) < 0) {
     throw std::domain_error(
-        "Direction of itegration does not match stepsize sign,"
+        "Direction of integration does not match stepsize sign,"
         " adjusting it so that integration happens from xi to xf.");
   }
-  // Check that yeval and xeval are right size
-  if (info.denseout) {
-    if (!xeval.size()) {
-      throw std::domain_error("Dense output requrested but xeval is size 0!");
+  // Check that yeval and x_eval are right size
+  if (info.denseout_) {
+    if (!x_eval.size()) {
+      throw std::domain_error("Dense output requested but x_eval is size 0!");
     }
     // TODO: Better error messages
-    const bool high_range_err = intdir * xf > (intdir * xeval.maxCoeff());
-    const bool low_range_err = intdir * xf > (intdir * xeval.minCoeff());
+    const bool high_range_err = intdir * xf > (intdir * x_eval.maxCoeff());
+    const bool low_range_err = intdir * xi > (intdir * x_eval.minCoeff());
     if (high_range_err || low_range_err) {
       if (high_range_err && low_range_err) {
         throw std::domain_error(
-            "Some dense output points lie outside the integration range!")
+            "Some dense output points lie outside the high and low of the integration range!");
       }
       if (high_range_err) {
         throw std::domain_error(
-            "Some dense output points lie outside the integration range!")
+            "Some dense output points lie outside the high of the integration range!");
       }
       if (low_range_err) {
         throw std::domain_error(
-            "Some dense output points lie outside the integration range!")
+            "Some dense output points lie outside the low of the integration range!");
       }
     }
   }
 
   // Initialize vectors for storing results
-  vectord_t xs(100);
-  vectorc_t ys(100);
-  vectorc_t dys(100);
+  std::size_t output_size = 100;
+  stdvecd_t xs;
+  xs.reserve(output_size);
+  stdvecc_t ys;
+  ys.reserve(output_size);
+  stdvecc_t dys;
+  dys.reserve(output_size);
   std::vector<int> successes;
+  successes.reserve(output_size);
   std::vector<int> steptypes;
-  vectorc_t phases;
-  vectorc_t yeval(xeval.size());
+  steptypes.reserve(output_size);
+  stdvecd_t phases;
+  phases.reserve(output_size);
+  vectorc_t yeval(x_eval.size());
 
   complex_t y = yi;
   complex_t dy = dyi;
   complex_t yprev = y;
   complex_t dyprev = dy;
-  auto scale_xi = scale(xn, xi, hi).eval();
-  auto omega_is = info.omega_fun(scale_xi).eval();
-  auto gamma_is = info.omega_fun(scale_xi).eval();
-  auto wi = wis.mean();
-  auto gi = gis.mean();
-  auto dwi = (2.0 / hi * (info.Dn * wis)).mean();
-  auto dgi = (2.0 / hi * (info.Dn * wis)).mean();
+  auto scale_xi = (xi + info.h0_ / 2.0 + info.h0_ / 2.0 * info.xn_.array()).matrix().eval();
+  auto omega_is = info.omega_fun_(scale_xi).eval();
+  auto gamma_is = info.gamma_fun_(scale_xi).eval();
+  Scalar wi = omega_is.mean();
+  Scalar gi = gamma_is.mean();
+  Scalar dwi = (2.0 / info.h0_ * (info.Dn_ * omega_is)).mean();
+  Scalar dgi = (2.0 / info.h0_ * (info.Dn_ * gamma_is)).mean();
+  std::cout << "Dn_: " << info.Dn_ << std::endl;
+  Scalar hslo_ini = intdir * std::min(static_cast<Scalar>(1e8), std::abs(1.0 / wi));
+  Scalar hosc_ini = intdir
+                  * std::min(std::min(static_cast<Scalar>(1e8), std::abs(wi / dwi)),
+                             std::abs(gi / dgi));
+  std::cout << "\twi: " << wi << std::endl;
+  std::cout << "\tdwi: " << dwi << std::endl;
+  std::cout << "\tgi: " << gi << std::endl;
+  std::cout << "\tdgi: " << dgi << std::endl;
 
-  auto hslo_ini = intdir * std::min(1e8, std::abs(1.0 / wi));
-  auto hosc_ini = intdir
-                  * std::min(std::min(1e8, std::abs(wi / dwi)),
-                             std::abs(gi / dgi)) if (hard_stop) {
+  if (hard_stop) {
     hosc_ini = (intdir * (xi + hosc_ini) > intdir * xf) ? xf - xi : hosc_ini;
     hslo_ini = (intdir * (xi + hslo_ini) > intdir * xf) ? xf - xi : hslo_ini;
   }
-  auto hslo = choose_nonosc_stepsize(info.omega_fun_, xi, hslo_ini);
-  auto hosc = choose_osc_stepsize(info.omega_fun_, info.gamma_fun_, info.p_,
-                                  info.n_, info.xp_, info.xp_interp_, info.xn_,
-                                  info.L_, xi, hosc_ini, epsh);
+  auto hslo = choose_nonosc_stepsize(info, xi, hslo_ini, 0.2);
+  std::cout << "hosc_ini: " << hosc_ini << std::endl;
+  std::cout << "epsilon_h: " << epsilon_h << std::endl;
+  auto hosc = choose_osc_stepsize(info, xi, hosc_ini, epsilon_h);
   Scalar xcurrent = xi;
-  auto wnext = wi;
-  auto dwnext = dwi;
-  auto dense_positions = vectord_t(info.denseout ? xeval.size() : 0);
+  Scalar wnext = wi;
+  auto dense_positions = vectord_t(info.denseout_ ? x_eval.size() : 0);
+  matrixc_t y_eval;
+  matrixc_t dy_eval;
+  int iter = 0;
   while (std::abs(xcurrent - xf) > Scalar(1e-8)
          && intdir * xcurrent < intdir * xf) {
+    std::cout << "iter: " << iter << std::endl;
+    iter++;
+    Scalar phase{0.0};
     bool success = false;
     bool steptype = true;
+    Scalar err;
     if ((intdir * hosc > intdir * hslo * 5.0)
-        && (intdir * hosc * wnext / (2.0 * pi()) > 1.0)) {
+        && (intdir * hosc * wnext / (2.0 * pi<Scalar>()) > 1.0)) {
       if (hard_stop) {
-        if (int dir *(xcurrent + hosc) > intdir * xf) {
+        if (intdir * (xcurrent + hosc) > intdir * xf) {
           hosc = xf - xcurrent;
-          auto xscaled = (xcurrent + hosc / 2.0 + hosc / 2.0 * info.xp).eval();
-          info.wn = info.omega_fun(xscaled);
-          info.gn = info.gamma_fun(xscaled);
+          auto xscaled = ((xcurrent + hosc / 2.0 + hosc / 2.0 * info.xp_.array()).matrix()).eval();
+          info.omega_n_ = info.omega_fun_(xscaled);
+          info.gamma_n_ = info.gamma_fun_(xscaled);
         }
         if (intdir * (xcurrent + hslo) > intdir * xf) {
           hslo = xf - xcurrent;
         }
       }
-      std::tie(y, dy, res, success, phase)
+      std::tie(y, dy, err, success, phase)
           = osc_step(info, xcurrent, hosc, yprev, dyprev, eps);
       steptype = 1;
     }
     while (!success) {
-      std::tie(y, dy, err, success) = nonosc_step(info, xcurrent, hslo, yprev, dyprev, eps);
-      phase = 0;
+      std::tie(y, dy, err, success, y_eval, dy_eval) = nonosc_step(info, xcurrent, hslo, yprev, dyprev, eps);
       steptype = 0;
       if (!success) {
         hslo *= 0.5;
@@ -171,52 +196,98 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
         throw std::domain_error("Stepsize became to small error");
       }
     }
+    std::cout << "\tsteptype: " << (steptype ? "osc" : "nosc") << std::endl;
+    std::cout << "\thosc: " << hosc << std::endl;
+    std::cout << "\thslo: " << hslo << std::endl;
     auto h = steptype ? hosc : hslo;
-    if (info.denseout){
-        std::size_t dense_size = 0;
-        std::size_t dense_start = 0;
-        vectord_t xdense(x_eval.size());
-        // Assuming xeval is sorted we just want start and size
+    if (info.denseout_){
+        Eigen::Index dense_size = 0;
+        Eigen::Index dense_start = 0;
+        // Assuming x_eval is sorted we just want start and size
         {
-          unsigned int i = 0
+          Eigen::Index i = 0;
           for (; i < dense_positions.size(); ++i) {
-              if ((intdir * xeval[i] >= intdir * xcurrent &&
-                  intdir * xeval[i] < intdir * (xcurrent + h)) ||
-                  (xeval[i] == xf && xeval[i] == (xcurrent + h))) {
+              if ((intdir * x_eval[i] >= intdir * xcurrent &&
+                  intdir * x_eval[i] < intdir * (xcurrent + h)) ||
+                  (x_eval[i] == xf && x_eval[i] == (xcurrent + h))) {
                     dense_start = i;
                     dense_size++;
                     break;
                   }
           }
           for (; i < dense_positions.size(); ++i) {
-              if ((intdir * xeval[i] >= intdir * xcurrent &&
-                  intdir * xeval[i] < intdir * (xcurrent + h)) ||
-                  (xeval[i] == xf && xeval[i] == (xcurrent + h))) {
+              if ((intdir * x_eval[i] >= intdir * xcurrent &&
+                  intdir * x_eval[i] < intdir * (xcurrent + h)) ||
+                  (x_eval[i] == xf && x_eval[i] == (xcurrent + h))) {
                     dense_size++;
                   } else {
                     break;
                   }
           }
         }
-        //auto xdense = xeval[positions]
-        auto x_eval_map = Eigen::Map<vectord_t>(xeval.data() + dense_start, dense_size);
+        auto x_eval_map = Eigen::Map<vectord_t>(x_eval.data() + dense_start, dense_size);
         auto y_eval_map = Eigen::Map<vectorc_t>(yeval.data() + dense_start, dense_size);
         if (steptype) {
             // xscaled = xcurrent + h/2 + h/2*info.xn
-            auto xscaled = 2.0 / h * (x_eval_map - xcurrent) - 1.0;
-            auto Linterp = interp(info.xn_, xscaled);
+            auto xscaled = (2.0 / h * (x_eval_map.array() - xcurrent) - 1.0).matrix().eval();
+            auto Linterp = interpolate(info.xn_, xscaled);
             auto udense = Linterp * info.un_;
-            auto fdense = udense.exp();
-            y_eval_map = info.a_[0] * fdense + info.a_[1] * fdense.conj();
+            auto fdense = udense.array().exp().matrix().eval();
+            y_eval_map = info.a_.first * fdense + info.a_.second * fdense.conjugate();
         } else {
-            auto xscaled = xcurrent + h / 2 + h / 2 * info.nodes[1];
-            auto Linterp = interp(xscaled, xdense);
-            y_eval_map = Linterp * info.yn_;
+            auto xscaled = (xcurrent + h / 2 + h / 2 * info.chebyshev_[1].second.array()).matrix().eval();
+            auto Linterp = interpolate(xscaled, x_eval_map);
+            print_matrix("Linterp", Linterp);
+            print_matrix("y", y_eval);
+            y_eval_map = Linterp * y_eval;
         }
     }
+    // Finish appending and ending conditions
+    ys.push_back(y);
+    dys.push_back(dy);
+    xs.push_back(xcurrent + h);
+    phases.push_back(phase);
+    steptypes.push_back(steptype);
+    successes.push_back(success);
+    Scalar gnext;
+    Scalar dwnext;
+    Scalar dgnext;
+    if (steptype) {
+      wnext = info.omega_n_[0];
+      gnext = info.gamma_n_[0];
+      // ERROR HERE
+      dwnext = 2.0 / h * info.Dn_.row(0).dot(info.omega_n_);
+      dgnext = 2.0 / h * info.Dn_.row(0).dot(info.gamma_n_);
+    } else {
+      wnext = info.omega_fun_(xcurrent + h);
+      gnext = info.gamma_fun_(xcurrent + h);
+      dwnext = 2 / h * info.Dn_.row(0).dot(info.omega_fun_((xcurrent + h / 2.0 + h / 2.0 * info.xn_.array()).matrix()));
+      dgnext = 2 / h * info.Dn_.row(0).dot(info.gamma_fun_((xcurrent + h / 2.0 + h / 2.0 * info.xn_.array()).matrix()));
+    }
+    xcurrent += h;
+    if (intdir * xcurrent < intdir * xf) {
+      hslo_ini = intdir * std::min(1e-8, std::abs(1.0 / wnext));
+      hosc_ini = intdir * std::min(std::min(1e-8, std::abs(wnext / dwnext)), std::abs(gnext / dgnext));
+      if (hard_stop) {
+        if (intdir * (xcurrent + hosc_ini) > intdir * xf) {
+          hosc_ini = xf - xcurrent;
+        }
+        if (intdir * (xcurrent + hslo_ini) > intdir * xf) {
+          hslo_ini = xf - xcurrent;
+        }
+      }
+      std::cout << "hosc_ini: " << hosc_ini << std::endl;
+      std::cout << "xcurrent: " << xcurrent << std::endl;
+      hosc = choose_osc_stepsize(info, xcurrent, hosc_ini, epsilon_h);
+      hslo = choose_nonosc_stepsize(info, xcurrent, hslo_ini, 0.2);
+      std::cout << "hosc: " << hosc << std::endl;
+      std::cout << "hslo: " << hslo << std::endl;
+      yprev = y;
+      dyprev = dy;
+    }
   }
-
-  return std::make_tuple(xs, ys, dys, successes, phases, steptypes, yeval);
+  return std::make_tuple(std::move(xs), std::move(ys), std::move(dys), std::move(successes),
+    std::move(phases), std::move(steptypes), std::move(yeval));
 }
 
 }  // namespace riccati

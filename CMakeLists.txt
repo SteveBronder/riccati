@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20.2)
 project(
-    ricatti
+    riccati
     VERSION 1.3.0
     LANGUAGES C CXX)
 
@@ -48,11 +48,11 @@ set(CMAKE_C_FLAGS_LSAN
     CACHE STRING "Flags used by the C compiler during LeakSanitizer builds."
     FORCE)
 set(CMAKE_CXX_FLAGS_LSAN
-    "-fsanitize=leak -fno-omit-frame-pointer -g -O1"
+    "-fsanitize=leak -fno-omit-frame-pointer -ggdb3 -O1"
     CACHE STRING "Flags used by the C++ compiler during LeakSanitizer builds."
     FORCE)
 
-
+    add_compile_options(-fsanitize=leak -fno-omit-frame-pointer -ggdb3 -O1)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(FetchContent)
@@ -63,6 +63,7 @@ FetchContent_Declare(googletest
 
 FetchContent_MakeAvailable(googletest)
 
+set(BUILD_TESTING OFF)
 FetchContent_Declare(
   Eigen
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
@@ -72,15 +73,29 @@ set(EIGEN_BUILD_DOC OFF)
 # you should put this code in a add_subdirectory to avoid to change
 # BUILD_TESTING for your own project too since variables are directory
 # scoped
-set(BUILD_TESTING OFF)
 set(EIGEN_BUILD_PKGCONFIG OFF)
 FetchContent_MakeAvailable(Eigen)
+
+# Only needed for testing
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_STATIC_RUNTIME ON)
+set(BOOST_ENABLE_CMAKE ON)
+FetchContent_Declare(
+  boost
+  URL https://boostorg.jfrog.io/artifactory/main/release/1.78.0/source/boost_1_78_0.tar.gz
+)
+
+FetchContent_GetProperties(boost)
+if(NOT boost_POPULATED)
+  FetchContent_Populate(boost)
+  set(boost_INCLUDE_DIR ${boost_SOURCE_DIR})
+endif()
+
 
 if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   add_compile_options(
     -DNO_FPRINTF_OUTPUT
-    -Wall
-    -O3)
+    -Wall)
 endif()
 
 set(riccati_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
@@ -134,7 +149,7 @@ function(add_gtest_grouped_test test_directory)
   add_executable(${TEST_TARGET_NAME} ${TEST_SOURCES})
 
   # Add include directories, link libraries, and register tests as before
-  target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+  target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/riccati ${boost_INCLUDE_DIR})
   target_link_libraries(${TEST_TARGET_NAME} gtest_main riccati Eigen3::Eigen)
   add_test(NAME ${TEST_TARGET_NAME} COMMAND ${TEST_TARGET_NAME})
   endif()

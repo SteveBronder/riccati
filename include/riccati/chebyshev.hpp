@@ -6,155 +6,201 @@
 
 namespace riccati {
 
+namespace internal {
+  template <bool Fwd, typename T>
+  auto fft(T&& x) {
+    using Scalar = typename std::decay_t<T>::Scalar;
+    Eigen::FFT<Scalar> fft;
+    using T_t = std::decay_t<T>;
+    typename T_t::PlainObject res(x.rows(), x.cols());
+    for (Eigen::Index j = 0; j < x.cols(); ++j) {
+      if (Fwd) {
+        res.col(j) = fft.fwd(Eigen::Matrix<std::complex<Scalar>, -1, 1>(x.col(j))).real();
+      } else {
+        res.col(j) = fft.inv(Eigen::Matrix<std::complex<Scalar>, -1, 1>(x.col(j))).real();
+      }
+    }
+    return res;
+  }
+}
 template <typename Mat>
-auto coeffs_to_cheby_nodes(Mat &&coeffs) {
-  const auto n = coeffs.rows();
+inline auto coeffs_to_cheby_nodes(Mat &&input_id) {
+  const auto n = input_id.rows();
+  using Mat_t = std::decay_t<typename std::decay_t<Mat>::PlainObject>;
   if (n <= 1) {
-    return coeffs
+    return Mat_t(input_id);
   } else {
-    coeffs.block(1, 0, n - 1, coeffs.cols()) /= 2.0;
-    Mat values(n + n - 2, m);
-    values.topRows(n) = coeffs;
-    values.bottomRows(n - 2) = coeffs.bottomRows(n - 2).reverse();
-    return Mat(Eigen::FFT<base_type_t<V>> fft{}.fwd(xv).real().topRows(n));
+    Mat_t fwd_values(n + n - 2, input_id.cols());
+    fwd_values.topRows(n) = input_id;
+    fwd_values.block(1, 0, n - 2, n) /= 2.0;
+    fwd_values.bottomRows(n - 1) = fwd_values.topRows(n - 1).rowwise().reverse();
+    return Mat_t(internal::fft<true>(fwd_values).topRows(n).eval());
   }
 }
 
 template <typename Mat>
-auto cheby_nodes_to_coeffs(Mat &&coeffs) {
-  using Scalar = typename std::decay_t<Mat>::Scalar;
-  const auto n = coeffs.rows();
+inline auto cheby_nodes_to_coeffs(Mat &&input_id) {
+  const auto n = input_id.rows();
+  using Mat_t = std::decay_t<typename std::decay_t<Mat>::PlainObject>;
   if (n <= 1) {
-    return coeffs
+    return Mat_t(Mat_t::Zero(input_id.rows(), input_id.cols()));
   } else {
-    coeffs.block(1, 0, n - 1, coeffs.cols()) /= 2.0;
-    Mat values(n + n - 2, m);
-    values.topRows(n) = coeffs;
-    values.bottomRows(n - 2) = coeffs.bottomRows(n - 2).reverse();
-    return Mat(Eigen::FFT<Scalar> fft{}.rev(xv).real().topRows(n));
+    Mat_t rev_values(n + n - 2, input_id.cols());
+    rev_values.topRows(n) = input_id;
+    rev_values.bottomRows(n - 1) = rev_values.topRows(n - 1).rowwise().reverse();
+    auto rev_ret = Mat_t(internal::fft<false>(rev_values).topRows(n)).eval();
+    rev_ret.block(1, 0, n - 2, n).array() *= 2.0;
+    return rev_ret;
   }
 }
 
 template <typename Mat>
-auto coeffs_and_cheby_nodes(Mat &&coeffs) {
-  using Scalar = typename std::decay_t<Mat>::Scalar;
-  const auto n = coeffs.rows();
+inline auto coeffs_and_cheby_nodes(Mat &&input_id) {
+  const auto n = input_id.rows();
+  using Mat_t = std::decay_t<typename std::decay_t<Mat>::PlainObject>;
   if (n <= 1) {
-    return coeffs
+    return std::make_pair(Mat_t(input_id), Mat_t(Mat_t::Zero(input_id.rows(), input_id.cols())));
   } else {
-    coeffs.block(1, 0, n - 1, coeffs.cols()) /= 2.0;
-    Mat values(n + n - 2, m);
-    values.topRows(n) = coeffs;
-    values.bottomRows(n - 2) = coeffs.bottomRows(n - 2).reverse();
-    Eigen::FFT<Scalar> fft{};
-    return std::make_pair(Mat(values.fwd(values).real().topRows(n)),
-                          Mat(values.rev(values).real().topRows(n)));
+    Mat_t fwd_values(n + n - 2, input_id.cols());
+    fwd_values.topRows(n) = input_id;
+    fwd_values.block(1, 0, n - 2, n) /= 2.0;
+    fwd_values.bottomRows(n - 1) = fwd_values.topRows(n - 1).rowwise().reverse();
+    auto fwd_ret = Mat_t(internal::fft<true>(fwd_values).topRows(n).eval());
+    Mat_t rev_values(n + n - 2, input_id.cols());
+    rev_values.topRows(n) = input_id;
+    rev_values.bottomRows(n - 1) = rev_values.topRows(n - 1).rowwise().reverse();
+    auto rev_ret = Mat_t(internal::fft<false>(rev_values).topRows(n)).eval();
+    rev_ret.block(1, 0, n - 2, n).array() *= 2.0;
+    return std::make_pair(std::move(fwd_ret),std::move(rev_ret));
   }
 }
 
 template <typename Scalar, typename Integral>
-auto integration(Integral &n) {
+inline auto integration_matrix(Integral n) {
   // TODO: Let user chooses double/float/etc
-  auto coeffs_pair = coeffs_and_cheby_nodes(matrix_v<Scalar>::Identity(n));
+  auto ident = matrix_t<Scalar>::Identity(n, n).eval();
+  auto coeffs_pair = coeffs_and_cheby_nodes(ident);
   auto &&T = coeffs_pair.first;
   auto &&T_inverse = coeffs_pair.second;
-  // TODO: I think this should be done outside of the function
   n--;
-  auto k = vector_t<Scalar>::LinSpaced(1.0, n, n);
-  auto k2 = 2 * (k.array() - 1);
+  auto k = vector_t<Scalar>::LinSpaced(n, 1.0, n).eval();
+  auto k2 = eval(2 * (k.array() - 1));
   k2.coeffRef(0) = 1.0;
-  matrix_t<Scalar> B(n + 1, n + 1);
-  B.diagonal(-1) = 1.0 / (2.0 * k);
-  B.diagonal(1) = -1.0;
-  B.diagonal(1) /= k2;
-  B.diagonal.head(1) = -1.0;
-  B.row(0) vector_t<Scalar> v = Eigen::VectorXd::Ones(n);
-  for (unsigned int i = 1; i < n; i += 2) {
+  // B = np.diag(1 / (2 * k), -1) - np.diag(1 / k2, 1)
+  matrix_t<Scalar> B = matrix_t<Scalar>::Zero(n + 1, n + 1);
+  B.diagonal(-1).array() = 1.0 / (2.0 * k).array();
+  B.diagonal(1).array() = -1.0 / k2.array();
+  vector_t<Scalar> v = Eigen::VectorXd::Ones(n);
+  for (Integral i = 1; i < n; i += 2) {
     v.coeffRef(i) = -1;
   }
-  B.row(0) = (v.asDiagonal() * B.block(1, 0, n + 1, n + 1)).colwise().sum();
+  auto tmp = (v.asDiagonal() * B.block(1, 0, n, n + 1)).eval();
+  B.row(0) = (tmp).colwise().sum();
   B.col(0) *= 2.0;
   auto Q = matrix_t<Scalar>(T * B * T_inverse);
-  Q.bottomRow(1).setZero();
+  Q.bottomRows(1).setZero();
   return Q;
 }
 
 template <typename Scalar, typename Integral>
-auto quad_weights(Integral n) {
-  vector_t<Scalar> w = vector_t<Scalar>::Zeros(n + 1);
+inline auto quad_weights(Integral n) {
+  vector_t<Scalar> w = vector_t<Scalar>::Zero(n + 1);
   if (n == 0) {
     return w;
   } else {
-    auto a = vector_t<Scalar>::LinSpaced(0, std::pi, n + 1);
-    auto v = vector_t::Ones(n - 1);
+    auto a = vector_t<Scalar>::LinSpaced(n + 1, 0, pi<Scalar>()).eval();
+    auto v = vector_t<Scalar>::Ones(n - 1).eval();
     // TODO: Smarter way to do this
     if (n % 2 == 0) {
       w.coeffRef(0) = 1.0 / (n * n - 1);
-      w.coeffRef(n) = w.coeffRef(0);
-      for (int i = 0; i < n / 2.0; ++i) {
-        v -= 2.0 * (2.0 * k * a.head(n).array()).cos() / (4.0 * k * k - 1);
+      w.coeffRef(n) = w.coeff(0);
+      for (Integral i = 0; i < n / 2; ++i) {
+        v.array() -= 2.0 * (2.0 * i * a.segment(1, n - 1).array()).cos() / (4.0 * i * i - 1);
       }
-      v -= (n * a.head(n).array()).cos() / (n * n - 1);
+      v.array() -= (n * a.segment(1, n - 1).array()).cos() / (n * n - 1);
     } else {
       w.coeffRef(0) = 1.0 / (n * n);
       w.coeffRef(n) = w.coeffRef(0);
-      for (int i = 0; i < std::floor((n + 1) / 2.0); ++i) {
-        v -= 2.0 * (2.0 * k * a.head(n).array()).cos() / (4.0 * k * k - 1);
+      for (std::size_t i = 0; i < std::floor((n + 1) / 2.0); ++i) {
+        v.array() -= 2.0 * (2.0 * i * a.segment(1, n - 1).array()).cos() / (4.0 * i * i - 1);
       }
-      v -= (n * a.head(n).array()).cos() / (n * n - 1);
+      v.array() -= (n * a.segment(1, n - 1).array()).cos() / (n * n - 1);
     }
-    w.head(n).array() = 2 * v.array() / n;
+    w.segment(1, n - 1).array() = 2.0 * v.array() / n;
     return w;
   }
 }
 
 template <typename Scalar, typename Integral>
-auto chebyshev(Integral n) {
+inline auto chebyshev(Integral n) {
   if (n == 0) {
-    return std::make_pair(matrix_t<Scalar>(1, 1)::Zeros().eval(),
+    return std::make_pair(matrix_t<Scalar>::Zero(1,1).eval(),
                           vector_t<Scalar>::Ones(1).eval());
   } else {
-    auto a = vector_t<Scalar>::LinSpaced(1.0, std::pi, n + 1);
-    auto x = a.array().cos();
-    auto b = vector_t<Scalar>::Ones(n + 1);
+    auto a = vector_t<Scalar>::LinSpaced(n + 1, 0.0, pi<Scalar>());
+    auto b = vector_t<Scalar>::Ones(n + 1).eval();
     b.coeffRef(0) = 2.0;
-    b.coeffRef(b.size()) = 2.0;
-    auto d = vector_t<Scalar>::Ones(n + 1);
-    for (int i = 0; i < n + 1; i += 2) {
+    b.coeffRef(b.size() - 1) = 2.0;
+    auto d = vector_t<Scalar>::Ones(n + 1).eval();
+    for (Integral i = 1; i < n + 1; i += 2) {
       d.coeffRef(i) = -1;
     }
-    auto c = b.array() * d.array();
-    auto X = x.transpose() * b;
-    auto dX = X - X.transpose();
-    auto D = c.matrix().transpose() * (1.0 / c).matrix() / (dX + b);
+    auto x = a.array().cos().eval();
+    print_matrix("x", x);
+    print_matrix("b", b);
+    auto X = (x.matrix() * vector_t<Scalar>::Ones(n + 1).transpose()).matrix().eval();
+    auto dX = (X - X.transpose()).eval();
+    auto c = (b.array() * d.array()).eval();
+      print_matrix("x", x);
+  print_matrix("X", X);
+  print_matrix("dX", dX);
+  print_matrix("c", c);
+
+    auto D = ((c.matrix() * (1.0 / c).matrix().transpose()).array() / (dX + matrix_t<Scalar>::Identity(n + 1, n + 1)).array()).matrix().eval();
+    print_matrix("D_pre", D);
     D -= D.rowwise().sum().asDiagonal();
+    print_matrix("D", D);
     return std::make_pair(matrix_t<Scalar>(std::move(D)),
-                          vector_t<Scalar>(std::move(x)))
+                          vector_t<Scalar>(std::move(x)));
   }
 }
 
-template <typename Omega_F, typename Gamma_F, typename T_D, typename T_x,
-          typename T_ns, typename Scalar, typename Integral>
-auto spectral_chebyshev(Omega_F &&omega_fun, Gamma_F &&gamma_fun, T_D &&D,
-                        T_x &&x, T_ns ns, Scalar x0, Scalar h, Scalar y0,
-                        Scalar dy0, Integral niter) {
-  auto x_scaled = riccati::scale(x, x0, h);
-  auto ws = omega_fun(xscaled);
-  auto gs = gamma_fun(xscaled);
-  auto w2 = ws * ws;
-  auto D2 = 4.0 / (h * h) * (D * D) + 4.0 / h * (gs.asDiagonal() * D)
-            + w2.asDiagonal();
-  const auto n = std::round(ns);
-  auto ic = vector_t<std::complex<Scalar>>::Zeros(n + 1).eval();
-  ic.coeffRef(n + 1) = 0.0;
-  D2ic = matrix_t<std::complex<Scalar>>::Zeros(n + 3, n + 1);
-  //     D2ic[: n + 1] = D2
-  D2ic.head(n + 1) = D2;
+template <typename Vec1, typename Vec2>
+inline auto interpolate(Vec1&& s, Vec2&& t) {
+  const auto r = s.rows();
+  const auto q = t.rows();
+  auto V = matrix_t<typename std::decay_t<Vec1>::Scalar>::Ones(r, r).eval();
+  auto R = matrix_t<typename std::decay_t<Vec1>::Scalar>::Ones(q, r).eval();
+  for (std::size_t i = 1; i < static_cast<std::size_t>(r); ++i) {
+    V.col(i).array() = V.col(i - 1).array() * s.array();
+    R.col(i).array() = R.col(i - 1).array() * t.array();
+  }
+  return V.transpose().colPivHouseholderQr().solve(R.transpose()).transpose().eval();
+}
+
+template <typename SolverInfo, typename Scalar, typename Integral>
+inline auto spectral_chebyshev(SolverInfo&& info, Scalar x0, Scalar h, std::complex<Scalar> y0,
+                        std::complex<Scalar> dy0, Integral niter) {
+  auto x_scaled = riccati::scale(info.chebyshev_[niter].second, x0, h).eval();
+  auto&& D = info.chebyshev_[niter].first;
+  auto ws = info.omega_fun_(x_scaled);
+  auto gs = info.gamma_fun_(x_scaled);
+  auto w2 = (ws.array() * ws.array()).matrix();
+  auto D2 = (4.0 / (h * h) * (D * D) + 4.0 / h * (gs.asDiagonal() * D)).eval();
+  D2 += w2.asDiagonal();
+  const auto n = std::round(info.ns_[niter]);
+  using complex_t = std::complex<Scalar>;
+  auto D2ic = matrix_t<complex_t>::Zero(n + 3, n + 1).eval();
+  D2ic.topRows(n + 1) = D2;
   D2ic.row(n + 1) = 2.0 / h * D.row(D.rows() - 1);
+  auto ic = vector_t<complex_t>::Zero(n + 1).eval();
+  ic.coeffRef(n) = complex_t{1.0, 0.0};
   D2ic.row(n + 2) = ic;
-  auto y1 = (D2ic.transpose() * D2ic).ldlt().solve(D2ic.transpose() * rhs);
-  auto dy1 = 2.0 / h * (D * y1);
-  // info.increase
+  vector_t<complex_t> rhs = vector_t<complex_t>::Zero(n + 3);
+  rhs.coeffRef(n + 1) = dy0;
+  rhs.coeffRef(n + 2) = y0;
+  auto y1 = (D2ic.transpose() * D2ic).ldlt().solve(D2ic.transpose() * rhs).eval();
+  auto dy1 = (2.0 / h * (D * y1)).eval();
   return std::make_tuple(std::move(y1), std::move(dy1), std::move(x_scaled));
 }
 

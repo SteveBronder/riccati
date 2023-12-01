@@ -8,7 +8,7 @@ namespace riccati {
 /**
  * Chooses the stepsize for spectral Chebyshev steps, based on the variation
  * of 1/w, the approximate timescale over which the solution changes. If over
- *  the suggested interval h 1/w changes by a fraction of :math:`\pm``epsh` or
+ *  the suggested interval h 1/w changes by a fraction of :math:`\pm``epsilon_h` or
  * more, the interval is halved, otherwise it's accepted.
  *
  *  @tparam SolverInfo A riccati solver like object
@@ -17,19 +17,19 @@ namespace riccati {
  * (p+1) Chebyshev nodes used for interpolation to determine the stepsize.
  *  @param x0 Current value of the independent variable.
  *  @param h Initial estimate of the stepsize.
- *  @param epsh Tolerance parameter defining how much 1/w(x) is allowed to
+ *  @param epsilon_h Tolerance parameter defining how much 1/w(x) is allowed to
  * change over the course of the step.
  *
  *  @return Refined stepsize over which 1/w(x) does not change by more than
- * epsh/w(x).
+ * epsilon_h/w(x).
  *
  */
-template <typename Omega_F, typename T_Xp, typename FloatingPoint>
-auto choose_nonosc_stepsize(Omega_F &&omega_fun, T_Xp xp, FloatingPoint x0,
-                            FloatingPoint epsh) {
-  auto ws = omega_fun(riccati::scale(xp, x0, h));
-  if (ws.maxCoeff() > (1 + epsh) / std::abs(h)) {
-    return choose_nonosc_stepsize(omega_fun, xp, x0, h / 2.0, epsh);
+template <typename SolverInfo, typename FloatingPoint>
+FloatingPoint choose_nonosc_stepsize(SolverInfo&& info, FloatingPoint x0, FloatingPoint h,
+                            FloatingPoint epsilon_h) {
+  auto ws = info.omega_fun_(riccati::scale(info.xp_, x0, h));
+  if (ws.maxCoeff() > (1 + epsilon_h) / std::abs(h)) {
+    return choose_nonosc_stepsize(info, x0, h / 2.0, epsilon_h);
   } else {
     return h;
   }
@@ -37,43 +37,43 @@ auto choose_nonosc_stepsize(Omega_F &&omega_fun, T_Xp xp, FloatingPoint x0,
 
 // TODO: Better Names
 // TODO: What if h is too small to start with? Recurse forever?
-template <typename Omega_F, typename Gamma_F, typename Xp, typename XpInterp,
-          typename T_P, typename T_N, typename Xn, typename LMat,
-          typename FloatingPoint>
-auto choose_nonosc_stepsize(Omega_F &&omega_fun, Gamma_F &&gamma_fun, T_P p,
-                            T_N n, Xp &&xp, XpInterp &&xp_interp, Xn &&xn,
-                            LMat &&L, FloatingPoint x0, FloatingPoint h,
-                            FloatingPoint epsh) {
-  auto t = riccati::scale(xp_interp, x0, h);
-  auto s = riccati::scale(xp, x0, h);
+template <typename SolverInfo, typename FloatingPoint>
+FloatingPoint choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0, FloatingPoint h,
+                            FloatingPoint epsilon_h) {
+  std::cout << "\tL: \n" << info.L_ << std::endl;
+  auto t = riccati::scale(info.xp_interp_, x0, h).eval();
+  auto s = riccati::scale(info.xp_, x0, h).eval();
+  std::cout << "\txpinterp: \n" << info.xp_interp_ << std::endl;
+  std::cout << "\txp: \n" << info.xp_ << std::endl;
   // TODO: Use a memory arena for these
-  Eigen::VectorXd wn(s.size());
-  Eigen::VectorXd gn(s.size());
-  Eigen::VectorXd ws(s.size());
-  Eigen::VectorXd gs(s.size());
-  if (p == n) {
-    wn = omega_fun(s);
-    gn = gamma_fun(s);
+  using vectord_t = vector_t<FloatingPoint>;
+  vectord_t wn(s.size());
+  vectord_t gn(s.size());
+  vectord_t ws(s.size());
+  vectord_t gs(s.size());
+  if (info.p_ == info.n_) {
+    wn = info.omega_fun_(s);
+    gn = info.gamma_fun_(s);
     ws = wn;
     gs = gn;
   } else {
-    auto xn_scaled = riccati::scale(xn, x0, h);
-    wn = omega_fun(xn_scaled);
-    gn = gamma_fun(xn_scaled);
-    ws = w(s);
-    gs = g(s);
+    auto xn_scaled = riccati::scale(info.xn_, x0, h);
+    wn = info.omega_fun_(xn_scaled);
+    gn = info.gamma_fun_(xn_scaled);
+    ws = info.omega_fun_(s);
+    gs = info.gamma_fun_(s);
   }
-  auto omega_analytic = w(t);
-  auto omega_estimate = L * ws;
-  auto gamma_analytic = g(t);
-  auto gamma_estimate = L * gs;
-  auto max_omega_err = (((west - wana) / wana).abs()).maxCoeff();
-  auto max_gamma_err = (((gest - gana) / gana).abs()).maxCoeff();
-  auto max_err = std::max(max_omega_err, max_gamma_err);
-  if (max_err > epsh) {
+  auto omega_analytic = info.omega_fun_(t);
+  auto omega_estimate = info.L_ * ws;
+  auto gamma_analytic = info.gamma_fun_(t);
+  auto gamma_estimate = info.L_ * gs;
+  FloatingPoint max_omega_err = (((omega_estimate - omega_analytic).array() / omega_analytic.array()).abs()).maxCoeff();
+  FloatingPoint max_gamma_err = (((gamma_estimate - gamma_analytic).array() / gamma_analytic.array()).abs()).maxCoeff();
+  FloatingPoint max_err = std::max(max_omega_err, max_gamma_err);
+  if (max_err > epsilon_h) {
     auto h_scaling
-        = std::min(0.7, 0.9 * std::exp(epsh / maxerr, (1.0 / (p - 1.0))));
-    return choose_osc_stepsize(omega_fun, x0, h_scaling, epsh);
+        = std::min(0.7, 0.9 * std::pow(epsilon_h / max_err, (1.0 / (info.p_ - 1.0))));
+    return choose_osc_stepsize(info, x0, h * h_scaling, epsilon_h);
   } else {
     return h;
   }

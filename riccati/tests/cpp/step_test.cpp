@@ -1,4 +1,4 @@
-#include <riccati/step.hpp>
+#include <riccati/evolve.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <fstream>

@@ -26,25 +26,25 @@ def test_integration():
 
 
 def test_denseoutput():
-    w = lambda x: np.sqrt(x)
-    g = lambda x: np.zeros_like(x)
-    info = solversetup(w, g, n=32, p=32)
-    xi = 1e0
-    xf = 1e6
-    eps = 1e-12
-    epsh = 1e-13
-    yi = sp.airy(-xi)[0] + 1j * sp.airy(-xi)[2]
-    dyi = -sp.airy(-xi)[1] - 1j * sp.airy(-xi)[3]
-    Neval = int(1e2)
-    xeval = np.linspace(xi, xf, Neval)
-    xs, ys, dys, ss, ps, stypes, yeval = solve(
-        info, xi, xf, yi, dyi, xeval=xeval, eps=eps, epsh=epsh
-    )
-    ytrue = np.array([mpmath.airyai(-x) + 1j * mpmath.airybi(-x) for x in xeval])
-    yerr = np.abs((ytrue - yeval) / ytrue)
-    print(yeval, ytrue)
-    maxerr = max(yerr)
-    assert maxerr < 1e-6
+w = lambda x: np.sqrt(x)
+g = lambda x: np.zeros_like(x)
+info = solversetup(w, g, n=32, p=32)
+xi = 1e0
+xf = 1e6
+eps = 1e-12
+epsh = 1e-13
+yi = sp.airy(-xi)[0] + 1j * sp.airy(-xi)[2]
+dyi = -sp.airy(-xi)[1] - 1j * sp.airy(-xi)[3]
+Neval = int(1e2)
+xeval = np.linspace(xi, xf, Neval)
+xs, ys, dys, ss, ps, stypes, yeval = solve(
+    info, xi, xf, yi, dyi, xeval=xeval, eps=eps, epsh=epsh
+)
+ytrue = np.array([mpmath.airyai(-x) + 1j * mpmath.airybi(-x) for x in xeval])
+yerr = np.abs((ytrue - yeval) / ytrue)
+print(yeval, ytrue)
+maxerr = max(yerr)
+assert maxerr < 1e-6
 
 
 def test_denseoutput_xbac():

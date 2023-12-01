@@ -1,28 +1,42 @@
 #ifndef INCLUDE_riccati_SOLVER_HPP
 #define INCLUDE_riccati_SOLVER_HPP
 
-#include <riccati/utils.hpp>
 #include <riccati/chebyshev.hpp>
+#include <riccati/utils.hpp>
 #include <Eigen/Dense>
 #include <algorithm>
-#include <cmath>
-#include <complex>
 #include <functional>
+#include <complex>
+#include <cmath>
 #include <vector>
+// REMOVE THIS
+#include <iostream>
 
 namespace riccati {
+
+namespace internal {
+  inline Eigen::VectorXd logspace(double start, double end, int num, double base) {
+    Eigen::VectorXd result(num);
+    double delta = (end - start) / (num - 1);
+
+    for (int i = 0; i < num; ++i) {
+        result[i] = std::pow(base, start + i * delta);
+    }
+
+    return result;
+}
+}
 // OmegaFun / GammaFun take in a scalar and return a complex<Scalar>
 template <typename OmegaFun, typename GammaFun, typename Scalar_,
           typename Integral_>
-class Solverinfo {
+class SolverInfo {
  public:
+  using Scalar = Scalar_;
+  using Integral = Integral_;
   using complex_t = std::complex<Scalar>;
-  using matrixc_t = matrix_t<complex_t>;
   using matrixd_t = matrix_t<Scalar>;
   using vectorc_t = vector_t<complex_t>;
   using vectord_t = vector_t<Scalar>;
-  using Scalar = Scalar_;
-  using Integral = Integral_;
   // Frequency function
   OmegaFun omega_fun_;
   // Friction function
@@ -31,16 +45,18 @@ class Solverinfo {
    * Current state vector of size (2,), containing the numerical solution and
    * its derivative.
    */
-  vectorc_t y_;
+  Eigen::Matrix<std::complex<Scalar>, 2, 1> y_;
   // Frequency and friction functions evaluated at n+1 Chebyshev nodes
-  vectorc_t omega_n_;
-  vectorc_t gamma_n_;
+  vectord_t omega_n_;
+  vectord_t gamma_n_;
+  // idk yet
+  vectorc_t un_;
+  std::pair<complex_t, complex_t> a_;
   // Number of nodes and diff matrices
   Integral n_nodes_{0};
   // Differentiation matrices and Vectors of Chebyshev nodes
   std::vector<std::pair<matrixd_t, vectord_t>> chebyshev_;
   matrixd_t Dn_;
-  vectord_t xn_;
   // Lengths of node vectors
   vectord_t ns_;
   /**
@@ -68,7 +84,10 @@ class Solverinfo {
    * \ldots p-1.
    * $$
    */
-  vectord_t xpinterp_;
+  vectord_t xp_interp_;
+  vectord_t yn_;
+  vectord_t dyn_;
+
   /**
    * Interpolation matrix of size (`p`+1, `p`), used for interpolating
    * function between the nodes `xp` and `xpinterp` (for computing Riccati
@@ -119,33 +138,32 @@ class Solverinfo {
   Integral n_riccstep_{0};
   bool denseout_{false};  // Dense output flag
 
-  static auto build_chebyshev(Integral n_nodes) {
-    std::vector<std::pair<matrixd_t, vectord_t>> chebyshev(
-        n_nodes, std::make_pair(matrixd_t{}, vectord_t{}));
+  inline auto build_chebyshev(Integral nini, Integral n_nodes) {
+    std::vector<std::pair<matrixd_t, vectord_t>> res(n_nodes + 1, std::make_pair(matrixd_t{}, vectord_t{}));
     // Compute Chebyshev nodes and differentiation matrices
-    for (unsigned int i = 0; i <= n_nodes_; ++i) {
-      chebyshev[i] = chebyshev(current_n);
+    for (Integral i = 0; i <= n_nodes_; ++i) {
+      res[i] = chebyshev<Scalar>(nini * std::pow(2, i));
     }
-    return chebyshev;
+    return res;
   }
   // Constructor
-  Solverinfo(OmegaFun omega_fun, GammaFun gamma_fun, Scalar h0, Integral nini,
+  template <typename OmegaFun_, typename GammaFun_>
+  SolverInfo(OmegaFun_&& omega_fun, GammaFun_&& gamma_fun, Scalar h0, Integral nini,
              Integral nmax, Integral n, Integral p, bool dense_output)
-      : omega_fun_(omega_fun),
-        gamma_fun_(gamma_fun),
-        y_(2, vectorc_t::Zero()),
+      : omega_fun_(std::forward<OmegaFun_>(omega_fun)),
+        gamma_fun_(std::forward<GammaFun_>(gamma_fun)),
+        y_(Eigen::Matrix<std::complex<Scalar>, 2, 1>::Zero()),
         omega_n_(n + 1),
         gamma_n_(n + 1),
         n_nodes_(log2(nmax / nini) + 1),
-        diff_matrices_(n_nodes_),
-        nodes_(n_nodes_),
-        ns_(n_nodes_),
+        chebyshev_(build_chebyshev(nini, n_nodes_)),
+        ns_(internal::logspace(std::log2(nini), std::log2(nini) + n_nodes_ - 1, n_nodes_, 2.0)),
         xn_(),
         xp_(),
-        xpinterp_(),
+        xp_interp_(),
         L_(),
-        quadwts_(quad_weights(n)),
-        integration_matrix_(dense_output ? integration_matrix(n + 1)
+        quadwts_(quad_weights<Scalar>(n)),
+        integration_matrix_(dense_output ? integration_matrix<Scalar>(n + 1)
                                          : matrixd_t(0, 0)),
         nini_(nini),
         nmax_(nmax),
@@ -159,31 +177,44 @@ class Solverinfo {
         n_LS_(n_nodes_),
         n_riccstep_(n_nodes_),
         denseout_(dense_output) {
-    ns_ = vectord_t::LinSpaced(n_nodes_, nini_,
-                               nini_ * std::pow(2, Dlength - 1));
 
     // Set Dn and xn if available
-    auto it = std::find(ns_.begin(), ns_.end(), n + 1);
+    auto it = std::find(ns_.begin(), ns_.end(), n);
+    std::cout << "n: " << n << std::endl;
+    std::cout << "ns_: ";
+    for (auto iterr : ns_) {
+      std::cout << iterr << ", ";
+    }
+    std::cout << std::endl;
+    int ii = 0;
+    for (auto&& cheber : chebyshev_) {
+      std::cout << "i: " << ii << std::endl;
+      ii++;
+      std::cout << "Dn_: \n" << cheber.first << std::endl;
+      std::cout << "xn_: \n" << cheber.second << std::endl;
+    }
     if (it != ns_.end()) {
+      std::cout << "this happened" << std::endl;
       Integral idx = std::distance(ns_.begin(), it);
-      Dn_ = diff_matrices_[idx];
-      xn_ = nodes_[idx];
+      Dn_ = chebyshev_[idx].first;
+      xn_ = chebyshev_[idx].second;
     } else {
-      std::tie(Dn_, xn_) = chebyshev(n);
+      std::cout << "other happened" << std::endl;
+      std::tie(Dn_, xn_) = chebyshev<Scalar>(n);
     }
 
     // Set xp and xpinterp
-    if (std::find(ns_.begin(), ns_.end(), p + 1) != ns_.end()) {
-      xp_ = nodes_[std::distance(ns_.begin(),
-                                 std::find(ns_.begin(), ns_.end(), p + 1))];
+    if (std::find(ns_.begin(), ns_.end(), p) != ns_.end()) {
+      xp_ = chebyshev_[std::distance(ns_.begin(),
+                                 std::find(ns_.begin(), ns_.end(), p))].second;
     } else {
-      xp_ = chebyshev(p).second;
+      xp_ = chebyshev<Scalar>(p).second;
     }
-    xpinterp_.resize(p);
-    for (Integral k = 0; k < p; ++k) {
-      xpinterp_(k) = cos((2 * k + 1) * M_PI / (2 * p));
-    }
-    L_ = integration(xp_, xpinterp_);  // Assuming interp is a function that
+    print_matrix("xp: ", xp_);
+    xp_interp_ = (vector_t<Scalar>::LinSpaced(p_, pi<Scalar>() / (2.0 * p_),
+      pi<Scalar>() * (1.0 - (1.0 / (2.0 * p_)))).array()).cos().matrix();
+    print_matrix("xp_interp: ", xp_interp_);
+    L_ = interpolate(xp_, xp_interp_);  // Assuming interp is a function that
                                        // creates the interpolation matrix
   }
 
@@ -200,8 +231,8 @@ class Solverinfo {
       const std::vector<Integral>& steptypes) {
     Integral cheb_steps = 0;
     Integral ricc_steps = 0;
-    const auto stepcount_size
-        = steptypes.size() for (std::size_t i = 0; i < stepcount_size; ++i) {
+    const auto stepcount_size = steptypes.size();
+    for (std::size_t i = 0; i < stepcount_size; ++i) {
       cheb_steps += steptypes[i];
       ricc_steps += !steptypes[i];
     }
@@ -209,14 +240,14 @@ class Solverinfo {
   }
 };
 
-template <typename OmegaFun, typename GammaFun, typename Scalar,
+template <bool DenseOutput, typename OmegaFun, typename GammaFun, typename Scalar,
           typename Integral>
-inline auto make_solver(OmegaFun&& omega_fun, GammaFun&& gamma_fun, Scalar nini,
+inline auto make_solver(OmegaFun&& omega_fun, GammaFun&& gamma_fun, Scalar h0, Integral nini,
                         Integral nmax, Integral n, Integral p) {
   return SolverInfo<std::decay_t<OmegaFun>, std::decay_t<GammaFun>, Scalar,
                     Integral>(std::forward<OmegaFun>(omega_fun),
-                              std::forward<GammaFun>(gamma_fun), nini, nmax, n,
-                              p);
+                              std::forward<GammaFun>(gamma_fun), h0, nini, nmax, n,
+                              p, DenseOutput);
 }
 
 }  // namespace riccati
