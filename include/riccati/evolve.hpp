@@ -137,23 +137,16 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
   Scalar gi = gamma_is.mean();
   Scalar dwi = (2.0 / info.h0_ * (info.Dn_ * omega_is)).mean();
   Scalar dgi = (2.0 / info.h0_ * (info.Dn_ * gamma_is)).mean();
-  std::cout << "Dn_: " << info.Dn_ << std::endl;
   Scalar hslo_ini = intdir * std::min(static_cast<Scalar>(1e8), std::abs(1.0 / wi));
   Scalar hosc_ini = intdir
                   * std::min(std::min(static_cast<Scalar>(1e8), std::abs(wi / dwi)),
                              std::abs(gi / dgi));
-  std::cout << "\twi: " << wi << std::endl;
-  std::cout << "\tdwi: " << dwi << std::endl;
-  std::cout << "\tgi: " << gi << std::endl;
-  std::cout << "\tdgi: " << dgi << std::endl;
 
   if (hard_stop) {
     hosc_ini = (intdir * (xi + hosc_ini) > intdir * xf) ? xf - xi : hosc_ini;
     hslo_ini = (intdir * (xi + hslo_ini) > intdir * xf) ? xf - xi : hslo_ini;
   }
   auto hslo = choose_nonosc_stepsize(info, xi, hslo_ini, 0.2);
-  std::cout << "hosc_ini: " << hosc_ini << std::endl;
-  std::cout << "epsilon_h: " << epsilon_h << std::endl;
   auto hosc = choose_osc_stepsize(info, xi, hosc_ini, epsilon_h);
   Scalar xcurrent = xi;
   Scalar wnext = wi;
@@ -196,9 +189,6 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
         throw std::domain_error("Stepsize became to small error");
       }
     }
-    std::cout << "\tsteptype: " << (steptype ? "osc" : "nosc") << std::endl;
-    std::cout << "\thosc: " << hosc << std::endl;
-    std::cout << "\thslo: " << hslo << std::endl;
     auto h = steptype ? hosc : hslo;
     if (info.denseout_){
         Eigen::Index dense_size = 0;
@@ -237,8 +227,6 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
         } else {
             auto xscaled = (xcurrent + h / 2 + h / 2 * info.chebyshev_[1].second.array()).matrix().eval();
             auto Linterp = interpolate(xscaled, x_eval_map);
-            print_matrix("Linterp", Linterp);
-            print_matrix("y", y_eval);
             y_eval_map = Linterp * y_eval;
         }
     }
@@ -249,25 +237,40 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
     phases.push_back(phase);
     steptypes.push_back(steptype);
     successes.push_back(success);
-    Scalar gnext;
     Scalar dwnext;
+    Scalar gnext;
     Scalar dgnext;
     if (steptype) {
+      std::cout << "\tosc update" << std::endl;
       wnext = info.omega_n_[0];
       gnext = info.gamma_n_[0];
       // ERROR HERE
       dwnext = 2.0 / h * info.Dn_.row(0).dot(info.omega_n_);
       dgnext = 2.0 / h * info.Dn_.row(0).dot(info.gamma_n_);
     } else {
+      std::cout << "\tnonosc update" << std::endl;
       wnext = info.omega_fun_(xcurrent + h);
       gnext = info.gamma_fun_(xcurrent + h);
-      dwnext = 2 / h * info.Dn_.row(0).dot(info.omega_fun_((xcurrent + h / 2.0 + h / 2.0 * info.xn_.array()).matrix()));
-      dgnext = 2 / h * info.Dn_.row(0).dot(info.gamma_fun_((xcurrent + h / 2.0 + h / 2.0 * info.xn_.array()).matrix()));
+      print("Dn: ", info.Dn_);
+      print("xn", info.xn_);
+      print("h", h);
+      auto gam_eval = info.omega_fun_((xcurrent + h / 2.0 + h / 2.0 * info.xn_.array()).matrix()).eval();
+      print("gam_eval", gam_eval);
+      auto test2 = info.Dn_.row(0).dot(gam_eval);
+      print("test2", test2);
+      dwnext = 2.0 / h * test2;
+      dgnext = 2.0 / h * info.Dn_.row(0).dot(info.gamma_fun_((xcurrent + h / 2.0 + h / 2.0 * info.xn_.array()).matrix()));
     }
+    print("\twnext", wnext);
+    print("\tdwnext", dwnext);
+    print("\tgnext", gnext);
+    print("\tdgnext", dgnext);
+    print("\txcurrent", xcurrent);
+    print("\tintdir", intdir);
     xcurrent += h;
     if (intdir * xcurrent < intdir * xf) {
-      hslo_ini = intdir * std::min(1e-8, std::abs(1.0 / wnext));
-      hosc_ini = intdir * std::min(std::min(1e-8, std::abs(wnext / dwnext)), std::abs(gnext / dgnext));
+      hslo_ini = intdir * std::min(1e8, std::abs(1.0 / wnext));
+      hosc_ini = intdir * std::min(std::min(1e8, std::abs(wnext / dwnext)), std::abs(gnext / dgnext));
       if (hard_stop) {
         if (intdir * (xcurrent + hosc_ini) > intdir * xf) {
           hosc_ini = xf - xcurrent;
@@ -276,12 +279,12 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
           hslo_ini = xf - xcurrent;
         }
       }
-      std::cout << "hosc_ini: " << hosc_ini << std::endl;
-      std::cout << "xcurrent: " << xcurrent << std::endl;
       hosc = choose_osc_stepsize(info, xcurrent, hosc_ini, epsilon_h);
       hslo = choose_nonosc_stepsize(info, xcurrent, hslo_ini, 0.2);
-      std::cout << "hosc: " << hosc << std::endl;
-      std::cout << "hslo: " << hslo << std::endl;
+      print("hosc_ini", hosc_ini);
+      print("hslo_ini", hslo_ini);
+      print("hosc", hosc);
+      print("hslo", hslo);
       yprev = y;
       dyprev = dy;
     }

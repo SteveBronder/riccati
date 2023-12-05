@@ -180,26 +180,11 @@ class SolverInfo {
 
     // Set Dn and xn if available
     auto it = std::find(ns_.begin(), ns_.end(), n);
-    std::cout << "n: " << n << std::endl;
-    std::cout << "ns_: ";
-    for (auto iterr : ns_) {
-      std::cout << iterr << ", ";
-    }
-    std::cout << std::endl;
-    int ii = 0;
-    for (auto&& cheber : chebyshev_) {
-      std::cout << "i: " << ii << std::endl;
-      ii++;
-      std::cout << "Dn_: \n" << cheber.first << std::endl;
-      std::cout << "xn_: \n" << cheber.second << std::endl;
-    }
     if (it != ns_.end()) {
-      std::cout << "this happened" << std::endl;
       Integral idx = std::distance(ns_.begin(), it);
       Dn_ = chebyshev_[idx].first;
       xn_ = chebyshev_[idx].second;
     } else {
-      std::cout << "other happened" << std::endl;
       std::tie(Dn_, xn_) = chebyshev<Scalar>(n);
     }
 
@@ -210,10 +195,8 @@ class SolverInfo {
     } else {
       xp_ = chebyshev<Scalar>(p).second;
     }
-    print_matrix("xp: ", xp_);
     xp_interp_ = (vector_t<Scalar>::LinSpaced(p_, pi<Scalar>() / (2.0 * p_),
       pi<Scalar>() * (1.0 - (1.0 / (2.0 * p_)))).array()).cos().matrix();
-    print_matrix("xp_interp: ", xp_interp_);
     L_ = interpolate(xp_, xp_interp_);  // Assuming interp is a function that
                                        // creates the interpolation matrix
   }

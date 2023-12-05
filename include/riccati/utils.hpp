@@ -2,7 +2,7 @@
 #define INCLUDE_riccati_UTILS_HPP
 
 #include <Eigen/Dense>
-#define RICCATI_DEBUG
+#include <type_traits>
 #ifdef RICCATI_DEBUG
 #include <iostream>
 #endif
@@ -79,11 +79,29 @@ inline const auto& eval(const Eigen::Array<T, R, C>& x) {
   return x;
 }
 
-template <typename T>
-void print_matrix(const char* name, T&& x) {
+template <typename T, int R, int C>
+void print(const char* name, const Eigen::Matrix<T, R, C>& x) {
 #ifdef RICCATI_DEBUG
   std::cout << name << "(" << x.rows() << ", " << x.cols() << ")" << std::endl;
   std::cout << x << std::endl;
+#endif
+}
+
+template <typename T, int R, int C>
+void print(const char* name, const Eigen::Array<T, R, C>& x) {
+#ifdef RICCATI_DEBUG
+  std::cout << name << "(" << x.rows() << ", " << x.cols() << ")" << std::endl;
+  std::cout << x << std::endl;
+#endif
+}
+
+template <typename T,
+  std::enable_if_t<
+    std::is_floating_point<std::decay_t<T>>::value ||
+    std::is_integral<std::decay_t<T>>::value>* = nullptr>
+void print(const char* name, T&& x) {
+#ifdef RICCATI_DEBUG
+  std::cout << name << ": " << x << std::endl;
 #endif
 }
 

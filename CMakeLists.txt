@@ -52,7 +52,10 @@ set(CMAKE_CXX_FLAGS_LSAN
     CACHE STRING "Flags used by the C++ compiler during LeakSanitizer builds."
     FORCE)
 
-    add_compile_options(-fsanitize=leak -fno-omit-frame-pointer -ggdb3 -O1)
+set(CMAKE_CXX_FLAGS_DEBUG
+    "-fno-omit-frame-pointer -ggdb3 -Og -DRICCATI_DEBUG=true"
+    CACHE STRING "Flags used by the C++ compiler during Debug builds."
+    FORCE)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 include(FetchContent)
@@ -62,8 +65,8 @@ FetchContent_Declare(googletest
         GIT_TAG main)
 
 FetchContent_MakeAvailable(googletest)
-
 set(BUILD_TESTING OFF)
+set(EIGEN_BUILD_TESTING OFF)
 FetchContent_Declare(
   Eigen
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git

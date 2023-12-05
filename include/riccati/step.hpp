@@ -90,6 +90,8 @@ inline auto osc_step(SolverInfo &&info, Scalar x0, Scalar h, std::complex<Scalar
   if (info.denseout_) {
     f1 = (h / 2.0 * (info.integration_matrix_ * du1)).array().exp();
   } else {
+    print("quadwts", info.quadwts_);
+    print("du1", du1);
     f1 = (h / 2.0 * (info.quadwts_ * du1)).array().exp();
   }
   auto f2 = f1.conjugate().eval();

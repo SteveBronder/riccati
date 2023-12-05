@@ -102,6 +102,7 @@ inline auto integration_matrix(Integral n) {
   return Q;
 }
 
+// WRONG
 template <typename Scalar, typename Integral>
 inline auto quad_weights(Integral n) {
   vector_t<Scalar> w = vector_t<Scalar>::Zero(n + 1);
@@ -146,20 +147,12 @@ inline auto chebyshev(Integral n) {
       d.coeffRef(i) = -1;
     }
     auto x = a.array().cos().eval();
-    print_matrix("x", x);
-    print_matrix("b", b);
     auto X = (x.matrix() * vector_t<Scalar>::Ones(n + 1).transpose()).matrix().eval();
     auto dX = (X - X.transpose()).eval();
     auto c = (b.array() * d.array()).eval();
-      print_matrix("x", x);
-  print_matrix("X", X);
-  print_matrix("dX", dX);
-  print_matrix("c", c);
 
     auto D = ((c.matrix() * (1.0 / c).matrix().transpose()).array() / (dX + matrix_t<Scalar>::Identity(n + 1, n + 1)).array()).matrix().eval();
-    print_matrix("D_pre", D);
     D -= D.rowwise().sum().asDiagonal();
-    print_matrix("D", D);
     return std::make_pair(matrix_t<Scalar>(std::move(D)),
                           vector_t<Scalar>(std::move(x)));
   }

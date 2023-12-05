@@ -40,11 +40,8 @@ FloatingPoint choose_nonosc_stepsize(SolverInfo&& info, FloatingPoint x0, Floati
 template <typename SolverInfo, typename FloatingPoint>
 FloatingPoint choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0, FloatingPoint h,
                             FloatingPoint epsilon_h) {
-  std::cout << "\tL: \n" << info.L_ << std::endl;
   auto t = riccati::scale(info.xp_interp_, x0, h).eval();
   auto s = riccati::scale(info.xp_, x0, h).eval();
-  std::cout << "\txpinterp: \n" << info.xp_interp_ << std::endl;
-  std::cout << "\txp: \n" << info.xp_ << std::endl;
   // TODO: Use a memory arena for these
   using vectord_t = vector_t<FloatingPoint>;
   vectord_t wn(s.size());
