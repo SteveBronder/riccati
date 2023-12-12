@@ -9,23 +9,22 @@
 #include <complex>
 #include <cmath>
 #include <vector>
-// REMOVE THIS
-#include <iostream>
 
 namespace riccati {
 
 namespace internal {
-  inline Eigen::VectorXd logspace(double start, double end, int num, double base) {
-    Eigen::VectorXd result(num);
-    double delta = (end - start) / (num - 1);
+inline Eigen::VectorXd logspace(double start, double end, int num,
+                                double base) {
+  Eigen::VectorXd result(num);
+  double delta = (end - start) / (num - 1);
 
-    for (int i = 0; i < num; ++i) {
-        result[i] = std::pow(base, start + i * delta);
-    }
+  for (int i = 0; i < num; ++i) {
+    result[i] = std::pow(base, start + i * delta);
+  }
 
-    return result;
+  return result;
 }
-}
+}  // namespace internal
 // OmegaFun / GammaFun take in a scalar and return a complex<Scalar>
 template <typename OmegaFun, typename GammaFun, typename Scalar_,
           typename Integral_>
@@ -111,12 +110,6 @@ class SolverInfo {
   Integral n_;
   // (Number of Chebyshev nodes - 1) to use for estimating Riccati stepsizes.
   Integral p_;
-  /**
-   * Initial interval length which will be used to estimate the initial
-   * derivatives of w, g.
-   */
-  Scalar h0_;
-  Scalar h_;  // Current stepsize
   // Counters for various operations
   Integral n_chebnodes_{0};
   // Number of Chebyshev steps attempted.
@@ -139,7 +132,8 @@ class SolverInfo {
   bool denseout_{false};  // Dense output flag
 
   inline auto build_chebyshev(Integral nini, Integral n_nodes) {
-    std::vector<std::pair<matrixd_t, vectord_t>> res(n_nodes + 1, std::make_pair(matrixd_t{}, vectord_t{}));
+    std::vector<std::pair<matrixd_t, vectord_t>> res(
+        n_nodes + 1, std::make_pair(matrixd_t{}, vectord_t{}));
     // Compute Chebyshev nodes and differentiation matrices
     for (Integral i = 0; i <= n_nodes_; ++i) {
       res[i] = chebyshev<Scalar>(nini * std::pow(2, i));
@@ -148,7 +142,7 @@ class SolverInfo {
   }
   // Constructor
   template <typename OmegaFun_, typename GammaFun_>
-  SolverInfo(OmegaFun_&& omega_fun, GammaFun_&& gamma_fun, Scalar h0, Integral nini,
+  SolverInfo(OmegaFun_&& omega_fun, GammaFun_&& gamma_fun, Integral nini,
              Integral nmax, Integral n, Integral p, bool dense_output)
       : omega_fun_(std::forward<OmegaFun_>(omega_fun)),
         gamma_fun_(std::forward<GammaFun_>(gamma_fun)),
@@ -157,7 +151,8 @@ class SolverInfo {
         gamma_n_(n + 1),
         n_nodes_(log2(nmax / nini) + 1),
         chebyshev_(build_chebyshev(nini, n_nodes_)),
-        ns_(internal::logspace(std::log2(nini), std::log2(nini) + n_nodes_ - 1, n_nodes_, 2.0)),
+        ns_(internal::logspace(std::log2(nini), std::log2(nini) + n_nodes_ - 1,
+                               n_nodes_, 2.0)),
         xn_(),
         xp_(),
         xp_interp_(),
@@ -169,15 +164,12 @@ class SolverInfo {
         nmax_(nmax),
         n_(n),
         p_(p),
-        h0_(h0),
-        h_(h0),
         n_chebnodes_(n_nodes_),
         n_chebstep_(n_nodes_),
         n_chebits_(n_nodes_),
         n_LS_(n_nodes_),
         n_riccstep_(n_nodes_),
         denseout_(dense_output) {
-
     // Set Dn and xn if available
     auto it = std::find(ns_.begin(), ns_.end(), n);
     if (it != ns_.end()) {
@@ -191,14 +183,19 @@ class SolverInfo {
     // Set xp and xpinterp
     if (std::find(ns_.begin(), ns_.end(), p) != ns_.end()) {
       xp_ = chebyshev_[std::distance(ns_.begin(),
-                                 std::find(ns_.begin(), ns_.end(), p))].second;
+                                     std::find(ns_.begin(), ns_.end(), p))]
+                .second;
     } else {
       xp_ = chebyshev<Scalar>(p).second;
     }
-    xp_interp_ = (vector_t<Scalar>::LinSpaced(p_, pi<Scalar>() / (2.0 * p_),
-      pi<Scalar>() * (1.0 - (1.0 / (2.0 * p_)))).array()).cos().matrix();
+    xp_interp_ = (vector_t<Scalar>::LinSpaced(
+                      p_, pi<Scalar>() / (2.0 * p_),
+                      pi<Scalar>() * (1.0 - (1.0 / (2.0 * p_))))
+                      .array())
+                     .cos()
+                     .matrix();
     L_ = interpolate(xp_, xp_interp_);  // Assuming interp is a function that
-                                       // creates the interpolation matrix
+                                        // creates the interpolation matrix
   }
 
   // Method to increase various counters
@@ -223,13 +220,13 @@ class SolverInfo {
   }
 };
 
-template <bool DenseOutput, typename OmegaFun, typename GammaFun, typename Scalar,
-          typename Integral>
-inline auto make_solver(OmegaFun&& omega_fun, GammaFun&& gamma_fun, Scalar h0, Integral nini,
-                        Integral nmax, Integral n, Integral p) {
+template <bool DenseOutput, typename Scalar, typename OmegaFun,
+          typename GammaFun, typename Integral>
+inline auto make_solver(OmegaFun&& omega_fun, GammaFun&& gamma_fun,
+                        Integral nini, Integral nmax, Integral n, Integral p) {
   return SolverInfo<std::decay_t<OmegaFun>, std::decay_t<GammaFun>, Scalar,
                     Integral>(std::forward<OmegaFun>(omega_fun),
-                              std::forward<GammaFun>(gamma_fun), h0, nini, nmax, n,
+                              std::forward<GammaFun>(gamma_fun), nini, nmax, n,
                               p, DenseOutput);
 }
 

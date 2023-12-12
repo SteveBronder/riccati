@@ -1,27 +1,106 @@
 #ifndef INCLUDE_riccati_EVOLVE_HPP
 #define INCLUDE_riccati_EVOLVE_HPP
 
-#include <riccati/solver.hpp>
+#include <riccati/chebyshev.hpp>
 #include <riccati/step.hpp>
 #include <riccati/stepsize.hpp>
 #include <riccati/utils.hpp>
 #include <complex>
 #include <type_traits>
-
-
+#include <tuple>
 
 namespace riccati {
-template <typename SolverInfo, typename Scalar, typename Y0>
-auto osc_evolve(SolverInfo &&info, Scalar x0, Scalar x1, Scalar h, Y0 y0,
-                Scalar epsres, Scalar epsilon_h) {
-  auto sign = std::signbit(h) ? -1 : 1;
-  if (sign * (x0 + h) > sign * x1) {
-    h = x1 - x0;
-    auto xscaled = h / 2.0 * info.xn + x0 + h / 2.0;
-    info.wn = info.w(xscaled);
-    info.gn = info.g(xscaled);
+
+template <typename SolverInfo, typename Scalar, typename Vec, typename Vec2>
+inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
+                       std::complex<Scalar> yi, std::complex<Scalar> dyi,
+                       Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
+                       Vec &&x_eval, Vec2 &&y_true, bool hard_stop = false,
+                       bool warn = false) {
+  int sign = init_stepsize > 0 ? 1 : -1;
+  std::cout << "xi: " << xi << std::endl;
+  std::cout << "sign * xi: " << sign * xi << std::endl;
+  std::cout << "xi + init_stepsize: " << xi + init_stepsize << std::endl;
+  std::cout << "sign * (xi + init_stepsize): "
+            << sign * (xi + init_stepsize) << std::endl;
+  std::cout << "yi: " << yi << std::endl;
+  std::cout << "dyi: " << dyi << std::endl;
+  using complex_t = std::complex<Scalar>;
+  using vectorc_t = vector_t<complex_t>;
+  using vectord_t = vector_t<Scalar>;
+  auto xscaled = (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array()).matrix().eval();
+    info.omega_n_ = info.omega_fun_(xscaled);
+    info.gamma_n_ = info.gamma_fun_(xscaled);
+
+  vectorc_t yeval;
+  // TODO: Add this check to regular evolve
+  if (sign * (xi + init_stepsize) > sign * xf) {
+    throw std::out_of_range(
+        std::string("Stepsize (") + std::to_string(init_stepsize)
+        + std::string(") is too large for integration range (")
+        + std::to_string(xi) + std::string(", ") + std::to_string(xf)
+        + std::string(")!"));
   }
-  info.h = h;
+  auto osc_ret = osc_step(info, xi, init_stepsize, yi, dyi, eps);
+  if (std::get<3>(osc_ret) == 0) {
+    return std::make_tuple(false, xi, init_stepsize, osc_ret,
+                           vectorc_t(0), static_cast<Eigen::Index>(0), static_cast<Eigen::Index>(0));
+  } else {
+    Eigen::Index dense_size = 0;
+    Eigen::Index dense_start = 0;
+    if (info.denseout_) {
+      // Assuming x_eval is sorted we just want start and size
+      {
+        Eigen::Index i = 0;
+        for (; i < x_eval.size(); ++i) {
+          if ((sign * x_eval[i] >= sign * xi
+               && sign * x_eval[i] < sign * (xi + init_stepsize))
+              || (x_eval[i] == xf && x_eval[i] == (xi + init_stepsize))) {
+            dense_start = i;
+            break;
+          }
+        }
+        for (; i < x_eval.size(); ++i) {
+          if ((sign * x_eval[i] >= sign * xi
+               && sign * x_eval[i] < sign * (xi + init_stepsize))
+              || (x_eval[i] == xf && x_eval[i] == (xi + init_stepsize))) {
+            dense_size++;
+          } else {
+            break;
+          }
+        }
+      }
+      if (dense_size != 0) {
+        auto x_eval_map
+            = Eigen::Map<vectord_t>(x_eval.data() + dense_start, dense_size);
+        yeval = vectorc_t(dense_size);
+        std::cout << "Writing from " << dense_start << " to "
+                  << dense_start + dense_size << std::endl;
+          // xscaled = xi + init_stepsize/2 + init_stepsize/2*info.xn
+          std::cout << "========osc dense: =======" << std::endl;
+          auto xscaled = (2.0 / init_stepsize * (x_eval_map.array() - xi) - 1.0)
+                             .matrix()
+                             .eval();
+          auto Linterp = interpolate(info.xn_, xscaled);
+          auto udense = (Linterp * info.un_).eval();
+          auto fdense = udense.array().exp().matrix().eval();
+          yeval = info.a_.first * fdense + info.a_.second * fdense.conjugate();
+      }
+    }
+    auto x_next = xi + init_stepsize;
+    auto wnext = info.omega_n_[0];
+    auto gnext = info.gamma_n_[0];
+    auto dwnext = 2.0 / init_stepsize * info.Dn_.row(0).dot(info.omega_n_);
+    auto dgnext = 2.0 / init_stepsize * info.Dn_.row(0).dot(info.gamma_n_);
+    auto hosc_ini = sign
+                    * std::min(std::min(1e8, std::abs(wnext / dwnext)),
+                               std::abs(gnext / dgnext));
+    if (sign * (x_next + hosc_ini) > sign * xf) {
+      hosc_ini = xf - x_next;
+    }
+    auto h_next = choose_osc_stepsize(info, x_next, hosc_ini, epsilon_h);
+    return std::make_tuple(true, x_next, h_next, osc_ret, yeval, dense_start, dense_size);
+  }
 }
 
 /**
@@ -70,18 +149,20 @@ auto osc_evolve(SolverInfo &&info, Scalar x0, Scalar x1, Scalar h, Y0 y0,
  * Riccati, 0 for Chebyshev).
  *         - Vector of interpolated values of the solution at x_eval (yeval).
  */
-template <typename SolverInfo, typename Scalar, typename Vec>
-auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
-           std::complex<Scalar> dyi, Scalar eps, Scalar epsilon_h, Vec &&x_eval,
-           bool hard_stop = false, bool warn = false) {
+template <typename SolverInfo, typename Scalar, typename Vec, typename Vec2>
+inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
+                   std::complex<Scalar> yi, std::complex<Scalar> dyi,
+                   Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
+                   Vec &&x_eval, Vec2 &&y_true, bool hard_stop = false,
+                   bool warn = false) {
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
   using matrixc_t = matrix_t<complex_t>;
   using vectord_t = vector_t<Scalar>;
   using stdvecd_t = std::vector<Scalar>;
   using stdvecc_t = std::vector<complex_t>;
-  Scalar intdir = std::signbit(info.h0_) ? -1 : 1;
-  if (intdir * (xf - xi) < 0) {
+  Scalar intdir = init_stepsize > 0 ? 1 : -1;
+  if (init_stepsize * (xf - xi) < 0) {
     throw std::domain_error(
         "Direction of integration does not match stepsize sign,"
         " adjusting it so that integration happens from xi to xf.");
@@ -91,21 +172,37 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
     if (!x_eval.size()) {
       throw std::domain_error("Dense output requested but x_eval is size 0!");
     }
+    print("x_eval", x_eval);
     // TODO: Better error messages
-    const bool high_range_err = intdir * xf > (intdir * x_eval.maxCoeff());
-    const bool low_range_err = intdir * xi > (intdir * x_eval.minCoeff());
+    auto x_eval_max = (intdir * x_eval.maxCoeff());
+    auto x_eval_min = (intdir * x_eval.minCoeff());
+    auto xi_intdir = intdir * xi;
+    auto xf_intdir = intdir * xf;
+    const bool high_range_err = xf_intdir < x_eval_max;
+    const bool low_range_err = xi_intdir > x_eval_min;
     if (high_range_err || low_range_err) {
       if (high_range_err && low_range_err) {
-        throw std::domain_error(
-            "Some dense output points lie outside the high and low of the integration range!");
+        throw std::out_of_range(
+            std::string{"The max and min of the output points ("}
+            + std::to_string(x_eval_min) + std::string{", "}
+            + std::to_string(x_eval_max)
+            + ") lie outside the high and low of the integration range ("
+            + std::to_string(xi_intdir) + std::string{", "}
+            + std::to_string(xf_intdir) + ")!");
       }
       if (high_range_err) {
-        throw std::domain_error(
-            "Some dense output points lie outside the high of the integration range!");
+        throw std::out_of_range(
+            std::string{"The max of the output points ("}
+            + std::to_string(x_eval_max)
+            + ") lies outside the high of the integration range ("
+            + std::to_string(xf_intdir) + ")!");
       }
       if (low_range_err) {
-        throw std::domain_error(
-            "Some dense output points lie outside the low of the integration range!");
+        throw std::out_of_range(
+            std::string{"The min of the output points ("}
+            + std::to_string(x_eval_min)
+            + ") lies outside the low of the integration range ("
+            + std::to_string(xi_intdir) + ")!");
       }
     }
   }
@@ -130,17 +227,22 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
   complex_t dy = dyi;
   complex_t yprev = y;
   complex_t dyprev = dy;
-  auto scale_xi = (xi + info.h0_ / 2.0 + info.h0_ / 2.0 * info.xn_.array()).matrix().eval();
+  auto scale_xi
+      = (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array())
+            .matrix()
+            .eval();
   auto omega_is = info.omega_fun_(scale_xi).eval();
   auto gamma_is = info.gamma_fun_(scale_xi).eval();
   Scalar wi = omega_is.mean();
   Scalar gi = gamma_is.mean();
-  Scalar dwi = (2.0 / info.h0_ * (info.Dn_ * omega_is)).mean();
-  Scalar dgi = (2.0 / info.h0_ * (info.Dn_ * gamma_is)).mean();
-  Scalar hslo_ini = intdir * std::min(static_cast<Scalar>(1e8), std::abs(1.0 / wi));
-  Scalar hosc_ini = intdir
-                  * std::min(std::min(static_cast<Scalar>(1e8), std::abs(wi / dwi)),
-                             std::abs(gi / dgi));
+  Scalar dwi = (2.0 / init_stepsize * (info.Dn_ * omega_is)).mean();
+  Scalar dgi = (2.0 / init_stepsize * (info.Dn_ * gamma_is)).mean();
+  Scalar hslo_ini
+      = intdir * std::min(static_cast<Scalar>(1e8), std::abs(1.0 / wi));
+  Scalar hosc_ini
+      = intdir
+        * std::min(std::min(static_cast<Scalar>(1e8), std::abs(wi / dwi)),
+                   std::abs(gi / dgi));
 
   if (hard_stop) {
     hosc_ini = (intdir * (xi + hosc_ini) > intdir * xf) ? xf - xi : hosc_ini;
@@ -150,13 +252,12 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
   auto hosc = choose_osc_stepsize(info, xi, hosc_ini, epsilon_h);
   Scalar xcurrent = xi;
   Scalar wnext = wi;
-  auto dense_positions = vectord_t(info.denseout_ ? x_eval.size() : 0);
   matrixc_t y_eval;
   matrixc_t dy_eval;
   int iter = 0;
   while (std::abs(xcurrent - xf) > Scalar(1e-8)
          && intdir * xcurrent < intdir * xf) {
-    std::cout << "iter: " << iter << std::endl;
+    std::cout << "\niter: " << iter << std::endl;
     iter++;
     Scalar phase{0.0};
     bool success = false;
@@ -167,7 +268,10 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
       if (hard_stop) {
         if (intdir * (xcurrent + hosc) > intdir * xf) {
           hosc = xf - xcurrent;
-          auto xscaled = ((xcurrent + hosc / 2.0 + hosc / 2.0 * info.xp_.array()).matrix()).eval();
+          auto xscaled
+              = ((xcurrent + hosc / 2.0 + hosc / 2.0 * info.xp_.array())
+                     .matrix())
+                    .eval();
           info.omega_n_ = info.omega_fun_(xscaled);
           info.gamma_n_ = info.gamma_fun_(xscaled);
         }
@@ -180,7 +284,8 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
       steptype = 1;
     }
     while (!success) {
-      std::tie(y, dy, err, success, y_eval, dy_eval) = nonosc_step(info, xcurrent, hslo, yprev, dyprev, eps);
+      std::tie(y, dy, err, success, y_eval, dy_eval)
+          = nonosc_step(info, xcurrent, hslo, yprev, dyprev, eps);
       steptype = 0;
       if (!success) {
         hslo *= 0.5;
@@ -190,45 +295,80 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
       }
     }
     auto h = steptype ? hosc : hslo;
-    if (info.denseout_){
-        Eigen::Index dense_size = 0;
-        Eigen::Index dense_start = 0;
-        // Assuming x_eval is sorted we just want start and size
-        {
-          Eigen::Index i = 0;
-          for (; i < dense_positions.size(); ++i) {
-              if ((intdir * x_eval[i] >= intdir * xcurrent &&
-                  intdir * x_eval[i] < intdir * (xcurrent + h)) ||
-                  (x_eval[i] == xf && x_eval[i] == (xcurrent + h))) {
-                    dense_start = i;
-                    dense_size++;
-                    break;
-                  }
-          }
-          for (; i < dense_positions.size(); ++i) {
-              if ((intdir * x_eval[i] >= intdir * xcurrent &&
-                  intdir * x_eval[i] < intdir * (xcurrent + h)) ||
-                  (x_eval[i] == xf && x_eval[i] == (xcurrent + h))) {
-                    dense_size++;
-                  } else {
-                    break;
-                  }
+    if (info.denseout_) {
+      Eigen::Index dense_size = 0;
+      Eigen::Index dense_start = 0;
+      // Assuming x_eval is sorted we just want start and size
+      std::cout << "xcurrent: " << xcurrent << std::endl;
+      std::cout << "intdir * xcurrent: " << intdir * xcurrent << std::endl;
+      std::cout << "xcurrent + h: " << xcurrent + h << std::endl;
+      std::cout << "intdir * (xcurrent + h): " << intdir * (xcurrent + h)
+                << std::endl;
+      {
+        Eigen::Index i = 0;
+        for (; i < x_eval.size(); ++i) {
+          if ((intdir * x_eval[i] >= intdir * xcurrent
+               && intdir * x_eval[i] < intdir * (xcurrent + h))
+              || (x_eval[i] == xf && x_eval[i] == (xcurrent + h))) {
+            dense_start = i;
+            break;
           }
         }
-        auto x_eval_map = Eigen::Map<vectord_t>(x_eval.data() + dense_start, dense_size);
-        auto y_eval_map = Eigen::Map<vectorc_t>(yeval.data() + dense_start, dense_size);
+        for (; i < x_eval.size(); ++i) {
+          if ((intdir * x_eval[i] >= intdir * xcurrent
+               && intdir * x_eval[i] < intdir * (xcurrent + h))
+              || (x_eval[i] == xf && x_eval[i] == (xcurrent + h))) {
+            dense_size++;
+          } else {
+            break;
+          }
+        }
+      }
+      if (dense_size != 0) {
+        auto x_eval_map
+            = Eigen::Map<vectord_t>(x_eval.data() + dense_start, dense_size);
+        auto y_eval_map
+            = Eigen::Map<vectorc_t>(yeval.data() + dense_start, dense_size);
+        auto y_true_map
+            = Eigen::Map<vectorc_t>(y_true.data() + dense_start, dense_size);
+        std::cout << "Writing from " << dense_start << " to "
+                  << dense_start + dense_size << std::endl;
         if (steptype) {
-            // xscaled = xcurrent + h/2 + h/2*info.xn
-            auto xscaled = (2.0 / h * (x_eval_map.array() - xcurrent) - 1.0).matrix().eval();
-            auto Linterp = interpolate(info.xn_, xscaled);
-            auto udense = Linterp * info.un_;
-            auto fdense = udense.array().exp().matrix().eval();
-            y_eval_map = info.a_.first * fdense + info.a_.second * fdense.conjugate();
+          // xscaled = xcurrent + h/2 + h/2*info.xn
+          std::cout << "========osc dense: =======" << std::endl;
+          auto xscaled = (2.0 / h * (x_eval_map.array() - xcurrent) - 1.0)
+                             .matrix()
+                             .eval();
+          auto Linterp = interpolate(info.xn_, xscaled);
+          auto udense = (Linterp * info.un_).eval();
+          auto fdense = udense.array().exp().matrix().eval();
+          print("xscaled", xscaled);
+          print("Linterp", Linterp);
+          print("udense", udense);
+          print("fdense", fdense);
+          y_eval_map
+              = info.a_.first * fdense + info.a_.second * fdense.conjugate();
+          print("y_eval_map", vectorc_t(y_eval_map));
+          vectord_t y_err
+              = ((y_true_map - y_eval_map).array() / y_true_map.array())
+                    .abs()
+                    .matrix();
+          print("y_err", y_err);
         } else {
-            auto xscaled = (xcurrent + h / 2 + h / 2 * info.chebyshev_[1].second.array()).matrix().eval();
-            auto Linterp = interpolate(xscaled, x_eval_map);
-            y_eval_map = Linterp * y_eval;
+          std::cout << "=======nonosc dense: ========" << std::endl;
+          auto xscaled
+              = (xcurrent + h / 2 + h / 2 * info.chebyshev_[1].second.array())
+                    .matrix()
+                    .eval();
+          auto Linterp = interpolate(xscaled, x_eval_map);
+          y_eval_map = Linterp * y_eval;
+          vectord_t y_err
+              = ((y_true_map - y_eval_map).array() / y_true_map.array())
+                    .abs()
+                    .matrix();
+          print("y_err", y_err);
         }
+      }
     }
     // Finish appending and ending conditions
     ys.push_back(y);
@@ -241,36 +381,29 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
     Scalar gnext;
     Scalar dgnext;
     if (steptype) {
-      std::cout << "\tosc update" << std::endl;
       wnext = info.omega_n_[0];
       gnext = info.gamma_n_[0];
-      // ERROR HERE
       dwnext = 2.0 / h * info.Dn_.row(0).dot(info.omega_n_);
       dgnext = 2.0 / h * info.Dn_.row(0).dot(info.gamma_n_);
     } else {
-      std::cout << "\tnonosc update" << std::endl;
       wnext = info.omega_fun_(xcurrent + h);
       gnext = info.gamma_fun_(xcurrent + h);
-      print("Dn: ", info.Dn_);
-      print("xn", info.xn_);
-      print("h", h);
-      auto gam_eval = info.omega_fun_((xcurrent + h / 2.0 + h / 2.0 * info.xn_.array()).matrix()).eval();
-      print("gam_eval", gam_eval);
+      auto gam_eval
+          = info.omega_fun_(
+                    (xcurrent + h / 2.0 + h / 2.0 * info.xn_.array()).matrix())
+                .eval();
       auto test2 = info.Dn_.row(0).dot(gam_eval);
-      print("test2", test2);
       dwnext = 2.0 / h * test2;
-      dgnext = 2.0 / h * info.Dn_.row(0).dot(info.gamma_fun_((xcurrent + h / 2.0 + h / 2.0 * info.xn_.array()).matrix()));
+      dgnext = 2.0 / h
+               * info.Dn_.row(0).dot(info.gamma_fun_(
+                   (xcurrent + h / 2.0 + h / 2.0 * info.xn_.array()).matrix()));
     }
-    print("\twnext", wnext);
-    print("\tdwnext", dwnext);
-    print("\tgnext", gnext);
-    print("\tdgnext", dgnext);
-    print("\txcurrent", xcurrent);
-    print("\tintdir", intdir);
     xcurrent += h;
     if (intdir * xcurrent < intdir * xf) {
       hslo_ini = intdir * std::min(1e8, std::abs(1.0 / wnext));
-      hosc_ini = intdir * std::min(std::min(1e8, std::abs(wnext / dwnext)), std::abs(gnext / dgnext));
+      hosc_ini = intdir
+                 * std::min(std::min(1e8, std::abs(wnext / dwnext)),
+                            std::abs(gnext / dgnext));
       if (hard_stop) {
         if (intdir * (xcurrent + hosc_ini) > intdir * xf) {
           hosc_ini = xf - xcurrent;
@@ -281,16 +414,11 @@ auto solve(SolverInfo &&info, Scalar xi, Scalar xf, std::complex<Scalar> yi,
       }
       hosc = choose_osc_stepsize(info, xcurrent, hosc_ini, epsilon_h);
       hslo = choose_nonosc_stepsize(info, xcurrent, hslo_ini, 0.2);
-      print("hosc_ini", hosc_ini);
-      print("hslo_ini", hslo_ini);
-      print("hosc", hosc);
-      print("hslo", hslo);
       yprev = y;
       dyprev = dy;
     }
   }
-  return std::make_tuple(std::move(xs), std::move(ys), std::move(dys), std::move(successes),
-    std::move(phases), std::move(steptypes), std::move(yeval));
+  return std::make_tuple(xs, ys, dys, successes, phases, steptypes, yeval);
 }
 
 }  // namespace riccati
