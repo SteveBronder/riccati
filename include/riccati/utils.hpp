@@ -78,6 +78,28 @@ inline const auto& eval(const Eigen::Array<T, R, C>& x) {
   return x;
 }
 
+template <typename T, typename Scalar>
+auto get_slice(T&& x_eval, Scalar start, Scalar end) {
+  Eigen::Index i = 0;
+  Eigen::Index dense_start = 0;
+  for (; i < x_eval.size(); ++i) {
+    if ((x_eval[i] >= start && x_eval[i] <= end)) {
+      dense_start = i;
+      break;
+    }
+  }
+  Eigen::Index dense_size = 0;
+  for (; i < x_eval.size(); ++i) {
+    if ((x_eval[i] >= start && x_eval[i] <= end)) {
+      dense_size++;
+    } else {
+      break;
+    }
+  }
+  return std::make_pair(dense_start, dense_size);
+}
+
+
 template <typename T, int R, int C>
 inline void print(const char* name, const Eigen::Matrix<T, R, C>& x) {
 #ifdef RICCATI_DEBUG

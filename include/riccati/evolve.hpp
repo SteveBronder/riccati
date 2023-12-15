@@ -50,41 +50,16 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
     Eigen::Index dense_start = 0;
     if (info.denseout_) {
       // Assuming x_eval is sorted we just want start and size
-      {
-        Eigen::Index i = 0;
-        for (; i < x_eval.size(); ++i) {
-          if ((sign * x_eval[i] >= sign * xi
-               && sign * x_eval[i] < sign * (xi + init_stepsize))
-              || (x_eval[i] == xf && x_eval[i] == (xi + init_stepsize))) {
-            dense_start = i;
-            break;
-          }
-        }
-        for (; i < x_eval.size(); ++i) {
-          if ((sign * x_eval[i] >= sign * xi
-               && sign * x_eval[i] < sign * (xi + init_stepsize))
-              || (x_eval[i] == xf && x_eval[i] == (xi + init_stepsize))) {
-            dense_size++;
-          } else {
-            break;
-          }
-        }
-      }
+      std::tie(dense_start, dense_size) = get_slice(x_eval, sign * xi, sign * (xi + init_stepsize));
       if (dense_size != 0) {
-        auto x_eval_map
-            = Eigen::Map<vectord_t>(x_eval.data() + dense_start, dense_size);
-        yeval = vectorc_t(dense_size);
-        std::cout << "Writing from " << dense_start << " to "
-                  << dense_start + dense_size << std::endl;
-          // xscaled = xi + init_stepsize/2 + init_stepsize/2*info.xn
-          std::cout << "========osc dense: =======" << std::endl;
-          auto xscaled = (2.0 / init_stepsize * (x_eval_map.array() - xi) - 1.0)
-                             .matrix()
-                             .eval();
-          auto Linterp = interpolate(info.xn_, xscaled);
-          auto udense = (Linterp * info.un_).eval();
-          auto fdense = udense.array().exp().matrix().eval();
-          yeval = info.a_.first * fdense + info.a_.second * fdense.conjugate();
+        auto x_eval_map = x_eval.segment(dense_start, dense_size);
+        auto xscaled = (2.0 / init_stepsize * (x_eval_map.array() - xi) - 1.0)
+                            .matrix()
+                            .eval();
+        auto Linterp = interpolate(info.xn_, xscaled);
+        auto udense = (Linterp * info.un_).eval();
+        auto fdense = udense.array().exp().matrix().eval();
+        yeval = info.a_.first * fdense + info.a_.second * fdense.conjugate();
       }
     }
     auto x_next = xi + init_stepsize;
