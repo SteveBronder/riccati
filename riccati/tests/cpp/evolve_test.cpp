@@ -24,7 +24,7 @@ TEST(riccati, osc_evolve_dense_output) {
       = -airy_ai_prime(-xi) - std::complex<double>(0, 1) * airy_bi_prime(-xi);
   Eigen::Index Neval = 1e3;
   riccati::vector_t<double> x_eval
-      = riccati::vector_t<double>::LinSpaced(Neval, xi, xi + 300);
+      = riccati::vector_t<double>::LinSpaced(Neval, xi, xf);
   auto airy_i = [](auto&& x) {
     return airy_ai(x) + std::complex<double>(0.0, 1.0) * airy_bi(x);
   };
@@ -35,7 +35,7 @@ TEST(riccati, osc_evolve_dense_output) {
   hi = choose_osc_stepsize(info, xi, hi, epsh);
   std::vector<std::complex<double>> ys;
   std::vector<double> xs;
-
+  bool x_validated = false;
   while (xi < xf) {
     auto res = riccati::osc_evolve(info, xi, xf, yi, dyi, eps, epsh, hi, x_eval, ytrue);
     if (!std::get<0>(res)) {
@@ -51,18 +51,18 @@ TEST(riccati, osc_evolve_dense_output) {
     auto airy_true = airy_i(-std::get<1>(res));
     auto airy_est = std::get<0>(std::get<3>(res));
     auto err = std::abs((airy_true - airy_est) / airy_true);
-    std::cout << "Err: " << err << std::endl;
-    EXPECT_LE(err, 1e-6);
+    EXPECT_LE(err, 3e-7);
     auto start_y = std::get<5>(res);
     auto size_y = std::get<6>(res);
     if (size_y > 0) {
-      std::cout << "start_y: " << start_y << std::endl;
-      std::cout << "size_y: " << size_y << std::endl;
+      x_validated = true;
       auto y_true_slice = ytrue.segment(start_y, size_y);
-      std::cout << "y_true_slice(" << y_true_slice.size() << ")" << std::endl;
-      std::cout << "res(" << std::get<4>(res).size() << ")" << std::endl;
       auto y_err
           = ((std::get<4>(res) - y_true_slice).array() / y_true_slice.array()).abs().eval();
+      for (Eigen::Index i = 0; i < y_err.size(); ++i) {
+        EXPECT_LE(y_err[i], 2e-6);
+      }
+      /*
       Eigen::Matrix<double, -1, -1> err_mat(size_y, 2);
       auto x_eval_slice = x_eval.segment(start_y, size_y);
       err_mat.col(0) = x_eval_slice;
@@ -73,7 +73,11 @@ TEST(riccati, osc_evolve_dense_output) {
       //std::cout << "y_mat:\n" << y_mat << std::endl;
       //std::cout << "err_mat:\n" << err_mat << std::endl;
       //std::cout << "max err: " << y_err.maxCoeff() << std::endl;
+      */
     }
+  }
+  if (!x_validated) {
+    FAIL() << "Dense evaluation was never completed!";
   }
 }
 /*
