@@ -33,8 +33,6 @@ TEST(riccati, osc_evolve_dense_output) {
             .eval();
   auto hi = 2.0 * xi;
   hi = choose_osc_stepsize(info, xi, hi, epsh);
-  std::vector<std::complex<double>> ys;
-  std::vector<double> xs;
   bool x_validated = false;
   while (xi < xf) {
     auto res = riccati::osc_evolve(info, xi, xf, yi, dyi, eps, epsh, hi, x_eval, ytrue);
@@ -46,8 +44,6 @@ TEST(riccati, osc_evolve_dense_output) {
       yi = std::get<0>(std::get<3>(res));
       dyi = std::get<1>(std::get<3>(res));
     }
-    xs.push_back(std::get<1>(res));
-    ys.push_back(std::get<0>(std::get<3>(res)));
     auto airy_true = airy_i(-std::get<1>(res));
     auto airy_est = std::get<0>(std::get<3>(res));
     auto err = std::abs((airy_true - airy_est) / airy_true);
