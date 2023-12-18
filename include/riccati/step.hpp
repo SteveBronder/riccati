@@ -26,8 +26,8 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
   while (maxerr > epsres) {
     N *= 2;
     if (N > Nmax) {
-      return std::make_tuple(complex_t(0.0, 0.0), complex_t(0.0, 0.0), maxerr,
-                             0, yprev, dyprev);
+      return std::make_tuple(false, complex_t(0.0, 0.0), complex_t(0.0, 0.0), maxerr,
+                             yprev, dyprev);
     }
     cheby = spectral_chebyshev(info, x0, h, y0, dy0,
                                static_cast<int>(std::log2(N / info.nini_)));
@@ -43,7 +43,7 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
     dyprev = dy;
     xprev = x;
   }
-  return std::make_tuple(yprev(0, 0), dyprev(0, 0), maxerr, 1, yprev, dyprev);
+  return std::make_tuple(true, yprev(0, 0), dyprev(0, 0), maxerr, yprev, dyprev);
 }
 
 template <typename SolverInfo, typename Scalar>
@@ -54,7 +54,7 @@ inline auto osc_step(SolverInfo &&info, Scalar x0, Scalar h,
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
 
-  int success = 1;
+  bool success = true;
   auto &&omega_s = info.omega_n_;
   auto &&gamma_s = info.gamma_n_;
 
@@ -79,7 +79,7 @@ inline auto osc_step(SolverInfo &&info, Scalar x0, Scalar h,
     Ry = R(deltay);
     maxerr = Ry.array().abs().maxCoeff();
     if (maxerr >= prev_err) {
-      success = 0;
+      success = false;
       break;
     }
     prev_err = maxerr;
@@ -101,7 +101,7 @@ inline auto osc_step(SolverInfo &&info, Scalar x0, Scalar h,
     Scalar phase = std::imag(f1(0));
     info.un_ = u1;
     info.a_ = std::make_pair(ap, am);
-    return std::make_tuple(y1(0), dy1(0), maxerr, success, phase);
+    return std::make_tuple(success, y1(0), dy1(0), maxerr, phase);
   } else {
     complex_t f1 = std::exp(h / 2.0 * (info.quadwts_.dot(du1)));
     auto f2 = std::conj(f1);
@@ -115,7 +115,7 @@ inline auto osc_step(SolverInfo &&info, Scalar x0, Scalar h,
     auto y1 = (ap * f1 + am * f2);
     auto dy1 = (ap * du1 * f1 + am * du2 * f2).eval();
     Scalar phase = std::imag(f1);
-    return std::make_tuple(y1, dy1(0), maxerr, success, phase);
+    return std::make_tuple(success, y1, dy1(0), maxerr, phase);
   }
 }
 
