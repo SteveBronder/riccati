@@ -1,7 +1,5 @@
 import numpy as np
-import typing as tp
 from riccati.chebutils import cheb, interp, quadwts
-
 
 class Solverinfo:
     """
@@ -94,16 +92,8 @@ class Solverinfo:
 
     """
 
-    def __init__(
-        self,
-        w: tp.Callable[[float], complex],
-        g: tp.Callable[[float], complex],
-        h : float,
-        nini : int,
-        nmax : int,
-        n : int,
-        p : int,
-    ):
+    def __init__(self, w, g, h, nini, nmax, n, p):
+
         # Parameters
         self.w = w
         self.g = g
@@ -115,47 +105,44 @@ class Solverinfo:
         self.denseout = False
 
         # Run statistics
-        self.n_chebnodes : int = 0
-        self.n_chebstep : int= 0
-        self.n_chebits : int= 0
-        self.n_LS : int = 0
-        self.n_riccstep : int = 0
+        self.n_chebnodes = 0
+        self.n_chebstep = 0
+        self.n_chebits = 0
+        self.n_LS = 0
+        self.n_riccstep = 0
 
         self.h = self.h0
-        self.y : np.ndarray[complex] = np.zeros(2, dtype=complex)
-        self.wn, self.gn   = np.zeros(n + 1), np.zeros(n + 1)
-        Dlength = int(np.log2(self.nmax / self.nini)) + 1
-        self.Ds, self.nodes  = [], []
+        self.y = np.zeros(2, dtype = complex)
+        self.wn, self.gn = np.zeros(n + 1), np.zeros(n + 1)
+        Dlength = int(np.log2(self.nmax/self.nini)) + 1
+        self.Ds, self.nodes = [], []
         lognini = np.log2(self.nini)
-        self.ns : np.ndarray[int] = np.logspace(
-            lognini, lognini + Dlength - 1, num=Dlength, base=2.0
-        )  # , dtype=int)
+        self.ns = np.logspace(lognini, lognini + Dlength - 1, num = Dlength, base = 2.0)#, dtype=int)
 
         for i in range(Dlength):
-            D, x = cheb(self.nini * 2**i)
-            self.increase(chebnodes=1)
+            D, x = cheb(self.nini*2**i)
+            self.increase(chebnodes = 1)
             self.Ds.append(D)
             self.nodes.append(x)
         if self.n in self.ns:
             i = np.where(self.ns == self.n)[0][0]
-            self.Dn, self.xn  = self.Ds[i], self.nodes[i]
+            self.Dn, self.xn = self.Ds[i], self.nodes[i]
         else:
             self.Dn, self.xn = cheb(self.n)
-            self.increase(chebnodes=1)
+            self.increase(chebnodes = 1)
         if self.p in self.ns:
             i = np.where(self.ns == self.p)[0][0]
             self.xp = self.nodes[i]
         else:
             self.xp = cheb(self.p)[1]
-            self.increase(chebnodes=1)
-        self.xpinterp = np.cos(
-            np.linspace(np.pi / (2 * self.p), np.pi * (1 - 1 / (2 * self.p)), self.p)
-        )
+            self.increase(chebnodes = 1)
+        self.xpinterp = np.cos(np.linspace(np.pi/(2*self.p), np.pi*(1 - 1/(2*self.p)), self.p))
         self.L = interp(self.xp, self.xpinterp)
-        self.increase(LS=1)
+        self.increase(LS = 1)
         self.quadwts = quadwts(n)
 
-    def increase(self, chebnodes=0, chebstep=0, chebits=0, LS=0, riccstep=0):
+    def increase(self, chebnodes = 0, chebstep = 0, chebits = 0,
+                 LS = 0, riccstep = 0):
         """
         Increases the relevant attribute of the class (a counter for a specific
         arithmetic operation) by a given number. Used for generating performance statistics.
@@ -217,17 +204,15 @@ class Solverinfo:
             cheb nodes: int
                 Total number of times a call to compute Chebyshev nodes has been made.
         """
-        statdict = {
-            "cheb steps": (self.n_chebstep, sum(np.array(steptypes) == 0) - 1),
-            "cheb iterations": self.n_chebits,
-            "ricc steps": (self.n_riccstep, sum(np.array(steptypes) == 1)),
-            "linear solves": self.n_LS,
-            "cheb nodes": self.n_chebnodes,
-        }
+        statdict = {"cheb steps": (self.n_chebstep, sum(np.array(steptypes) == 0) - 1),
+                    "cheb iterations": self.n_chebits,
+                    "ricc steps": (self.n_riccstep, sum(np.array(steptypes) == 1)),
+                    "linear solves": self.n_LS,
+                    "cheb nodes": self.n_chebnodes}
         return statdict
 
 
-def solversetup(w, g, h0=0.1, nini=16, nmax=32, n=16, p=16):
+def solversetup(w, g, h0 = 0.1, nini = 16, nmax = 32, n = 16, p = 16):
     """
     Sets up the solver by generating differentiation matrices based on an
     increasing number of Chebyshev gridpoints (see `riccati.solversetup.Solverinfo`).  Needs to be called
@@ -260,3 +245,4 @@ def solversetup(w, g, h0=0.1, nini=16, nmax=32, n=16, p=16):
     """
     info = Solverinfo(w, g, h0, nini, nmax, n, p)
     return info
+

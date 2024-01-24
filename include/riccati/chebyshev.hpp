@@ -212,10 +212,7 @@ inline auto spectral_chebyshev(SolverInfo&& info, Scalar x0, Scalar h,
   rhs.coeffRef(n + 1) = dy0;
   rhs.coeffRef(n + 2) = y0;
   vectorc_t y1 = D2ic.colPivHouseholderQr().solve(rhs);
-  print("D", D);
-  print("y1", y1);
   auto dy1 = (2.0 / h * (D * y1)).eval();
-  print("dy1", dy1);
   return std::make_tuple(std::move(y1), std::move(dy1), std::move(x_scaled));
 }
 

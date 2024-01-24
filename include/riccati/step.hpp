@@ -23,21 +23,21 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
   auto yprev = std::get<0>(cheby);
   auto dyprev = std::get<1>(cheby);
   auto xprev = std::get<2>(cheby);
-  print("yprev", yprev);
-  print("dyprev", dyprev);
-  print("xprev", xprev);
+  int iter = 0;
   while (maxerr > epsres) {
+    iter++;
     N *= 2;
     if (N > Nmax) {
       return std::make_tuple(false, complex_t(0.0, 0.0), complex_t(0.0, 0.0),
                              maxerr, yprev, dyprev);
     }
-    cheby = spectral_chebyshev(info, x0, h, y0, dy0,
-                               static_cast<int>(std::log2(N / info.nini_)));
-    auto &&y = std::get<0>(cheby);
-    auto &&dy = std::get<1>(cheby);
-    auto &&x = std::get<2>(cheby);
-    maxerr = std::abs((yprev(0, 0) - y(0, 0)) / y(0, 0));
+    auto cheb_num = static_cast<int>(std::log2(N / info.nini_));
+    auto cheby2 = spectral_chebyshev(info, x0, h, y0, dy0,
+                               cheb_num);
+    auto &&y = std::get<0>(cheby2);
+    auto &&dy = std::get<1>(cheby2);
+    auto &&x = std::get<2>(cheby2);
+    maxerr = std::abs((yprev(0) - y(0)) / y(0));
     if (std::isnan(maxerr)) {
       maxerr = std::numeric_limits<Scalar>::infinity();
     }
@@ -46,13 +46,13 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
     dyprev = dy;
     xprev = x;
   }
-  return std::make_tuple(true, yprev(0, 0), dyprev(0, 0), maxerr, yprev,
+  return std::make_tuple(true, yprev(0), dyprev(0), maxerr, yprev,
                          dyprev);
 }
 
-template <typename SolverInfo, typename Scalar>
+template <typename SolverInfo, typename Scalar, typename YScalar>
 inline auto osc_step(SolverInfo &&info, Scalar x0, Scalar h,
-                     std::complex<Scalar> y0, std::complex<Scalar> dy0,
+                     YScalar y0, YScalar dy0,
                      Scalar epsres = Scalar(1e-12), bool plotting = false,
                      int k = 0) {
   using complex_t = std::complex<Scalar>;

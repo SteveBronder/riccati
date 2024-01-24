@@ -189,24 +189,3 @@ TEST(riccati, spectral_chebyshev_test) {
     EXPECT_NEAR(std::get<1>(ret)(i).imag(), spec_dy1(i).imag(), 1e-12);
   }
 }
-
-
-TEST(riccati, spectral_cheb2) {
-  using namespace riccati::test;
-  auto omega_fun
-      = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
-  auto gamma_fun = [](auto&& x) { return zero_like(x); };
-  auto info = riccati::make_solver<true, double>(omega_fun, gamma_fun, 16, 32,
-                                                 32, 32);
-  auto xi = 1e0;
-  auto h = 0.5;
-  auto xf = 1e6;
-  auto eps = 1e-12;
-  auto epsh = 1e-13;
-  auto yi = airy_ai(-xi);
-  auto dyi = -airy_bi_prime(-xi);
-  riccati::print("yi", yi);
-  riccati::print("dyi", dyi);
-  auto res = riccati::spectral_chebyshev(info, xi, h, yi, dyi, 0);
-
-}

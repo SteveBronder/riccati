@@ -13,31 +13,30 @@ template <typename T>
 using require_floating_point
     = std::enable_if_t<std::is_floating_point<std::decay_t<T>>::value>;
 
-
 namespace internal {
-  template <typename T>
-  struct is_complex_impl : std::false_type {};
-  template <typename T>
-  struct is_complex_impl<std::complex<T>> : std::true_type {};
-}
+template <typename T>
+struct is_complex_impl : std::false_type {};
+template <typename T>
+struct is_complex_impl<std::complex<T>> : std::true_type {};
+}  // namespace internal
 
 template <typename T>
 struct is_complex : internal::is_complex_impl<std::decay_t<T>> {};
 
 template <typename T>
 using require_floating_point_or_complex
-    = std::enable_if_t<
-      std::is_floating_point<std::decay_t<T>>::value ||
-      is_complex<std::decay_t<T>>::value>;
+    = std::enable_if_t<std::is_floating_point<std::decay_t<T>>::value
+                       || is_complex<std::decay_t<T>>::value>;
 
 template <typename T>
 using require_not_floating_point_or_complex
-    = std::enable_if_t<
-      !std::is_floating_point<std::decay_t<T>>::value &&
-      !is_complex<std::decay_t<T>>::value>;
+    = std::enable_if_t<!std::is_floating_point<std::decay_t<T>>::value
+                       && !is_complex<std::decay_t<T>>::value>;
 
 template <typename T, require_floating_point_or_complex<T>* = nullptr>
-inline auto sin(T x) { return std::sin(x); }
+inline auto sin(T x) {
+  return std::sin(x);
+}
 
 template <typename T, require_not_floating_point<T>* = nullptr>
 inline auto sin(T&& x) {
@@ -45,7 +44,9 @@ inline auto sin(T&& x) {
 }
 
 template <typename T, require_floating_point_or_complex<T>* = nullptr>
-inline auto cos(T x) { return std::cos(x); }
+inline auto cos(T x) {
+  return std::cos(x);
+}
 
 template <typename T, require_not_floating_point<T>* = nullptr>
 inline auto cos(T&& x) {
@@ -53,7 +54,9 @@ inline auto cos(T&& x) {
 }
 
 template <typename T, require_floating_point_or_complex<T>* = nullptr>
-inline auto sqrt(T x) { return std::sqrt(x); }
+inline auto sqrt(T x) {
+  return std::sqrt(x);
+}
 
 template <typename T, require_not_floating_point<T>* = nullptr>
 inline auto sqrt(T&& x) {
@@ -61,7 +64,9 @@ inline auto sqrt(T&& x) {
 }
 
 template <typename T, require_floating_point_or_complex<T>* = nullptr>
-inline auto array(T x) { return x; }
+inline auto array(T x) {
+  return x;
+}
 
 template <typename T, require_not_floating_point<T>* = nullptr>
 inline auto array(T&& x) {
@@ -69,7 +74,9 @@ inline auto array(T&& x) {
 }
 
 template <typename T, require_floating_point_or_complex<T>* = nullptr>
-inline auto matrix(T x) { return x; }
+inline auto matrix(T x) {
+  return x;
+}
 
 template <typename T, require_not_floating_point<T>* = nullptr>
 inline auto matrix(T&& x) {
@@ -77,7 +84,9 @@ inline auto matrix(T&& x) {
 }
 
 template <typename T, require_floating_point_or_complex<T>* = nullptr>
-inline auto eval(T x) { return x; }
+inline auto eval(T x) {
+  return x;
+}
 
 template <typename T, require_not_floating_point_or_complex<T>* = nullptr>
 inline auto eval(T&& x) {
@@ -85,15 +94,29 @@ inline auto eval(T&& x) {
 }
 
 template <typename T, require_floating_point_or_complex<T>* = nullptr>
-inline constexpr T zero_like(T x) { return static_cast<T>(0); }
+inline constexpr T zero_like(T x) {
+  return static_cast<T>(0);
+}
 
 template <typename T, require_not_floating_point<T>* = nullptr>
 inline auto zero_like(const T& x) {
   return std::decay_t<typename T::PlainObject>::Zero(x.rows(), x.cols());
 }
 
+template <typename T1, typename T2, require_floating_point<T1>* = nullptr>
+inline auto pow(T1 x, T2 y) {
+  return std::pow(x, y);
+}
+
+template <typename T1, typename T2, require_not_floating_point<T1>* = nullptr>
+inline auto pow(T1&& x, T2 y) {
+  return x.array().pow(y);
+}
+
 template <typename T, require_floating_point<T>* = nullptr>
-inline auto airy_ai(T x) { return boost::math::airy_ai(x); }
+inline auto airy_ai(T x) {
+  return boost::math::airy_ai(x);
+}
 
 template <typename T, require_not_floating_point<T>* = nullptr>
 inline auto airy_ai(T&& x) {
@@ -104,7 +127,9 @@ inline auto airy_ai(T&& x) {
 }
 
 template <typename T, require_floating_point<T>* = nullptr>
-inline auto airy_bi(T x) { return boost::math::airy_bi(x); }
+inline auto airy_bi(T x) {
+  return boost::math::airy_bi(x);
+}
 
 template <typename T, require_not_floating_point<T>* = nullptr>
 inline auto airy_bi(T&& x) {
@@ -115,7 +140,9 @@ inline auto airy_bi(T&& x) {
 }
 
 template <typename T, require_floating_point<T>* = nullptr>
-inline auto airy_ai_prime(T x) { return boost::math::airy_ai_prime(x); }
+inline auto airy_ai_prime(T x) {
+  return boost::math::airy_ai_prime(x);
+}
 
 template <typename T, require_not_floating_point<T>* = nullptr>
 inline auto airy_ai_prime(T&& x) {
@@ -126,7 +153,9 @@ inline auto airy_ai_prime(T&& x) {
 }
 
 template <typename T, require_floating_point<T>* = nullptr>
-inline auto airy_bi_prime(T x) { return boost::math::airy_bi_prime(x); }
+inline auto airy_bi_prime(T x) {
+  return boost::math::airy_bi_prime(x);
+}
 
 template <typename T, require_not_floating_point<T>* = nullptr>
 inline auto airy_bi_prime(T&& x) {
@@ -137,13 +166,36 @@ inline auto airy_bi_prime(T&& x) {
 }
 
 template <typename T>
+struct value_type_impl {
+  using type = double;
+};
+template<>
+struct value_type_impl<double> {
+  using type = double;
+};
+
+template<typename T, int R, int C>
+struct value_type_impl<Eigen::Matrix<T, R, C>> {
+  using type = T;
+};
+template<typename T, int R, int C>
+struct value_type_impl<Eigen::Array<T, R, C>> {
+  using type = T;
+};
+
+template <typename T>
+using value_type_t = typename value_type_impl<std::decay_t<T>>::type;
+
+template <typename T>
 inline auto airy_i(T&& xi) {
-  return eval(airy_ai(-xi) + std::complex<std::decay_t<T>>(0.0, 1.0) * airy_bi(-xi));
-} 
+  return eval(airy_ai(-xi)
+              + std::complex<value_type_t<T>>(0.0, 1.0) * airy_bi(-xi));
+}
 
 template <typename T>
 inline auto airy_i_prime(T&& xi) {
-  return eval(-airy_ai_prime(-xi) - std::complex<std::decay_t<T>>(0.0, 1.0) * airy_bi_prime(-xi));
+  return eval(-airy_ai_prime(-xi)
+              - std::complex<value_type_t<T>>(0.0, 1.0) * airy_bi_prime(-xi));
 }
 
 }  // namespace test

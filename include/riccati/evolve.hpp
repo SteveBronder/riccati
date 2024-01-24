@@ -11,11 +11,11 @@
 
 namespace riccati {
 
-template <typename SolverInfo, typename Scalar, typename Vec, typename Vec2>
+template <typename SolverInfo, typename Scalar, typename Vec>
 inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                        std::complex<Scalar> yi, std::complex<Scalar> dyi,
                        Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
-                       Vec &&x_eval, Vec2 &&y_true, bool hard_stop = false,
+                       Vec &&x_eval, bool hard_stop = false,
                        bool warn = false) {
   int sign = init_stepsize > 0 ? 1 : -1;
   using complex_t = std::complex<Scalar>;
@@ -77,11 +77,11 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
   }
 }
 
-template <typename SolverInfo, typename Scalar, typename Vec, typename Vec2>
+template <typename SolverInfo, typename Scalar, typename Vec>
 inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                           std::complex<Scalar> yi, std::complex<Scalar> dyi,
                           Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
-                          Vec &&x_eval, Vec2 &&y_true, bool hard_stop = false,
+                          Vec &&x_eval, bool hard_stop = false,
                           bool warn = false) {
   int sign = init_stepsize > 0 ? 1 : -1;
   using complex_t = std::complex<Scalar>;
@@ -195,11 +195,11 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
  * Riccati, 0 for Chebyshev).
  *         - Vector of interpolated values of the solution at x_eval (yeval).
  */
-template <typename SolverInfo, typename Scalar, typename Vec, typename Vec2>
+template <typename SolverInfo, typename Scalar, typename Vec>
 inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                    std::complex<Scalar> yi, std::complex<Scalar> dyi,
                    Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
-                   Vec &&x_eval, Vec2 &&y_true, bool hard_stop = false,
+                   Vec &&x_eval, bool hard_stop = false,
                    bool warn = false) {
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
@@ -218,7 +218,6 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
     if (!x_eval.size()) {
       throw std::domain_error("Dense output requested but x_eval is size 0!");
     }
-    print("x_eval", x_eval);
     // TODO: Better error messages
     auto x_eval_max = (intdir * x_eval.maxCoeff());
     auto x_eval_min = (intdir * x_eval.minCoeff());
@@ -375,44 +374,25 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
             = Eigen::Map<vectord_t>(x_eval.data() + dense_start, dense_size);
         auto y_eval_map
             = Eigen::Map<vectorc_t>(yeval.data() + dense_start, dense_size);
-        auto y_true_map
-            = Eigen::Map<vectorc_t>(y_true.data() + dense_start, dense_size);
         std::cout << "Writing from " << dense_start << " to "
                   << dense_start + dense_size << std::endl;
         if (steptype) {
           // xscaled = xcurrent + h/2 + h/2*info.xn
-          std::cout << "========osc dense: =======" << std::endl;
           auto xscaled = (2.0 / h * (x_eval_map.array() - xcurrent) - 1.0)
                              .matrix()
                              .eval();
           auto Linterp = interpolate(info.xn_, xscaled);
           auto udense = (Linterp * info.un_).eval();
           auto fdense = udense.array().exp().matrix().eval();
-          print("xscaled", xscaled);
-          print("Linterp", Linterp);
-          print("udense", udense);
-          print("fdense", fdense);
           y_eval_map
               = info.a_.first * fdense + info.a_.second * fdense.conjugate();
-          print("y_eval_map", vectorc_t(y_eval_map));
-          vectord_t y_err
-              = ((y_true_map - y_eval_map).array() / y_true_map.array())
-                    .abs()
-                    .matrix();
-          print("y_err", y_err);
         } else {
-          std::cout << "=======nonosc dense: ========" << std::endl;
           auto xscaled
               = (xcurrent + h / 2 + h / 2 * info.chebyshev_[1].second.array())
                     .matrix()
                     .eval();
           auto Linterp = interpolate(xscaled, x_eval_map);
           y_eval_map = Linterp * y_eval;
-          vectord_t y_err
-              = ((y_true_map - y_eval_map).array() / y_true_map.array())
-                    .abs()
-                    .matrix();
-          print("y_err", y_err);
         }
       }
     }

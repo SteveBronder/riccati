@@ -1,8 +1,7 @@
 import numpy as np
 from riccati.chebutils import spectral_cheb
-from riccati.solversetup import Solverinfo
 
-def nonosc_step(info : Solverinfo, x0 : float, h : float, y0 : complex, dy0 : complex, epsres : float=1e-12):
+def nonosc_step(info, x0, h, y0, dy0, epsres = 1e-12):
     """
     A single Chebyshev step to be called from the `solve()` function.
     Advances the solution from `x0` by `h`, starting from the initial
@@ -46,31 +45,42 @@ def nonosc_step(info : Solverinfo, x0 : float, h : float, y0 : complex, dy0 : co
         residual, `0` otherwise.
     """
     success = 1
-    maxerr = 10 * epsres
+    maxerr = 10*epsres
     N = info.nini
     Nmax = info.nmax
     yprev, dyprev, xprev = spectral_cheb(info, x0, h, y0, dy0, 0)
+    print("yprev", yprev)
+    print("dyprev", dyprev)
+    print("xprev", xprev)
+    iter = 0
     while maxerr > epsres:
+        print("Iter: ", iter)
+        iter = iter + 1
         N *= 2
         if N > Nmax:
             success = 0
             return 0, 0, maxerr, success
-        y, dy, x = spectral_cheb(info, x0, h, y0, dy0, int(np.log2(N / info.nini)))
-        maxerr = np.abs((yprev[0] - y[0]) / y[0])
+        cheb_num = int(np.log2(N/info.nini))
+        print("cheb_num", cheb_num)
+        y, dy, x = spectral_cheb(info, x0, h, y0, dy0, cheb_num)
+        print("y", y)
+        print("dy", dy)
+        print("x", x)
+        maxerr = np.abs((yprev[0] - y[0])/y[0])
+        print("maxerr", maxerr)
         if np.isnan(maxerr):
             maxerr = np.inf
         yprev = y
         dyprev = dy
         xprev = x
-    info.increase(chebstep=1)
+    info.increase(chebstep = 1)
     if info.denseout:
         # Store interp points
         info.yn = y
         info.dyn = dy
     return y[0], dy[0], maxerr, success
 
-
-def osc_step(info, x0, h, y0, dy0, epsres=1e-12, plotting=False, k=0):
+def osc_step(info, x0, h, y0, dy0, epsres = 1e-12, plotting = False, k = 0):
     """
     A single Riccati step to be called from within the `solve()` function.
     Advances the solution from `x0` by `h`, starting from the initial conditions
@@ -122,10 +132,10 @@ def osc_step(info, x0, h, y0, dy0, epsres=1e-12, plotting=False, k=0):
     ws = info.wn
     gs = info.gn
     Dn = info.Dn
-    y = 1j * ws
-    delta = lambda r, y: -r / (2 * (y + gs))
-    R = lambda d: 2 / h * (Dn @ d) + d**2
-    Ry = 1j * 2 * (1 / h * (Dn @ ws) + gs * ws)
+    y = 1j*ws
+    delta = lambda r, y: -r/(2*(y + gs))
+    R = lambda d: 2/h*(Dn @ d) + d**2
+    Ry = 1j*2*(1/h*(Dn @ ws) + gs*ws)
     maxerr = max(np.abs(Ry))
     prev_err = np.inf
     if plotting == False:
@@ -139,7 +149,7 @@ def osc_step(info, x0, h, y0, dy0, epsres=1e-12, plotting=False, k=0):
                 break
             prev_err = maxerr
     else:
-        o = 0  # Keep track of number of terms
+        o = 0 # Keep track of number of terms
         while o < k:
             o += 1
             deltay = delta(Ry, y)
@@ -149,18 +159,18 @@ def osc_step(info, x0, h, y0, dy0, epsres=1e-12, plotting=False, k=0):
     du1 = y
     du2 = np.conj(du1)
     if info.denseout:
-        u1 = h / 2 * (info.intmat @ du1)
+        u1 = h/2*(info.intmat @ du1)
     else:
-        u1 = h / 2 * (info.quadwts @ du1)
+        u1 = h/2*(info.quadwts @ du1)
     u2 = np.conj(u1)
     f1 = np.exp(u1)
     f2 = np.conj(f1)
-    ap = (dy0 - y0 * du2[-1]) / (du1[-1] - du2[-1])
-    am = (dy0 - y0 * du1[-1]) / (du2[-1] - du1[-1])
-    y1 = ap * f1 + am * f2
-    dy1 = ap * du1 * f1 + am * du2 * f2
+    ap = (dy0 - y0*du2[-1])/(du1[-1] - du2[-1])
+    am = (dy0 - y0*du1[-1])/(du2[-1] - du1[-1])
+    y1 = ap*f1 + am*f2
+    dy1 = ap*du1*f1 + am*du2*f2
     phase = np.imag(u1)
-    info.increase(riccstep=1)
+    info.increase(riccstep = 1)
     if info.denseout:
         info.un = u1
         info.a = (ap, am)
@@ -169,3 +179,4 @@ def osc_step(info, x0, h, y0, dy0, epsres=1e-12, plotting=False, k=0):
         return maxerr
     else:
         return y1, dy1[0], maxerr, success, phase
+

@@ -4,6 +4,7 @@ project(
     VERSION 1.3.0
     LANGUAGES C CXX)
 
+include(FetchContent)
 set(CMAKE_VERBOSE_MAKEFILE YES)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
@@ -58,26 +59,24 @@ set(CMAKE_CXX_FLAGS_DEBUG
     FORCE)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-include(FetchContent)
+
 # Externally provided libraries
 FetchContent_Declare(googletest
         GIT_REPOSITORY https://github.com/google/googletest.git
         GIT_TAG main)
 
-FetchContent_MakeAvailable(googletest)
 set(BUILD_TESTING OFF)
 set(EIGEN_BUILD_TESTING OFF)
+set(EIGEN_BUILD_DOC OFF)
+set(EIGEN_BUILD_PKGCONFIG OFF)
 FetchContent_Declare(
   Eigen
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
   GIT_TAG 3.4.0)
-set(EIGEN_BUILD_DOC OFF)
 # note: To disable eigen tests,
 # you should put this code in a add_subdirectory to avoid to change
 # BUILD_TESTING for your own project too since variables are directory
 # scoped
-set(EIGEN_BUILD_PKGCONFIG OFF)
-FetchContent_MakeAvailable(Eigen)
 
 # Only needed for testing
 set(Boost_USE_STATIC_LIBS ON)
@@ -93,6 +92,7 @@ if(NOT boost_POPULATED)
   FetchContent_Populate(boost)
   set(boost_INCLUDE_DIR ${boost_SOURCE_DIR})
 endif()
+FetchContent_MakeAvailable(Eigen googletest)
 
 
 if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -161,7 +161,7 @@ function(add_gtest_grouped_test test_directory)
 
     # Add an executable for the individual test
     add_executable(${INDIVIDUAL_TEST_TARGET_NAME} ${TEST_SOURCE})
-    
+
     # Add include directories, link libraries, and register the individual test
     target_include_directories(${INDIVIDUAL_TEST_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests ${CMAKE_CURRENT_SOURCE_DIR}/riccati ${boost_INCLUDE_DIR})
     target_link_libraries(${INDIVIDUAL_TEST_TARGET_NAME} gtest_main riccati Eigen3::Eigen)

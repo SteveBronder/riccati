@@ -1,7 +1,6 @@
 import numpy as np
 
-
-def choose_nonosc_stepsize(info, x0, h, epsh=0.2):
+def choose_nonosc_stepsize(info, x0, h, epsh = 0.2):
     """
     Chooses the stepsize for spectral Chebyshev steps, based on the variation
     of 1/w, the approximate timescale over which the solution changes. If over
@@ -26,15 +25,14 @@ def choose_nonosc_stepsize(info, x0, h, epsh=0.2):
     h: float
         Refined stepsize over which 1/w(x) does not change by more than epsh/w(x).
     """
-    xscaled = x0 + h / 2 + h / 2 * info.xp
+    xscaled = x0 + h/2 + h/2*info.xp
     ws = info.w(xscaled)
-    if max(ws) > (1 + epsh) / abs(h):
-        return choose_nonosc_stepsize(info, x0, h / 2, epsh=epsh)
+    if max(ws) > (1 + epsh)/abs(h):
+        return choose_nonosc_stepsize(info, x0, h/2, epsh = epsh)
     else:
         return h
 
-
-def choose_osc_stepsize(info, x0, h, epsh=1e-12):
+def choose_osc_stepsize(info, x0, h, epsh = 1e-12):
     """
     Chooses the stepsize `h` over which the functions w(x), g(x) can be
     represented sufficiently accurately. Evaluations of w(x) and g(x) at (p+1)
@@ -73,32 +71,28 @@ def choose_osc_stepsize(info, x0, h, epsh=1e-12):
         relative error no larger than epsh.
     """
     w, g, L = info.w, info.g, info.L
-    t = x0 + h / 2 + h / 2 * info.xpinterp
-    s = x0 + h / 2 + h / 2 * info.xp
+    t = x0 + h/2 + h/2*info.xpinterp
+    s = x0 + h/2 + h/2*info.xp
     if info.p == info.n:
         info.wn = w(s)
         info.gn = g(s)
         ws = info.wn
         gs = info.gn
     else:
-        info.wn = w(x0 + h / 2 + h / 2 * info.xn)
-        info.gn = g(x0 + h / 2 + h / 2 * info.xn)
+        info.wn = w(x0 + h/2 + h/2*info.xn)
+        info.gn = g(x0 + h/2 + h/2*info.xn)
         ws = w(s)
         gs = g(s)
     wana = w(t)
     west = L @ ws
     gana = g(t)
     gest = L @ gs
-    maxwerr = max(np.abs((west - wana) / wana))
-    maxgerr = max(np.abs((gest - gana) / gana))
+    maxwerr = max(np.abs((west - wana)/wana))
+    maxgerr = max(np.abs((gest - gana)/gana))
     maxerr = max(maxwerr, maxgerr)
     if maxerr > epsh:
-        return choose_osc_stepsize(
-            info,
-            x0,
-            h * min(0.7, 0.9 * (epsh / maxerr) ** (1 / (info.p - 1))),
-            epsh=epsh,
-        )
+        return choose_osc_stepsize(info, x0, h*min(0.7, 0.9*(epsh/maxerr)**(1/(info.p-1))), epsh = epsh)
     else:
         return h
-    # TODO: what if h is too small to begin with?
+    #TODO: what if h is too small to begin with?
+
