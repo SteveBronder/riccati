@@ -1,4 +1,5 @@
-#include <riccati/evolve.hpp>
+#include <riccati/solver.hpp>
+#include <riccati/stepsize.hpp>
 #include <tests/cpp/utils.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
@@ -7,7 +8,7 @@
 #include <string>
 
 #include <boost/math/special_functions/airy.hpp>
-/*
+
 TEST(riccati, osc_stepsize_dense_output) {
   using namespace riccati::test;
   auto omega_fun = [](auto&& x) { return
@@ -51,4 +52,4 @@ eval(matrix(riccati::test::sqrt(array(x))));}; auto gamma_fun = [](auto&& x) {
 32, 32); auto xi = 1e0; auto epsh = 2e-1; auto hi = 1.0 / omega_fun(xi); hi =
 riccati::choose_nonosc_stepsize(info, xi, hi, epsh); EXPECT_EQ(hi, 0.5);
 }
-*/
+

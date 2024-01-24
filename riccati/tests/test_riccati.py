@@ -1,7 +1,7 @@
 import numpy as np
-from riccati.chebutils import cheb, integrationm, quadwts, coeffs2vals, vals2coeffs, interp
+from riccati.chebutils import cheb, integrationm, quadwts, coeffs2vals, vals2coeffs, interp, spectral_cheb
 from riccati.solversetup import solversetup
-from riccati.evolve import solve, osc_evolve, nonosc_evolve, blah
+from riccati.evolve import solve, osc_evolve, nonosc_evolve
 from riccati.step import osc_step, nonosc_step
 from riccati.stepsize import choose_osc_stepsize, choose_nonosc_stepsize
 import scipy.special as sp
@@ -205,20 +205,47 @@ def test_osc_step():
 
 
 def test_nonosc_step():
-    w = lambda x: np.sqrt(x)
-    g = lambda x: np.zeros_like(x)
-    info = solversetup(w, g)
-    x0 = 1.0
-    h = 0.5
-    eps = 1e-12
-    y0 = sp.airy(-x0)[2]
-    dy0 = -sp.airy(-x0)[3]
-    y, dy, err, success = nonosc_step(info, x0, h, y0, dy0, epsres=eps)
-    y_ana = sp.airy(-x0 - h)[2]
-    dy_ana = -sp.airy(-x0 - h)[3]
-    y_err = np.abs((y - y_ana) / y_ana)
-    dy_err = np.abs((dy - dy_ana) / dy_ana)
-    assert y_err < 1e-8 and dy_err < 1e-8
+w = lambda x: np.sqrt(x)
+g = lambda x: np.zeros_like(x)
+info = solversetup(w, g)
+x0 = 1.0
+h = 0.5
+eps = 1e-12
+y0 = sp.airy(-x0)[2]
+dy0 = -sp.airy(-x0)[3]
+
+success = 1
+maxerr = 10 * eps
+N = info.nini
+Nmax = info.nmax
+yprev, dyprev, xprev = spectral_cheb(info, x0, h, y0, dy0, 0)
+while maxerr > eps:
+    N *= 2
+    if N > Nmax:
+        success = 0
+        return 0, 0, maxerr, success
+    y, dy, x = spectral_cheb(info, x0, h, y0, dy0, int(np.log2(N / info.nini)))
+    maxerr = np.abs((yprev[0] - y[0]) / y[0])
+    if np.isnan(maxerr):
+        maxerr = np.inf
+    yprev = y
+    dyprev = dy
+    xprev = x
+info.increase(chebstep=1)
+if info.denseout:
+    # Store interp points
+    info.yn = y
+    info.dyn = dy
+return y[0], dy[0], maxerr, success
+
+
+y, dy, err, success = nonosc_step(info, x0, h, y0, dy0, epsres=eps)
+y_ana = sp.airy(-x0 - h)[2]
+dy_ana = -sp.airy(-x0 - h)[3]
+y_err = np.abs((y - y_ana) / y_ana)
+dy_err = np.abs((dy - dy_ana) / dy_ana)
+
+assert y_err < 1e-8 and dy_err < 1e-8
 
 
 def test_solve_airy():

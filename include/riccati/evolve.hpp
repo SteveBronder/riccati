@@ -21,9 +21,12 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
   using vectord_t = vector_t<Scalar>;
-  auto xscaled = (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array()).matrix().eval();
-    info.omega_n_ = info.omega_fun_(xscaled);
-    info.gamma_n_ = info.gamma_fun_(xscaled);
+  auto xscaled
+      = (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array())
+            .matrix()
+            .eval();
+  info.omega_n_ = info.omega_fun_(xscaled);
+  info.gamma_n_ = info.gamma_fun_(xscaled);
 
   vectorc_t yeval;
   // TODO: Add this check to regular evolve
@@ -36,19 +39,21 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
   }
   auto osc_ret = osc_step(info, xi, init_stepsize, yi, dyi, eps);
   if (std::get<0>(osc_ret) == 0) {
-    return std::make_tuple(false, xi, init_stepsize, osc_ret,
-                           vectorc_t(0), static_cast<Eigen::Index>(0), static_cast<Eigen::Index>(0));
+    return std::make_tuple(false, xi, init_stepsize, osc_ret, vectorc_t(0),
+                           static_cast<Eigen::Index>(0),
+                           static_cast<Eigen::Index>(0));
   } else {
     Eigen::Index dense_size = 0;
     Eigen::Index dense_start = 0;
     if (info.denseout_) {
       // Assuming x_eval is sorted we just want start and size
-      std::tie(dense_start, dense_size) = get_slice(x_eval, sign * xi, sign * (xi + init_stepsize));
+      std::tie(dense_start, dense_size)
+          = get_slice(x_eval, sign * xi, sign * (xi + init_stepsize));
       if (dense_size != 0) {
         auto x_eval_map = x_eval.segment(dense_start, dense_size);
         auto xscaled = (2.0 / init_stepsize * (x_eval_map.array() - xi) - 1.0)
-                            .matrix()
-                            .eval();
+                           .matrix()
+                           .eval();
         auto Linterp = interpolate(info.xn_, xscaled);
         auto udense = (Linterp * info.un_).eval();
         auto fdense = udense.array().exp().matrix().eval();
@@ -67,23 +72,27 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
       hosc_ini = xf - x_next;
     }
     auto h_next = choose_osc_stepsize(info, x_next, hosc_ini, epsilon_h);
-    return std::make_tuple(true, x_next, h_next, osc_ret, yeval, dense_start, dense_size);
+    return std::make_tuple(true, x_next, h_next, osc_ret, yeval, dense_start,
+                           dense_size);
   }
 }
 
 template <typename SolverInfo, typename Scalar, typename Vec, typename Vec2>
 inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
-                       std::complex<Scalar> yi, std::complex<Scalar> dyi,
-                       Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
-                       Vec &&x_eval, Vec2 &&y_true, bool hard_stop = false,
-                       bool warn = false) {
+                          std::complex<Scalar> yi, std::complex<Scalar> dyi,
+                          Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
+                          Vec &&x_eval, Vec2 &&y_true, bool hard_stop = false,
+                          bool warn = false) {
   int sign = init_stepsize > 0 ? 1 : -1;
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
   using vectord_t = vector_t<Scalar>;
-  auto xscaled = (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array()).matrix().eval();
-    info.omega_n_ = info.omega_fun_(xscaled);
-    info.gamma_n_ = info.gamma_fun_(xscaled);
+  auto xscaled
+      = (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array())
+            .matrix()
+            .eval();
+  info.omega_n_ = info.omega_fun_(xscaled);
+  info.gamma_n_ = info.gamma_fun_(xscaled);
 
   vectorc_t yeval;
   // TODO: Add this check to regular evolve
@@ -96,46 +105,49 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
   }
   auto nonosc_ret = nonosc_step(info, xi, init_stepsize, yi, dyi, eps);
   if (!std::get<0>(nonosc_ret)) {
-    return std::make_tuple(false, xi, init_stepsize, nonosc_ret,
-                           vectorc_t(0), static_cast<Eigen::Index>(0), static_cast<Eigen::Index>(0));
+    return std::make_tuple(false, xi, init_stepsize, nonosc_ret, vectorc_t(0),
+                           static_cast<Eigen::Index>(0),
+                           static_cast<Eigen::Index>(0));
   } else {
     Eigen::Index dense_size = 0;
     Eigen::Index dense_start = 0;
     if (info.denseout_) {
       // Assuming x_eval is sorted we just want start and size
-      std::tie(dense_start, dense_size) = get_slice(x_eval, sign * xi, sign * (xi + init_stepsize));
+      std::tie(dense_start, dense_size)
+          = get_slice(x_eval, sign * xi, sign * (xi + init_stepsize));
       if (dense_size != 0) {
         auto x_eval_map = x_eval.segment(dense_start, dense_size);
-          auto xscaled
-              = (xi + init_stepsize / 2 + init_stepsize / 2 * info.chebyshev_[1].second.array())
-                    .matrix()
-                    .eval();
-      auto Linterp = interpolate(xscaled, x_eval_map);
+        auto xscaled = (xi + init_stepsize / 2
+                        + init_stepsize / 2 * info.chebyshev_[1].second.array())
+                           .matrix()
+                           .eval();
+        auto Linterp = interpolate(xscaled, x_eval_map);
         yeval = Linterp * std::get<4>(nonosc_ret);
       }
     }
     auto x_next = xi + init_stepsize;
     auto wnext = info.omega_fun_(xi + init_stepsize);
     auto gnext = info.gamma_fun_(xi + init_stepsize);
-    auto gam_eval
-        = info.omega_fun_(
-                  (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array()).matrix())
-              .eval();
+    auto gam_eval = info.omega_fun_((xi + init_stepsize / 2.0
+                                     + init_stepsize / 2.0 * info.xn_.array())
+                                        .matrix())
+                        .eval();
     auto test2 = info.Dn_.row(0).dot(gam_eval);
     auto dwnext = 2.0 / init_stepsize * test2;
     auto dgnext = 2.0 / init_stepsize
-              * info.Dn_.row(0).dot(info.gamma_fun_(
-                  (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array()).matrix()));
+                  * info.Dn_.row(0).dot(
+                      info.gamma_fun_((xi + init_stepsize / 2.0
+                                       + init_stepsize / 2.0 * info.xn_.array())
+                                          .matrix()));
     auto hslo_ini = sign * std::min(1e8, std::abs(1.0 / wnext));
     if (sign * (x_next + hslo_ini) > sign * xf) {
       hslo_ini = xf - x_next;
     }
     auto h_next = choose_nonosc_stepsize(info, x_next, hslo_ini, epsilon_h);
-    return std::make_tuple(true, x_next, h_next, nonosc_ret, yeval, dense_start, dense_size);
+    return std::make_tuple(true, x_next, h_next, nonosc_ret, yeval, dense_start,
+                           dense_size);
   }
 }
-
-
 
 /**
  * @brief Solves the differential equation y'' + 2gy' + w^2y = 0 over a given

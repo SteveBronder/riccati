@@ -99,7 +99,6 @@ auto get_slice(T&& x_eval, Scalar start, Scalar end) {
   return std::make_pair(dense_start, dense_size);
 }
 
-
 template <typename T, int R, int C>
 inline void print(const char* name, const Eigen::Matrix<T, R, C>& x) {
 #ifdef RICCATI_DEBUG
@@ -132,7 +131,8 @@ template <
                      || std::is_integral<std::decay_t<T>>::value>* = nullptr>
 inline void print(const char* name, const std::complex<T>& x) {
 #ifdef RICCATI_DEBUG
-  std::cout << name << ": (" << std::setprecision(16) << x.real() << ", " << x.imag() << ")" << std::endl;
+  std::cout << name << ": (" << std::setprecision(16) << x.real() << ", "
+            << x.imag() << ")" << std::endl;
 #endif
 }
 

@@ -188,17 +188,17 @@ inline auto interpolate(Vec1&& s, Vec2&& t) {
   return L;
 }
 
-template <typename SolverInfo, typename Scalar, typename Integral>
+template <typename SolverInfo, typename Scalar, typename YScalar, typename Integral>
 inline auto spectral_chebyshev(SolverInfo&& info, Scalar x0, Scalar h,
-                               std::complex<Scalar> y0,
-                               std::complex<Scalar> dy0, Integral niter) {
+                               YScalar y0,
+                               YScalar dy0, Integral niter) {
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
   auto x_scaled = riccati::scale(info.chebyshev_[niter].second, x0, h).eval();
   auto&& D = info.chebyshev_[niter].first;
   auto ws = info.omega_fun_(x_scaled);
   auto gs = info.gamma_fun_(x_scaled);
-  auto w2 = (ws.array() * ws.array()).matrix();
+  auto w2 = (ws.array().square()).matrix();
   auto D2 = (4.0 / (h * h) * (D * D) + 4.0 / h * (gs.asDiagonal() * D)).eval();
   D2 += w2.asDiagonal();
   const auto n = std::round(info.ns_[niter]);
@@ -212,7 +212,10 @@ inline auto spectral_chebyshev(SolverInfo&& info, Scalar x0, Scalar h,
   rhs.coeffRef(n + 1) = dy0;
   rhs.coeffRef(n + 2) = y0;
   vectorc_t y1 = D2ic.colPivHouseholderQr().solve(rhs);
+  print("D", D);
+  print("y1", y1);
   auto dy1 = (2.0 / h * (D * y1)).eval();
+  print("dy1", dy1);
   return std::make_tuple(std::move(y1), std::move(dy1), std::move(x_scaled));
 }
 

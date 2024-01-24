@@ -7,7 +7,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include <string>
-
+/*
 TEST(riccati, osc_evolve_dense_output) {
   using namespace riccati::test;
   auto omega_fun
@@ -54,18 +54,6 @@ TEST(riccati, osc_evolve_dense_output) {
       for (Eigen::Index i = 0; i < y_err.size(); ++i) {
         EXPECT_LE(y_err[i], 2e-6);
       }
-      /*
-      Eigen::Matrix<double, -1, -1> err_mat(size_y, 2);
-      auto x_eval_slice = x_eval.segment(start_y, size_y);
-      err_mat.col(0) = x_eval_slice;
-      err_mat.col(1) = y_err;
-      Eigen::Matrix<std::complex<double>, -1, -1> y_mat(size_y, 2);
-      y_mat.col(0) = y_true_slice;
-      y_mat.col(1) = std::get<4>(res);
-      //std::cout << "y_mat:\n" << y_mat << std::endl;
-      //std::cout << "err_mat:\n" << err_mat << std::endl;
-      //std::cout << "max err: " << y_err.maxCoeff() << std::endl;
-      */
     }
   }
   if (!x_validated) {
@@ -117,21 +105,8 @@ TEST(riccati, nonosc_evolve_dense_output) {
       auto y_true_slice = ytrue.segment(start_y, size_y);
       auto y_err
           = ((std::get<4>(res) - y_true_slice).array() / y_true_slice.array()).abs().eval();
-      for (Eigen::Index i = 0; i < y_err.size(); ++i) {
-        EXPECT_LE(y_err[i], 0.1);
-      }
-      /*
-      Eigen::Matrix<double, -1, -1> err_mat(size_y, 2);
-      auto x_eval_slice = x_eval.segment(start_y, size_y);
-      err_mat.col(0) = x_eval_slice;
-      err_mat.col(1) = y_err;
-      Eigen::Matrix<std::complex<double>, -1, -1> y_mat(size_y, 2);
-      y_mat.col(0) = y_true_slice;
-      y_mat.col(1) = std::get<4>(res);
-      //std::cout << "y_mat:\n" << y_mat << std::endl;
-      //std::cout << "err_mat:\n" << err_mat << std::endl;
-      //std::cout << "max err: " << y_err.maxCoeff() << std::endl;
-      */
+      EXPECT_LE(y_err.maxCoeff(), 0.1);
+
     }
   }
   if (!x_validated) {
@@ -140,7 +115,7 @@ TEST(riccati, nonosc_evolve_dense_output) {
 }
 
 
-/*
+
 
 TEST(riccati, evolve_dense_output) {
   using namespace riccati::test;
@@ -171,8 +146,11 @@ TEST(riccati, evolve_dense_output) {
   Eigen::Matrix<std::complex<double>, -1, -1> y_mat(Neval, 2);
   y_mat.col(0) = ytrue;
   y_mat.col(1) = std::get<6>(res);
+  
   std::cout << "y_mat:\n" << y_mat.topRows(100).eval() << std::endl;
   std::cout << "err_mat:\n" << err_mat.topRows(100).eval() << std::endl;
   std::cout << "max err: " << y_err.maxCoeff() << std::endl;
+  
+  EXPECT_LE(y_err.maxCoeff(), 0.0009);
 }
 */

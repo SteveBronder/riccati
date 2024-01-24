@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string>
 
-/*
+
 TEST(riccati, solver_make_solver_nondense) {
   auto omega_f = [](auto& x) {
     return riccati::test::sqrt(x);
@@ -29,4 +29,4 @@ TEST(riccati, solver_make_solver_dense) {
 32, 32);
 
 }
-*/
+

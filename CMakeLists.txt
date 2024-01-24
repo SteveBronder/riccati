@@ -150,12 +150,23 @@ function(add_gtest_grouped_test test_directory)
   if(TEST_SOURCES)
   # Add an executable for the grouped tests
   add_executable(${TEST_TARGET_NAME} ${TEST_SOURCES})
-
   # Add include directories, link libraries, and register tests as before
   target_include_directories(${TEST_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/riccati ${boost_INCLUDE_DIR})
   target_link_libraries(${TEST_TARGET_NAME} gtest_main riccati Eigen3::Eigen)
   add_test(NAME ${TEST_TARGET_NAME} COMMAND ${TEST_TARGET_NAME})
   endif()
+  foreach(TEST_SOURCE ${TEST_SOURCES})
+    get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE) # Extract the filename without extension
+    set(INDIVIDUAL_TEST_TARGET_NAME ${TEST_NAME}) # Create a unique target name
+
+    # Add an executable for the individual test
+    add_executable(${INDIVIDUAL_TEST_TARGET_NAME} ${TEST_SOURCE})
+    
+    # Add include directories, link libraries, and register the individual test
+    target_include_directories(${INDIVIDUAL_TEST_TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests ${CMAKE_CURRENT_SOURCE_DIR}/riccati ${boost_INCLUDE_DIR})
+    target_link_libraries(${INDIVIDUAL_TEST_TARGET_NAME} gtest_main riccati Eigen3::Eigen)
+    add_test(NAME ${INDIVIDUAL_TEST_TARGET_NAME} COMMAND ${INDIVIDUAL_TEST_TARGET_NAME})
+  endforeach()
 endfunction()
 
 enable_testing()

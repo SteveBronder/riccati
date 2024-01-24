@@ -9,9 +9,9 @@
 
 namespace riccati {
 
-template <typename SolverInfo, typename Scalar>
+template <typename SolverInfo, typename Scalar, typename YScalar>
 inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
-                        std::complex<Scalar> y0, std::complex<Scalar> dy0,
+                        YScalar y0, YScalar dy0,
                         Scalar epsres = Scalar(1e-12)) {
   using complex_t = std::complex<Scalar>;
 
@@ -20,14 +20,17 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
   auto Nmax = info.nmax_;
 
   auto cheby = spectral_chebyshev(info, x0, h, y0, dy0, 0);
-  auto &&yprev = std::get<0>(cheby);
-  auto &&dyprev = std::get<1>(cheby);
-  auto &&xprev = std::get<2>(cheby);
+  auto yprev = std::get<0>(cheby);
+  auto dyprev = std::get<1>(cheby);
+  auto xprev = std::get<2>(cheby);
+  print("yprev", yprev);
+  print("dyprev", dyprev);
+  print("xprev", xprev);
   while (maxerr > epsres) {
     N *= 2;
     if (N > Nmax) {
-      return std::make_tuple(false, complex_t(0.0, 0.0), complex_t(0.0, 0.0), maxerr,
-                             yprev, dyprev);
+      return std::make_tuple(false, complex_t(0.0, 0.0), complex_t(0.0, 0.0),
+                             maxerr, yprev, dyprev);
     }
     cheby = spectral_chebyshev(info, x0, h, y0, dy0,
                                static_cast<int>(std::log2(N / info.nini_)));
@@ -43,7 +46,8 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
     dyprev = dy;
     xprev = x;
   }
-  return std::make_tuple(true, yprev(0, 0), dyprev(0, 0), maxerr, yprev, dyprev);
+  return std::make_tuple(true, yprev(0, 0), dyprev(0, 0), maxerr, yprev,
+                         dyprev);
 }
 
 template <typename SolverInfo, typename Scalar>
@@ -92,8 +96,7 @@ inline auto osc_step(SolverInfo &&info, Scalar x0, Scalar h,
     auto du2 = du1.conjugate().eval();
     auto ap_top = (dy0 - y0 * du2(du2.size() - 1));
     auto ap_bottom = (du1(du1.size() - 1) - du2(du2.size() - 1));
-    auto ap = ap_top
-               / ap_bottom;
+    auto ap = ap_top / ap_bottom;
     auto am = (dy0 - y0 * du1(du1.size() - 1))
               / (du2(du2.size() - 1) - du1(du1.size() - 1));
     auto y1 = (ap * f1 + am * f2).eval();
@@ -108,8 +111,7 @@ inline auto osc_step(SolverInfo &&info, Scalar x0, Scalar h,
     auto du2 = du1.conjugate().eval();
     auto ap_top = (dy0 - y0 * du2(du2.size() - 1));
     auto ap_bottom = (du1(du1.size() - 1) - du2(du2.size() - 1));
-    auto ap = ap_top
-               / ap_bottom;
+    auto ap = ap_top / ap_bottom;
     auto am = (dy0 - y0 * du1(du1.size() - 1))
               / (du2(du2.size() - 1) - du1(du1.size() - 1));
     auto y1 = (ap * f1 + am * f2);

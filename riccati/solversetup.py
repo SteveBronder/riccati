@@ -123,24 +123,24 @@ class Solverinfo:
 
         self.h = self.h0
         self.y : np.ndarray[complex] = np.zeros(2, dtype=complex)
-        self.wn, self.gn : (np.ndarray[complex], np.ndarray[complex])  = np.zeros(n + 1), np.zeros(n + 1)
+        self.wn, self.gn   = np.zeros(n + 1), np.zeros(n + 1)
         Dlength = int(np.log2(self.nmax / self.nini)) + 1
-        self.Ds, self.nodes : (list[np.ndarray[float]], list[np.ndarray[float]]) = [], []
+        self.Ds, self.nodes  = [], []
         lognini = np.log2(self.nini)
         self.ns : np.ndarray[int] = np.logspace(
             lognini, lognini + Dlength - 1, num=Dlength, base=2.0
         )  # , dtype=int)
 
         for i in range(Dlength):
-            D, x : (np.ndarray[float], np.ndarray[float])= cheb(self.nini * 2**i)
+            D, x = cheb(self.nini * 2**i)
             self.increase(chebnodes=1)
             self.Ds.append(D)
             self.nodes.append(x)
         if self.n in self.ns:
             i = np.where(self.ns == self.n)[0][0]
-            self.Dn, self.xn : (np.ndarray[float], np.ndarray[float]) = self.Ds[i], self.nodes[i]
+            self.Dn, self.xn  = self.Ds[i], self.nodes[i]
         else:
-            self.Dn, self.xn : (np.ndarray[float], np.ndarray[float]) = cheb(self.n)
+            self.Dn, self.xn = cheb(self.n)
             self.increase(chebnodes=1)
         if self.p in self.ns:
             i = np.where(self.ns == self.p)[0][0]

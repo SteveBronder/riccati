@@ -276,7 +276,7 @@ def spectral_cheb(info, x0, h, y0, dy0, niter):
         collocation method scaled to lie between [x0, x0+h].
 
     """
-    D, x = info.diff_matrices_[niter], info.nodes[niter]
+    D, x = info.Dn[niter], info.nodes[niter]
     xscaled = h / 2 * x + x0 + h / 2
     ws = info.w(xscaled)
     gs = info.g(xscaled)
