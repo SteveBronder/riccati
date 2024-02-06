@@ -164,20 +164,13 @@ TEST(riccati, spectral_chebyshev_test) {
   auto gamma_fun = [](auto&& x) { return zero_like(x); };
   auto info = riccati::make_solver<true, double>(omega_fun, gamma_fun, 16, 32,
                                                  32, 32);
-  auto xi = 1e0;
-  Eigen::Index Neval = 1e3;
+  constexpr auto xi = 1.0;
   const auto h = 0.4880213350286135;
   const auto y0 = std::complex<double>(0.5355608832923522, 0.10399738949694468);
   const auto dy0
       = std::complex<double>(0.010160567116645175, -0.5923756264227923);
-  const auto niter = 0;
+  constexpr auto niter = 0;
   auto ret = riccati::spectral_chebyshev(info, xi, h, y0, dy0, niter);
-  const auto xi_h = xi + h;
-  auto yi = airy_ai(-xi_h) + std::complex<double>(0, 1) * airy_bi(-xi_h);
-  auto dyi = -airy_ai_prime(-xi_h)
-             - std::complex<double>(0, 1) * airy_bi_prime(-xi_h);
-  const auto y0_err = ((std::get<0>(ret).array() - yi) / yi).abs();
-  const auto dy0_err = ((std::get<1>(ret).array() - dyi) / dyi).abs();
   auto&& spec_y1 = riccati::test::output::spectral_cheby_y1;
   auto&& spec_dy1 = riccati::test::output::spectral_cheby_dy1;
   for (Eigen::Index i = 0; i < spec_y1.size(); ++i) {

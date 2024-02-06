@@ -24,6 +24,7 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
       = (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array())
             .matrix()
             .eval();
+  // Frequency and friction functions evaluated at n+1 Chebyshev nodes
   auto omega_n = info.omega_fun_(xscaled).eval();
   auto gamma_n = info.gamma_fun_(xscaled).eval();
   vectorc_t yeval;

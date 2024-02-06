@@ -39,9 +39,9 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
   auto N = info.nini_;
   auto Nmax = info.nmax_;
   auto cheby = spectral_chebyshev(info, x0, h, y0, dy0, 0);
-  auto yprev = std::get<0>(cheby);
-  auto dyprev = std::get<1>(cheby);
-  auto xprev = std::get<2>(cheby);
+  auto&& yprev = std::get<0>(cheby);
+  auto&& dyprev = std::get<1>(cheby);
+  auto&& xprev = std::get<2>(cheby);
   int iter = 0;
   while (maxerr > epsres) {
     iter++;
@@ -53,16 +53,16 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
     auto cheb_num = static_cast<int>(std::log2(N / info.nini_));
     auto cheby2 = spectral_chebyshev(info, x0, h, y0, dy0,
                                cheb_num);
-    auto &&y = std::get<0>(cheby2);
-    auto &&dy = std::get<1>(cheby2);
-    auto &&x = std::get<2>(cheby2);
+    auto &&y = std::get<0>(std::move(cheby2));
+    auto &&dy = std::get<1>(std::move(cheby2));
+    auto &&x = std::get<2>(std::move(cheby2));
     maxerr = std::abs((yprev(0) - y(0)) / y(0));
     if (std::isnan(maxerr)) {
       maxerr = std::numeric_limits<Scalar>::infinity();
     }
-    yprev = y;
-    dyprev = dy;
-    xprev = x;
+    yprev = std::move(y);
+    dyprev = std::move(dy);
+    xprev = std::move(x);
   }
   return std::make_tuple(true, yprev(0), dyprev(0), maxerr, yprev,
                          dyprev);

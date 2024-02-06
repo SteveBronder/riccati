@@ -84,7 +84,6 @@ TEST(riccati, nonosc_evolve_dense_output) {
   auto hi = 1.0 / omega_fun(xi);
   hi = choose_nonosc_stepsize(info, xi, hi, epsh);
   bool x_validated = false;
-  int iterator = 0;
   while (xi < xf) {
     auto res
         = riccati::nonosc_evolve(info, xi, xf, yi, dyi, eps, epsh, hi, x_eval);

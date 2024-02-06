@@ -40,11 +40,9 @@ TEST(riccati, nonosc_step_test) {
                                                  32, 32);
   auto xi = 1e0;
   auto h = 0.5;
-  auto xf = 1e6;
-  auto eps = 1e-12;
-  auto epsh = 1e-13;
   auto yi = airy_bi(-xi);
   auto dyi = -airy_bi_prime(-xi);
+  auto eps = 1e-12;
   auto res = riccati::nonosc_step(info, xi, h, yi, dyi, eps);
   auto y_ana = airy_bi(-xi - h);
   auto dy_ana = -airy_bi_prime(-xi - h);
