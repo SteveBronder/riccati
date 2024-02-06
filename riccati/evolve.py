@@ -275,7 +275,10 @@ def solve(info, xi, xf, yi, dyi, eps = 1e-12, epsh = 1e-12, xeval = np.array([])
     xcurrent = xi
     wnext = wi
     dwnext = dwi
+    iter = 0
     while abs(xcurrent - xf) > 1e-8 and intdir*xcurrent < intdir*xf:
+        print("iter: ", iter)
+        iter += 1
         # Check how oscillatory the solution is
         #ty = np.abs(1/wnext)
         #tw = np.abs(wnext/dwnext)
@@ -320,6 +323,10 @@ def solve(info, xi, xf, yi, dyi, eps = 1e-12, epsh = 1e-12, xeval = np.array([])
         if info.denseout:
             positions = np.logical_or(np.logical_and(intdir*xeval >= intdir*xcurrent, intdir*xeval < intdir*(xcurrent+h)), np.logical_and(xeval == xf, xeval == xcurrent + h))
             xdense = xeval[positions]
+            print("xcurrent", xcurrent)
+            print("int dir * xcurrent", intdir*xcurrent)
+            print("xcurrent + h", xcurrent + h)
+            print("int dir * (xcurrent + h)", intdir*(xcurrent + h))
             if steptype == 1:
                 #xscaled = xcurrent + h/2 + h/2*info.xn
                 xscaled = 2/h*(xdense - xcurrent) - 1

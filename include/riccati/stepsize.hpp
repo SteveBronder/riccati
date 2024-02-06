@@ -7,7 +7,7 @@ namespace riccati {
 /**
  * Chooses the stepsize for spectral Chebyshev steps, based on the variation
  * of 1/w, the approximate timescale over which the solution changes. If over
- *  the suggested interval h 1/w changes by a fraction of :math:`\pm``epsilon_h`
+ *  the suggested interval h 1/w changes by a fraction of $\pm epsilon_h$
  * or more, the interval is halved, otherwise it's accepted.
  *
  *  @tparam SolverInfo A riccati solver like object
@@ -35,30 +35,29 @@ inline FloatingPoint choose_nonosc_stepsize(SolverInfo&& info, FloatingPoint x0,
   }
 }
 
-// TODO: Better Names
-// TODO: What if h is too small to start with? Recurse forever?
+/**
+ * @brief Chooses an appropriate step size for the Riccati step based on the accuracy of Chebyshev interpolation of w(x) and g(x).
+ *
+ * This function determines an optimal step size `h` over which the functions `w(x)` and `g(x)` can be represented with sufficient accuracy by evaluating their values at `p+1` Chebyshev nodes.
+ * It performs interpolation to `p` points halfway between these nodes and compares the interpolated values with the actual values of `w(x)` and `g(x)`. If the largest relative error in `w` or `g` exceeds the tolerance `epsh`,
+ * the step size `h` is reduced. This process ensures that the Chebyshev interpolation of `w(x)` and `g(x)` over the step [`x0`, `x0+h`] has a relative error no larger than `epsh`.
+ *
+ * @param info SolverInfo object - Object containing pre-computed information and methods for evaluating functions `w(x)` and `g(x)`, as well as interpolation matrices and node positions.
+ * @param x0 float - The current value of the independent variable.
+ * @param h float - The initial estimate of the step size.
+ * @param epsh float - Tolerance parameter defining the maximum relative error allowed in the Chebyshev interpolation of `w(x)` and `g(x)` over the proposed step.
+ * @return float - The refined step size over which the Chebyshev interpolation of `w(x)` and `g(x)` satisfies the relative error tolerance `epsh`.
+ */
 template <typename SolverInfo, typename FloatingPoint>
-inline FloatingPoint choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
+inline auto choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
                                          FloatingPoint h,
                                          FloatingPoint epsilon_h) {
   auto t = riccati::scale(info.xp_interp_, x0, h).eval();
   auto s = riccati::scale(info.xp_, x0, h).eval();
   // TODO: Use a memory arena for these
   using vectord_t = vector_t<FloatingPoint>;
-  vectord_t ws(s.size());
-  vectord_t gs(s.size());
-  if (info.p_ == info.n_) {
-    info.omega_n_ = info.omega_fun_(s);
-    info.gamma_n_ = info.gamma_fun_(s);
-    ws = info.omega_n_;
-    gs = info.gamma_n_;
-  } else {
-    vectord_t xn_scaled = riccati::scale(info.xn_, x0, h);
-    info.omega_n_ = info.omega_fun_(xn_scaled);
-    info.gamma_n_ = info.gamma_fun_(xn_scaled);
-    ws = info.omega_fun_(s);
-    gs = info.gamma_fun_(s);
-  }
+  vectord_t ws = info.omega_fun_(s);
+  vectord_t gs = info.gamma_fun_(s);
   vectord_t omega_analytic = info.omega_fun_(t);
   auto omega_estimate = info.L_ * ws;
   vectord_t gamma_analytic = info.gamma_fun_(t);
@@ -72,12 +71,22 @@ inline FloatingPoint choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
              .abs())
             .maxCoeff();
   FloatingPoint max_err = std::max(max_omega_err, max_gamma_err);
-  if (max_err > epsilon_h) {
+  if (max_err <= epsilon_h) {
+    if (info.p_ != info.n_) {
+      vectord_t xn_scaled = riccati::scale(info.xn_, x0, h);
+      info.omega_n_ = info.omega_fun_(xn_scaled);
+      info.gamma_n_ = info.gamma_fun_(xn_scaled);
+      ws = info.omega_n_;
+      gs = info.gamma_n_;
+    } else {
+      info.omega_n_ = ws;
+      info.gamma_n_ = gs;
+    }
+    return std::make_tuple(h, ws, gs);
+  } else {
     auto h_scaling = std::min(
         0.7, 0.9 * std::pow(epsilon_h / max_err, (1.0 / (info.p_ - 1.0))));
     return choose_osc_stepsize(info, x0, h * h_scaling, epsilon_h);
-  } else {
-    return h;
   }
 }
 

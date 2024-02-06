@@ -19,7 +19,7 @@ TEST(riccati, osc_stepsize_dense_output) {
   auto xi = 1e2;
   auto epsh = 1e-13;
   auto hi = 2.0 * xi;
-  hi = riccati::choose_osc_stepsize(info, xi, hi, epsh);
+  hi = std::get<0>(riccati::choose_osc_stepsize(info, xi, hi, epsh));
   EXPECT_EQ(hi, 200.0);
 }
 
@@ -33,7 +33,7 @@ TEST(riccati, osc_stepsize_nondense_output) {
   auto xi = 1e2;
   auto epsh = 1e-13;
   auto hi = 2.0 * xi;
-  hi = riccati::choose_osc_stepsize(info, xi, hi, epsh);
+  hi = std::get<0>(riccati::choose_osc_stepsize(info, xi, hi, epsh));
   EXPECT_EQ(hi, 200.0);
 }
 

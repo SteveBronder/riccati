@@ -26,7 +26,7 @@ TEST(riccati, osc_evolve_dense_output) {
       = riccati::vector_t<double>::LinSpaced(Neval, xi, xf);
   auto ytrue = airy_i(x_eval.array()).matrix().eval();
   auto hi = 2.0 * xi;
-  hi = choose_osc_stepsize(info, xi, hi, epsh);
+  hi = std::get<0>(choose_osc_stepsize(info, xi, hi, epsh));
   bool x_validated = false;
   while (xi < xf) {
     auto res
@@ -86,8 +86,8 @@ TEST(riccati, nonosc_evolve_dense_output) {
   bool x_validated = false;
   int iterator = 0;
   while (xi < xf) {
-    auto res = riccati::nonosc_evolve(info, xi, xf, yi, dyi, eps, epsh, hi,
-                                      x_eval);
+    auto res
+        = riccati::nonosc_evolve(info, xi, xf, yi, dyi, eps, epsh, hi, x_eval);
     if (!std::get<0>(res)) {
       break;
     } else {
@@ -119,27 +119,28 @@ TEST(riccati, nonosc_evolve_dense_output) {
 TEST(riccati, evolve_dense_output_burst) {
   using namespace riccati::test;
   constexpr int m = 1e6;
-  auto omega_fun
-      = [m](auto&& x) { return
-      eval(matrix(
-        riccati::test::sqrt(static_cast<double>(std::pow(m, 2)) - 1.0) / (1 + riccati::test::pow(array(x), 2.0))
-        ));
-      };
+  auto omega_fun = [m](auto&& x) {
+    return eval(
+        matrix(riccati::test::sqrt(static_cast<double>(std::pow(m, 2)) - 1.0)
+               / (1 + riccati::test::pow(array(x), 2.0))));
+  };
   auto gamma_fun = [](auto&& x) { return zero_like(x); };
   auto info = riccati::make_solver<true, double>(omega_fun, gamma_fun, 16, 32,
                                                  32, 32);
   constexpr double xi = -m;
   constexpr double xf = m;
   auto burst_y = [m = static_cast<double>(m)](auto&& x) {
-    return (std::sqrt(1 + x * x) / m * (std::cos(m * std::atan(x))) +
-      std::complex<double>(0.0, 1.0) * std::sin(m * std::atan(x)));
+    return std::sqrt(1 + x * x) / m
+           * (std::cos(m * std::atan(x))
+              + std::complex<double>(0.0, 1.0) * std::sin(m * std::atan(x)));
   };
   auto yi = burst_y(xi);
   auto burst_dy = [mm = static_cast<double>(m)](auto&& x) {
-    return (1.0 / std::sqrt(1.0 + x * x) / mm * (
-      (x + std::complex<double>(0.0, 1.0) * mm) * std::cos(mm * std::atan(x))
-      + (-mm + std::complex<double>(0.0, 1.0) * x) * std::sin(mm * std::atan(x))
-      ));
+    return (1.0 / std::sqrt(1.0 + x * x) / mm
+            * ((x + std::complex<double>(0.0, 1.0) * mm)
+                   * std::cos(mm * std::atan(x))
+               + (-mm + std::complex<double>(0.0, 1.0) * x)
+                     * std::sin(mm * std::atan(x))));
   };
   auto dyi = burst_dy(xi);
   auto eps = 1e-12;
@@ -147,22 +148,14 @@ TEST(riccati, evolve_dense_output_burst) {
   Eigen::Index Neval = 1e3;
   riccati::vector_t<double> x_eval
       = riccati::vector_t<double>::LinSpaced(Neval, xi, xf);
-  auto ytrue = x_eval.unaryExpr(burst_y).eval();
-  auto res
-      = riccati::evolve(info, xi, xf, yi, dyi, eps, epsh, 0.1, x_eval);
+  auto res = riccati::evolve(info, xi, xf, yi, dyi, eps, epsh, 0.1, x_eval);
+  auto x_steps = Eigen::Map<Eigen::VectorXd>(std::get<0>(res).data(), std::get<0>(res).size());
+  auto ytrue = x_steps.unaryExpr(burst_y).eval();
+  auto y_steps = Eigen::Map<Eigen::Matrix<std::complex<double>, -1, 1>>(std::get<1>(res).data(), std::get<1>(res).size());
   auto y_err
-      = ((std::get<6>(res) - ytrue).array() / ytrue.array()).abs().eval();
-  Eigen::Matrix<double, -1, -1> err_mat(Neval, 2);
-  err_mat.col(0) = x_eval;
-  err_mat.col(1) = y_err;
-  Eigen::Matrix<std::complex<double>, -1, -1> y_mat(Neval, 2);
-  y_mat.col(0) = ytrue;
-  y_mat.col(1) = std::get<6>(res);
-  std::cout << "y_mat:\n" << y_mat.topRows(100).eval() << std::endl;
-  std::cout << "err_mat:\n" << err_mat.topRows(100).eval() << std::endl;
-  std::cout << "max err: " << y_err.maxCoeff() << std::endl;
-  EXPECT_LE(y_err.maxCoeff(), 0.0009);
-
+      = (((ytrue - y_steps).array()).abs() / (ytrue.array()).abs()).eval();
+  // FRUSZINA: Doing dense evals here gives a max error of 0.0001 or so :(
+  EXPECT_LE(y_err.maxCoeff(), 5e-9);
 }
 TEST(riccati, evolve_dense_output_airy) {
   using namespace riccati::test;
@@ -181,18 +174,8 @@ TEST(riccati, evolve_dense_output_airy) {
   riccati::vector_t<double> x_eval
       = riccati::vector_t<double>::LinSpaced(Neval, xi, 1e2);
   auto ytrue = airy_i(x_eval.array()).matrix().eval();
-  auto res
-      = riccati::evolve(info, xi, xf, yi, dyi, eps, epsh, 0.1, x_eval);
+  auto res = riccati::evolve(info, xi, xf, yi, dyi, eps, epsh, 0.1, x_eval);
   auto y_err
       = ((std::get<6>(res) - ytrue).array() / ytrue.array()).abs().eval();
-  Eigen::Matrix<double, -1, -1> err_mat(Neval, 2);
-  err_mat.col(0) = x_eval;
-  err_mat.col(1) = y_err;
-  Eigen::Matrix<std::complex<double>, -1, -1> y_mat(Neval, 2);
-  y_mat.col(0) = ytrue;
-  y_mat.col(1) = std::get<6>(res);
-  std::cout << "y_mat:\n" << y_mat.topRows(100).eval() << std::endl;
-  std::cout << "err_mat:\n" << err_mat.topRows(100).eval() << std::endl;
-  std::cout << "max err: " << y_err.maxCoeff() << std::endl;
   EXPECT_LE(y_err.maxCoeff(), 9e-4);
 }

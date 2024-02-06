@@ -27,7 +27,7 @@ inline Eigen::VectorXd logspace(double start, double end, int num,
 }  // namespace internal
 // OmegaFun / GammaFun take in a scalar and return a complex<Scalar>
 template <typename OmegaFun, typename GammaFun, typename Scalar_,
-          typename Integral_>
+          typename Integral_, bool DenseOutput = false>
 class SolverInfo {
  public:
   using Scalar = Scalar_;
@@ -110,27 +110,9 @@ class SolverInfo {
   Integral n_;
   // (Number of Chebyshev nodes - 1) to use for estimating Riccati stepsizes.
   Integral p_;
-  // Counters for various operations
-  Integral n_chebnodes_{0};
-  // Number of Chebyshev steps attempted.
-  Integral n_chebstep_{0};
-  /**
-   * Number of times an iteration of the Chebyshev-grid-based
-   * collocation method has been performed (note that if `nmax` >=
-   * 4`nini` then a single Chebyshev step may include multiple
-   * iterations!).
-   */
-  Integral n_chebits_{0};
-  // Number of times a linear system has been solved.
-  Integral n_LS_{0};
-  /**
-   * Number of times an iteration of the Chebyshev-grid-based
-   * collocation method has been performed (note that if `nmax` >=
-   * 4`nini` then a single Chebyshev step may include multiple iterations!).
-   */
-  Integral n_riccstep_{0};
-  bool denseout_{false};  // Dense output flag
 
+  static constexpr bool denseout_{DenseOutput};  // Dense output flag
+  private:
   inline auto build_chebyshev(Integral nini, Integral n_nodes) {
     std::vector<std::pair<matrixd_t, vectord_t>> res(
         n_nodes + 1, std::make_pair(matrixd_t{}, vectord_t{}));
@@ -140,10 +122,11 @@ class SolverInfo {
     }
     return res;
   }
+  public:
   // Constructor
   template <typename OmegaFun_, typename GammaFun_>
   SolverInfo(OmegaFun_&& omega_fun, GammaFun_&& gamma_fun, Integral nini,
-             Integral nmax, Integral n, Integral p, bool dense_output)
+             Integral nmax, Integral n, Integral p)
       : omega_fun_(std::forward<OmegaFun_>(omega_fun)),
         gamma_fun_(std::forward<GammaFun_>(gamma_fun)),
         y_(Eigen::Matrix<std::complex<Scalar>, 2, 1>::Zero()),
@@ -158,18 +141,12 @@ class SolverInfo {
         xp_interp_(),
         L_(),
         quadwts_(quad_weights<Scalar>(n)),
-        integration_matrix_(dense_output ? integration_matrix<Scalar>(n + 1)
+        integration_matrix_(DenseOutput ? integration_matrix<Scalar>(n + 1)
                                          : matrixd_t(0, 0)),
         nini_(nini),
         nmax_(nmax),
         n_(n),
-        p_(p),
-        n_chebnodes_(n_nodes_),
-        n_chebstep_(n_nodes_),
-        n_chebits_(n_nodes_),
-        n_LS_(n_nodes_),
-        n_riccstep_(n_nodes_),
-        denseout_(dense_output) {
+        p_(p) {
     // Set Dn and xn if available
     auto it = std::find(ns_.begin(), ns_.end(), n);
     if (it != ns_.end()) {
@@ -197,27 +174,6 @@ class SolverInfo {
     L_ = interpolate(xp_, xp_interp_);  // Assuming interp is a function that
                                         // creates the interpolation matrix
   }
-
-  // Method to increase various counters
-  void increase(int chebnodes = 0, int chebstep = 0, int chebits = 0,
-                int LS = 0, int riccstep = 0) {
-    n_chebnodes_ += chebnodes;
-    n_chebstep_ += chebstep;
-    n_chebits_ += chebits;
-    n_LS_ += LS;
-    n_riccstep_ += riccstep;
-  }
-  std::tuple<Integral, Integral, Integral, Integral, Integral> output(
-      const std::vector<Integral>& steptypes) {
-    Integral cheb_steps = 0;
-    Integral ricc_steps = 0;
-    const auto stepcount_size = steptypes.size();
-    for (std::size_t i = 0; i < stepcount_size; ++i) {
-      cheb_steps += steptypes[i];
-      ricc_steps += !steptypes[i];
-    }
-    return {n_chebstep_, cheb_steps, n_chebits_, n_LS_, n_chebnodes_};
-  }
 };
 
 template <bool DenseOutput, typename Scalar, typename OmegaFun,
@@ -225,9 +181,9 @@ template <bool DenseOutput, typename Scalar, typename OmegaFun,
 inline auto make_solver(OmegaFun&& omega_fun, GammaFun&& gamma_fun,
                         Integral nini, Integral nmax, Integral n, Integral p) {
   return SolverInfo<std::decay_t<OmegaFun>, std::decay_t<GammaFun>, Scalar,
-                    Integral>(std::forward<OmegaFun>(omega_fun),
+                    Integral, DenseOutput>(std::forward<OmegaFun>(omega_fun),
                               std::forward<GammaFun>(gamma_fun), nini, nmax, n,
-                              p, DenseOutput);
+                              p);
 }
 
 }  // namespace riccati

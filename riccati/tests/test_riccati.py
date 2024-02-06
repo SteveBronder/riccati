@@ -9,31 +9,26 @@ import mpmath
 import warnings
 import pytest
 
-w = lambda x: np.sqrt(x)
+m = int(1e6) # Frequency parameter
+w = lambda x: np.sqrt(m**2 - 1)/(1 + x**2)
 g = lambda x: np.zeros_like(x)
+bursty = lambda x: np.sqrt(1 + x**2)/m*(np.cos(m*np.arctan(x)) + 1j*np.sin(m*np.arctan(x)))
+burstdy = lambda x: 1/np.sqrt(1 + x**2)/m * ((x + 1j * m) * np.cos(m * np.arctan(x))\
+        + (-m + 1j*x)*np.sin(m*np.arctan(x)))
+xi = -m
+xf = m
+yi = bursty(xi)
+dyi = burstdy(xi)
+eps = 1e-10
+epsh = 1e-12
 info = solversetup(w, g, n = 32, p = 32)
-xi = 1e2
-xf = 1e6
-eps = 1e-12
-epsh = 1e-13
-yi = sp.airy(-xi)[0] + 1j*sp.airy(-xi)[2]
-dyi = -sp.airy(-xi)[1] - 1j*sp.airy(-xi)[3]
-# Store things
-xs, ys, dys = [], [], []
-# Always necessary for setting info.y
-info.y = np.array([yi, dyi])
-# Always necessary for setting info.wn, info.gn, and for getting an initial stepsize
-hi = 2*xi
-hi = choose_osc_stepsize(info, xi, hi, epsh = epsh)
-info.h = hi
-# Not necessary here because info.x is already xi, but in general it might be:
-info.x = xi
-while info.x < xf:
-    status = osc_evolve(info, info.x, xf, info.h, info.y, epsres = eps, epsh = epsh)
-    if status != 1:
-        break
-    xs.append(info.x)
-    ys.append(info.y[0])
+xs, ys, dys, ss, ps, types, yeval = solve(info, xi, xf, yi, dyi, eps = eps, epsh = epsh)
+xs = np.array(xs)
+ys = np.array(ys)
+ytrue = bursty(xs)
+yerr = np.abs((ytrue - ys))/np.abs(ytrue)
+maxerr = max(yerr)
+assert maxerr < 2e-7
 
 xs = np.array(xs)
 ys = np.array(ys)
