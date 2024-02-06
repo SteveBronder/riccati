@@ -74,13 +74,8 @@ inline auto choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
   if (max_err <= epsilon_h) {
     if (info.p_ != info.n_) {
       vectord_t xn_scaled = riccati::scale(info.xn_, x0, h);
-      info.omega_n_ = info.omega_fun_(xn_scaled);
-      info.gamma_n_ = info.gamma_fun_(xn_scaled);
-      ws = info.omega_n_;
-      gs = info.gamma_n_;
-    } else {
-      info.omega_n_ = ws;
-      info.gamma_n_ = gs;
+      ws = info.omega_fun_(xn_scaled);
+      gs = info.gamma_fun_(xn_scaled);
     }
     return std::make_tuple(h, ws, gs);
   } else {

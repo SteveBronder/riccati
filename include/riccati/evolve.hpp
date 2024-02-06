@@ -24,8 +24,6 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
       = (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array())
             .matrix()
             .eval();
-  info.omega_n_ = info.omega_fun_(xscaled);
-  info.gamma_n_ = info.gamma_fun_(xscaled);
   auto omega_n = info.omega_fun_(xscaled).eval();
   auto gamma_n = info.gamma_fun_(xscaled).eval();
   vectorc_t yeval;

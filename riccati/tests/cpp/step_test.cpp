@@ -18,11 +18,11 @@ TEST(riccati, osc_step_test) {
   auto h = 20.0;
   auto eps = 1e-12;
   auto xscaled = (x0 + h / 2.0 + h / 2.0 * info.xn_.array()).matrix().eval();
-  info.omega_n_ = info.omega_fun_(xscaled);
-  info.gamma_n_ = info.gamma_fun_(xscaled);
+  auto omega_n = info.omega_fun_(xscaled).eval();
+  auto gamma_n = info.gamma_fun_(xscaled).eval();
   auto y0 = airy_ai(-x0);
   auto dy0 = -airy_ai_prime(-x0);
-  auto res = riccati::osc_step(info, info.omega_n_, info.gamma_n_, x0, h, y0, dy0, eps);
+  auto res = riccati::osc_step(info, omega_n, gamma_n, x0, h, y0, dy0, eps);
   auto y_ana = airy_ai(-(x0 + h));
   auto dy_ana = -airy_ai_prime(-(x0 + h));
   auto y_err = std::abs((std::get<1>(res) - y_ana) / y_ana);

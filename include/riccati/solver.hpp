@@ -45,9 +45,6 @@ class SolverInfo {
    * its derivative.
    */
   Eigen::Matrix<std::complex<Scalar>, 2, 1> y_;
-  // Frequency and friction functions evaluated at n+1 Chebyshev nodes
-  vectord_t omega_n_;
-  vectord_t gamma_n_;
   // idk yet
   vectorc_t un_;
   std::pair<complex_t, complex_t> a_;
@@ -130,8 +127,6 @@ class SolverInfo {
       : omega_fun_(std::forward<OmegaFun_>(omega_fun)),
         gamma_fun_(std::forward<GammaFun_>(gamma_fun)),
         y_(Eigen::Matrix<std::complex<Scalar>, 2, 1>::Zero()),
-        omega_n_(n + 1),
-        gamma_n_(n + 1),
         n_nodes_(log2(nmax / nini) + 1),
         chebyshev_(build_chebyshev(nini, n_nodes_)),
         ns_(internal::logspace(std::log2(nini), std::log2(nini) + n_nodes_ - 1,
