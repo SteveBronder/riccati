@@ -9,20 +9,28 @@
 #endif
 namespace riccati {
 
-  /**
+/**
  * @brief Scales and shifts a vector of Chebyshev nodes.
  *
- * This function takes a vector of Chebyshev nodes and scales it to fit a specific interval. Each element `x(i)` of the input vector is transformed
- * to fit into the new interval starting at `x0` with a width of `h`, effectively mapping the standard Chebyshev interval `[-1, 1]` to `[x0, x0 + h]`.
- * The transformation used is `x(i) -> x0 + h/2 + h/2 * x(i)`. This is commonly used to adjust Chebyshev nodes or the results of spectral methods
- * to the specific interval of interest in numerical computations.
+ * This function takes a vector of Chebyshev nodes and scales it to fit a
+ * specific interval. Each element `x(i)` of the input vector is transformed to
+ * fit into the new interval starting at `x0` with a width of `h`, effectively
+ * mapping the standard Chebyshev interval `[-1, 1]` to `[x0, x0 + h]`. The
+ * transformation used is `x(i) -> x0 + h/2 + h/2 * x(i)`. This is commonly used
+ * to adjust Chebyshev nodes or the results of spectral methods to the specific
+ * interval of interest in numerical computations.
  *
- * @tparam Scalar The scalar type, typically a floating-point type like double or float.
+ * @tparam Scalar The scalar type, typically a floating-point type like double
+ * or float.
  * @tparam Vector The Eigen vector type, typically Eigen::VectorXd or similar.
- * @param x Vector (forwarded reference) - The input vector, typically containing Chebyshev nodes or similar quantities.
- * @param x0 Scalar - The start of the interval to which the nodes should be scaled.
- * @param h Scalar - The width of the interval to which the nodes should be scaled.
- * @return Returns a new Eigen vector of the same type as `x`, with each element scaled and shifted to the new interval `[x0, x0 + h]`.
+ * @param x Vector (forwarded reference) - The input vector, typically
+ * containing Chebyshev nodes or similar quantities.
+ * @param x0 Scalar - The start of the interval to which the nodes should be
+ * scaled.
+ * @param h Scalar - The width of the interval to which the nodes should be
+ * scaled.
+ * @return Returns a new Eigen vector of the same type as `x`, with each element
+ * scaled and shifted to the new interval `[x0, x0 + h]`.
  */
 template <typename Scalar, typename Vector>
 inline auto scale(Vector&& x, Scalar x0, Scalar h) {
@@ -123,7 +131,8 @@ inline void print(const char* name, const Eigen::Matrix<T, R, C>& x) {
 #endif
 }
 template <typename T, int R, int C>
-inline void print(const char* name, const Eigen::Map<Eigen::Matrix<T, R, C>>& x) {
+inline void print(const char* name,
+                  const Eigen::Map<Eigen::Matrix<T, R, C>>& x) {
 #ifdef RICCATI_DEBUG
   std::cout << name << "(" << x.rows() << ", " << x.cols() << ")" << std::endl;
   std::cout << x << std::endl;

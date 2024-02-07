@@ -109,7 +109,7 @@ class SolverInfo {
   Integral p_;
 
   static constexpr bool denseout_{DenseOutput};  // Dense output flag
-  private:
+ private:
   inline auto build_chebyshev(Integral nini, Integral n_nodes) {
     std::vector<std::pair<matrixd_t, vectord_t>> res(
         n_nodes + 1, std::make_pair(matrixd_t{}, vectord_t{}));
@@ -119,7 +119,8 @@ class SolverInfo {
     }
     return res;
   }
-  public:
+
+ public:
   // Constructor
   template <typename OmegaFun_, typename GammaFun_>
   SolverInfo(OmegaFun_&& omega_fun, GammaFun_&& gamma_fun, Integral nini,
@@ -137,7 +138,7 @@ class SolverInfo {
         L_(),
         quadwts_(quad_weights<Scalar>(n)),
         integration_matrix_(DenseOutput ? integration_matrix<Scalar>(n + 1)
-                                         : matrixd_t(0, 0)),
+                                        : matrixd_t(0, 0)),
         nini_(nini),
         nmax_(nmax),
         n_(n),
@@ -177,8 +178,8 @@ inline auto make_solver(OmegaFun&& omega_fun, GammaFun&& gamma_fun,
                         Integral nini, Integral nmax, Integral n, Integral p) {
   return SolverInfo<std::decay_t<OmegaFun>, std::decay_t<GammaFun>, Scalar,
                     Integral, DenseOutput>(std::forward<OmegaFun>(omega_fun),
-                              std::forward<GammaFun>(gamma_fun), nini, nmax, n,
-                              p);
+                                           std::forward<GammaFun>(gamma_fun),
+                                           nini, nmax, n, p);
 }
 
 }  // namespace riccati

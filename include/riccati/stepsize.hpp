@@ -36,22 +36,32 @@ inline FloatingPoint choose_nonosc_stepsize(SolverInfo&& info, FloatingPoint x0,
 }
 
 /**
- * @brief Chooses an appropriate step size for the Riccati step based on the accuracy of Chebyshev interpolation of w(x) and g(x).
+ * @brief Chooses an appropriate step size for the Riccati step based on the
+ * accuracy of Chebyshev interpolation of w(x) and g(x).
  *
- * This function determines an optimal step size `h` over which the functions `w(x)` and `g(x)` can be represented with sufficient accuracy by evaluating their values at `p+1` Chebyshev nodes.
- * It performs interpolation to `p` points halfway between these nodes and compares the interpolated values with the actual values of `w(x)` and `g(x)`. If the largest relative error in `w` or `g` exceeds the tolerance `epsh`,
- * the step size `h` is reduced. This process ensures that the Chebyshev interpolation of `w(x)` and `g(x)` over the step [`x0`, `x0+h`] has a relative error no larger than `epsh`.
+ * This function determines an optimal step size `h` over which the functions
+ * `w(x)` and `g(x)` can be represented with sufficient accuracy by evaluating
+ * their values at `p+1` Chebyshev nodes. It performs interpolation to `p`
+ * points halfway between these nodes and compares the interpolated values with
+ * the actual values of `w(x)` and `g(x)`. If the largest relative error in `w`
+ * or `g` exceeds the tolerance `epsh`, the step size `h` is reduced. This
+ * process ensures that the Chebyshev interpolation of `w(x)` and `g(x)` over
+ * the step [`x0`, `x0+h`] has a relative error no larger than `epsh`.
  *
- * @param info SolverInfo object - Object containing pre-computed information and methods for evaluating functions `w(x)` and `g(x)`, as well as interpolation matrices and node positions.
+ * @param info SolverInfo object - Object containing pre-computed information
+ * and methods for evaluating functions `w(x)` and `g(x)`, as well as
+ * interpolation matrices and node positions.
  * @param x0 float - The current value of the independent variable.
  * @param h float - The initial estimate of the step size.
- * @param epsh float - Tolerance parameter defining the maximum relative error allowed in the Chebyshev interpolation of `w(x)` and `g(x)` over the proposed step.
- * @return float - The refined step size over which the Chebyshev interpolation of `w(x)` and `g(x)` satisfies the relative error tolerance `epsh`.
+ * @param epsh float - Tolerance parameter defining the maximum relative error
+ * allowed in the Chebyshev interpolation of `w(x)` and `g(x)` over the proposed
+ * step.
+ * @return float - The refined step size over which the Chebyshev interpolation
+ * of `w(x)` and `g(x)` satisfies the relative error tolerance `epsh`.
  */
 template <typename SolverInfo, typename FloatingPoint>
 inline auto choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
-                                         FloatingPoint h,
-                                         FloatingPoint epsilon_h) {
+                                FloatingPoint h, FloatingPoint epsilon_h) {
   auto t = riccati::scale(info.xp_interp_, x0, h).eval();
   auto s = riccati::scale(info.xp_, x0, h).eval();
   // TODO: Use a memory arena for these
@@ -59,13 +69,9 @@ inline auto choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
   vectord_t ws = info.omega_fun_(s);
   vectord_t gs = info.gamma_fun_(s);
   vectord_t omega_analytic = info.omega_fun_(t);
-  std::cout << "G: " << __LINE__ << std::endl;
   auto omega_estimate = info.L_.transpose() * ws;
-  std::cout << "G: " << __LINE__ << std::endl;
   vectord_t gamma_analytic = info.gamma_fun_(t);
-  std::cout << "G: " << __LINE__ << std::endl;
   auto gamma_estimate = info.L_.transpose() * gs;
-  std::cout << "G: " << __LINE__ << std::endl;
   FloatingPoint max_omega_err
       = (((omega_estimate - omega_analytic).array() / omega_analytic.array())
              .abs())

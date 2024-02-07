@@ -44,7 +44,6 @@ namespace riccati {
 #define RICCATI_PURE __attribute__((pure))
 #endif
 
-}
-
+}  // namespace riccati
 
 #endif

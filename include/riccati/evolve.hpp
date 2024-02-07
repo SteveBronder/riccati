@@ -12,17 +12,14 @@
 
 namespace riccati {
 /*
-template <typename SolverInfo, typename Scalar, typename Vec, typename Allocator>
-inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
+template <typename SolverInfo, typename Scalar, typename Vec, typename
+Allocator> inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                        std::complex<Scalar> yi, std::complex<Scalar> dyi,
                        Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
-                       Vec &&x_eval, Allocator&& allocator, bool hard_stop = false,
-                       bool warn = false) {
-  int sign = init_stepsize > 0 ? 1 : -1;
-  using complex_t = std::complex<Scalar>;
-  using vectorc_t = vector_t<complex_t>;
-  auto xscaled
-      = (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array())
+                       Vec &&x_eval, Allocator&& allocator, bool hard_stop =
+false, bool warn = false) { int sign = init_stepsize > 0 ? 1 : -1; using
+complex_t = std::complex<Scalar>; using vectorc_t = vector_t<complex_t>; auto
+xscaled = (xi + init_stepsize / 2.0 + init_stepsize / 2.0 * info.xn_.array())
             .matrix()
             .eval();
   // Frequency and friction functions evaluated at n+1 Chebyshev nodes
@@ -38,10 +35,9 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
         + std::string(")!"));
   }
   // o and g read here
-  auto osc_ret = osc_step(info, omega_n, gamma_n, xi, init_stepsize, yi, dyi, eps);
-  if (std::get<0>(osc_ret) == 0) {
-    return std::make_tuple(false, xi, init_stepsize, osc_ret, vectorc_t(0),
-                           static_cast<Eigen::Index>(0),
+  auto osc_ret = osc_step(info, omega_n, gamma_n, xi, init_stepsize, yi, dyi,
+eps); if (std::get<0>(osc_ret) == 0) { return std::make_tuple(false, xi,
+init_stepsize, osc_ret, vectorc_t(0), static_cast<Eigen::Index>(0),
                            static_cast<Eigen::Index>(0));
   } else {
     Eigen::Index dense_size = 0;
@@ -75,17 +71,18 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
     }
     // o and g written here
     auto h_next = choose_osc_stepsize(info, x_next, hosc_ini, epsilon_h);
-    return std::make_tuple(true, x_next, std::get<0>(h_next), osc_ret, yeval, dense_start,
-                           dense_size);
+    return std::make_tuple(true, x_next, std::get<0>(h_next), osc_ret, yeval,
+dense_start, dense_size);
   }
 }
 */
-template <typename SolverInfo, typename Scalar, typename Vec, typename Allocator>
+template <typename SolverInfo, typename Scalar, typename Vec,
+          typename Allocator>
 inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                           std::complex<Scalar> yi, std::complex<Scalar> dyi,
                           Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
-                          Vec &&x_eval, Allocator&& allocator, bool hard_stop = false,
-                          bool warn = false) {
+                          Vec &&x_eval, Allocator &&allocator,
+                          bool hard_stop = false, bool warn = false) {
   int sign = init_stepsize > 0 ? 1 : -1;
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
@@ -97,7 +94,8 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
         + std::to_string(xi) + std::string(", ") + std::to_string(xf)
         + std::string(")!"));
   }
-  auto nonosc_ret = nonosc_step(info, xi, init_stepsize, yi, dyi, allocator, eps);
+  auto nonosc_ret
+      = nonosc_step(info, xi, init_stepsize, yi, dyi, allocator, eps);
   if (!std::get<0>(nonosc_ret)) {
     return std::make_tuple(false, xi, init_stepsize, nonosc_ret, vectorc_t(0),
                            static_cast<Eigen::Index>(0),
@@ -112,9 +110,11 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
           = get_slice(x_eval, sign * xi, sign * (xi + init_stepsize));
       if (dense_size != 0) {
         auto x_eval_map = x_eval.segment(dense_start, dense_size).eval();
-        auto xscaled = eigen_arena_alloc((xi + init_stepsize / 2
-                        + init_stepsize / 2 * info.chebyshev_[1].second.array())
-                           .matrix(), allocator);
+        auto xscaled = eigen_arena_alloc(
+            (xi + init_stepsize / 2
+             + init_stepsize / 2 * info.chebyshev_[1].second.array())
+                .matrix(),
+            allocator);
         auto Linterp = interpolate(xscaled, x_eval_map, allocator);
         yeval = Linterp * std::get<4>(nonosc_ret);
       }
@@ -304,8 +304,8 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
       }
       // o and g read here
       std::tie(success, y, dy, err, phase)
-          = osc_step(info, omega_n, gamma_n, xcurrent, hosc, yprev, dyprev, eps);
-      steptype = 1;
+          = osc_step(info, omega_n, gamma_n, xcurrent, hosc, yprev, dyprev,
+eps); steptype = 1;
     }
     while (!success) {
       std::tie(success, y, dy, err, y_eval, dy_eval)
@@ -369,8 +369,9 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
       wnext = info.omega_fun_(xcurrent + h);
       gnext = info.gamma_fun_(xcurrent + h);
       auto xn_scaled = scale(info.xn_.array(), xcurrent, h).eval();
-      dwnext = 2.0 / h * info.Dn_.row(0).dot(info.omega_fun_(xn_scaled).matrix());
-      dgnext = 2.0 / h * info.Dn_.row(0).dot(info.gamma_fun_((xn_scaled).matrix()));
+      dwnext = 2.0 / h *
+info.Dn_.row(0).dot(info.omega_fun_(xn_scaled).matrix()); dgnext = 2.0 / h *
+info.Dn_.row(0).dot(info.gamma_fun_((xn_scaled).matrix()));
     }
     xcurrent += h;
     if (intdir * xcurrent < intdir * xf) {

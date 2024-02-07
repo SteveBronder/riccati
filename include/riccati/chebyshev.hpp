@@ -27,21 +27,29 @@ inline auto fft(T&& x) {
 }  // namespace internal
 
 /**
- * @brief Convert the Chebyshev coefficient representation of a set of polynomials `P_j` to their values at Chebyshev nodes of the second kind.
+ * @brief Convert the Chebyshev coefficient representation of a set of
+ * polynomials `P_j` to their values at Chebyshev nodes of the second kind.
  *
- * This function computes the values of a set of polynomials at Chebyshev nodes of the second kind.
- * The input is a matrix of coefficients `C`, where each column represents a polynomial. The output
- * is a matrix `V`, where `V(i,j)` is the value of the j-th polynomial at the i-th Chebyshev node.
- * The relationship is given by:
+ * This function computes the values of a set of polynomials at Chebyshev nodes
+ * of the second kind. The input is a matrix of coefficients `C`, where each
+ * column represents a polynomial. The output is a matrix `V`, where `V(i,j)` is
+ * the value of the j-th polynomial at the i-th Chebyshev node. The relationship
+ * is given by:
  *
  * \f[
  * V_{ij} = P_j(x_i) = \sum_{k=0}^{n} C_{kj}T_k(x_i)
  * \f]
  *
- * This implementation is adapted from the `coeff2vals` function in the chebfun package (https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m).
+ * This implementation is adapted from the `coeff2vals` function in the chebfun
+ * package
+ * (https://github.com/chebfun/chebfun/blob/master/%40chebtech2/coeffs2vals.m).
  *
- * @param coeffs Eigen::MatrixXd (real) - A matrix of size (n+1, m), where the (i, j)th element represents the projection of the j-th input polynomial onto the i-th Chebyshev polynomial.
- * @return Eigen::MatrixXd (real) - A matrix of size (n+1, m), where the (i, j)th element represents the j-th input polynomial evaluated at the i-th Chebyshev node.
+ * @param coeffs Eigen::MatrixXd (real) - A matrix of size (n+1, m), where the
+ * (i, j)th element represents the projection of the j-th input polynomial onto
+ * the i-th Chebyshev polynomial.
+ * @return Eigen::MatrixXd (real) - A matrix of size (n+1, m), where the (i,
+ * j)th element represents the j-th input polynomial evaluated at the i-th
+ * Chebyshev node.
  */
 template <typename Mat>
 inline auto coeffs_to_cheby_nodes(Mat&& input_id) {
@@ -61,20 +69,33 @@ inline auto coeffs_to_cheby_nodes(Mat&& input_id) {
 }
 
 /**
- * @brief Convert a matrix of values of `m` polynomials evaluated at `n+1` Chebyshev nodes of the second kind to their interpolating Chebyshev coefficients.
+ * @brief Convert a matrix of values of `m` polynomials evaluated at `n+1`
+ * Chebyshev nodes of the second kind to their interpolating Chebyshev
+ * coefficients.
  *
- * This function computes the Chebyshev coefficients for a set of polynomials. The input is a matrix `V`, where each column contains the values of a polynomial at Chebyshev nodes. The output is a matrix `C`, where `C(i, j)` is the coefficient of the i-th Chebyshev polynomial for the j-th input polynomial. The relationship is given by:
+ * This function computes the Chebyshev coefficients for a set of polynomials.
+ * The input is a matrix `V`, where each column contains the values of a
+ * polynomial at Chebyshev nodes. The output is a matrix `C`, where `C(i, j)` is
+ * the coefficient of the i-th Chebyshev polynomial for the j-th input
+ * polynomial. The relationship is given by:
  *
  * \f[
  * F_j(x) = \sum_{k=0}^{n} C_{kj}T_k(x)
  * \f]
  *
- * which interpolates the values `[V_{0j}, V_{1j}, ..., V_{nj}]` for `j = 0...(m-1)`.
+ * which interpolates the values `[V_{0j}, V_{1j}, ..., V_{nj}]` for `j =
+ * 0...(m-1)`.
  *
- * This implementation is adapted from the `vals2coeffs` function in the chebfun package (https://github.com/chebfun/chebfun/blob/master/%40chebtech2/vals2coeffs.m).
+ * This implementation is adapted from the `vals2coeffs` function in the chebfun
+ * package
+ * (https://github.com/chebfun/chebfun/blob/master/%40chebtech2/vals2coeffs.m).
  *
- * @param values Eigen::MatrixXd (real) - A matrix of size (n+1, m), where the (i, j)th element is the value of the j-th polynomial evaluated at the i-th Chebyshev node.
- * @return Eigen::MatrixXd (real) - A matrix of size (n+1, m), where the (i, j)th element is the coefficient of the i-th Chebyshev polynomial for interpolating the j-th input polynomial.
+ * @param values Eigen::MatrixXd (real) - A matrix of size (n+1, m), where the
+ * (i, j)th element is the value of the j-th polynomial evaluated at the i-th
+ * Chebyshev node.
+ * @return Eigen::MatrixXd (real) - A matrix of size (n+1, m), where the (i,
+ * j)th element is the coefficient of the i-th Chebyshev polynomial for
+ * interpolating the j-th input polynomial.
  */
 template <typename Mat>
 inline auto cheby_nodes_to_coeffs(Mat&& input_id) {
@@ -122,16 +143,21 @@ inline auto coeffs_and_cheby_nodes(Mat&& input_id) {
 /**
  * @brief Constructs a Chebyshev integration matrix.
  *
- * This function computes the Chebyshev integration matrix, which maps the values of a function at `n` Chebyshev nodes
- * of the second kind (ordered from +1 to -1) to the values of the integral of the interpolating polynomial at those nodes.
- * The integral is computed on the interval defined by the Chebyshev nodes, with the last value of the integral (at the start of the
- * interval) being set to zero. This implementation is adapted from the `cumsummat` function in the chebfun package
+ * This function computes the Chebyshev integration matrix, which maps the
+ * values of a function at `n` Chebyshev nodes of the second kind (ordered from
+ * +1 to -1) to the values of the integral of the interpolating polynomial at
+ * those nodes. The integral is computed on the interval defined by the
+ * Chebyshev nodes, with the last value of the integral (at the start of the
+ * interval) being set to zero. This implementation is adapted from the
+ * `cumsummat` function in the chebfun package
  * (https://github.com/chebfun/chebfun/blob/master/%40chebcolloc2/chebcolloc2.m).
  *
- * @param n int - Number of Chebyshev nodes the integrand is evaluated at. The nodes are ordered from +1 to -1.
- * @return Eigen::MatrixXd (real) - Integration matrix of size (n, n). This matrix maps the values of the integrand at
- * the n Chebyshev nodes to the values of the definite integral on the interval, up to each of the Chebyshev nodes
- * (the last value being zero by definition).
+ * @param n int - Number of Chebyshev nodes the integrand is evaluated at. The
+ * nodes are ordered from +1 to -1.
+ * @return Eigen::MatrixXd (real) - Integration matrix of size (n, n). This
+ * matrix maps the values of the integrand at the n Chebyshev nodes to the
+ * values of the definite integral on the interval, up to each of the Chebyshev
+ * nodes (the last value being zero by definition).
  */
 template <typename Scalar, typename Integral>
 inline auto integration_matrix(Integral n) {
@@ -162,15 +188,21 @@ inline auto integration_matrix(Integral n) {
 /**
  * @brief Calculates Clenshaw-Curtis quadrature weights.
  *
- * This function computes the Clenshaw-Curtis quadrature weights, which map function evaluations at `n+1` Chebyshev nodes of the second kind
- * (ordered from +1 to -1) to the value of the definite integral of the interpolating function on the same interval. The method is based on the
- * Clenshaw-Curtis quadrature formula, as described in Trefethen's "Spectral Methods in MATLAB" (Chapter 12, `clencurt.m`).
+ * This function computes the Clenshaw-Curtis quadrature weights, which map
+ * function evaluations at `n+1` Chebyshev nodes of the second kind (ordered
+ * from +1 to -1) to the value of the definite integral of the interpolating
+ * function on the same interval. The method is based on the Clenshaw-Curtis
+ * quadrature formula, as described in Trefethen's "Spectral Methods in MATLAB"
+ * (Chapter 12, `clencurt.m`).
  *
- * @param n int - The number of Chebyshev nodes minus one, for which the quadrature weights are to be computed.
- * @return Eigen::VectorXd (real) - A vector of size (n+1), containing the quadrature weights.
+ * @param n int - The number of Chebyshev nodes minus one, for which the
+ * quadrature weights are to be computed.
+ * @return Eigen::VectorXd (real) - A vector of size (n+1), containing the
+ * quadrature weights.
  *
  * @reference
- * Trefethen, Lloyd N. Spectral methods in MATLAB. Society for industrial and applied mathematics, 2000.
+ * Trefethen, Lloyd N. Spectral methods in MATLAB. Society for industrial and
+ * applied mathematics, 2000.
  */
 template <typename Scalar, typename Integral>
 inline auto quad_weights(Integral n) {
@@ -206,8 +238,11 @@ inline auto quad_weights(Integral n) {
 /**
  * @brief Computes the Chebyshev differentiation matrix and Chebyshev nodes.
  *
- * This function calculates the Chebyshev differentiation matrix `D` of size (n+1, n+1) and `n+1` Chebyshev nodes `x` for the standard 1D interval [-1, 1].
- * The differentiation matrix `D` can be used to approximate the derivative of a function sampled at the Chebyshev nodes. The nodes are computed according to the formula:
+ * This function calculates the Chebyshev differentiation matrix `D` of size
+ * (n+1, n+1) and `n+1` Chebyshev nodes `x` for the standard 1D interval [-1,
+ * 1]. The differentiation matrix `D` can be used to approximate the derivative
+ * of a function sampled at the Chebyshev nodes. The nodes are computed
+ * according to the formula:
  *
  * \f[
  * x_p = \cos \left( \frac{\pi p}{n} \right), \quad p = 0, 1, \ldots, n.
@@ -215,8 +250,10 @@ inline auto quad_weights(Integral n) {
  *
  * @param n int - The number of Chebyshev nodes minus one.
  * @return std::pair<Eigen::MatrixXd, Eigen::VectorXd> - A pair consisting of:
- *         1. Eigen::MatrixXd (real) - The differentiation matrix `D` of size (n+1, n+1).
- *         2. Eigen::VectorXd (real) - The vector of Chebyshev nodes `x` of size (n+1), ordered in descending order from 1 to -1.
+ *         1. Eigen::MatrixXd (real) - The differentiation matrix `D` of size
+ * (n+1, n+1).
+ *         2. Eigen::VectorXd (real) - The vector of Chebyshev nodes `x` of size
+ * (n+1), ordered in descending order from 1 to -1.
  */
 template <typename Scalar, typename Integral>
 inline auto chebyshev(Integral n) {
@@ -249,15 +286,24 @@ inline auto chebyshev(Integral n) {
 }
 
 /**
- * @brief Creates an interpolation matrix from an array of source nodes to target nodes.
+ * @brief Creates an interpolation matrix from an array of source nodes to
+ * target nodes.
  *
- * This function constructs an interpolation matrix that maps function values known at source nodes `s` to estimated values at target nodes `t`.
- * The computation is based on the Vandermonde matrix approach and the resulting matrix `L` applies the interpolation. The method is adapted
- * from the implementation provided `here` (https://github.com/ahbarnett/BIE3D/blob/master/utils/interpmat_1d.m).
+ * This function constructs an interpolation matrix that maps function values
+ * known at source nodes `s` to estimated values at target nodes `t`. The
+ * computation is based on the Vandermonde matrix approach and the resulting
+ * matrix `L` applies the interpolation. The method is adapted from the
+ * implementation provided `here`
+ * (https://github.com/ahbarnett/BIE3D/blob/master/utils/interpmat_1d.m).
  *
- * @param s Eigen::VectorXd (real) - A vector specifying the source nodes, at which the function values are known.
- * @param t Eigen::VectorXd (real) - A vector specifying the target nodes, at which the function values are to be interpolated.
- * @return Eigen::MatrixXd (real) - The interpolation matrix `L`. If `s` has size `p` and `t` has size `q`, then `L` has size (q, p). `L` takes function values at source points `s` and yields the function evaluated at target points `t`.
+ * @param s Eigen::VectorXd (real) - A vector specifying the source nodes, at
+ * which the function values are known.
+ * @param t Eigen::VectorXd (real) - A vector specifying the target nodes, at
+ * which the function values are to be interpolated.
+ * @return Eigen::MatrixXd (real) - The interpolation matrix `L`. If `s` has
+ * size `p` and `t` has size `q`, then `L` has size (q, p). `L` takes function
+ * values at source points `s` and yields the function evaluated at target
+ * points `t`.
  */
 
 template <typename Vec1, typename Vec2>
@@ -272,7 +318,8 @@ inline auto interpolate(Vec1&& s, Vec2&& t) {
   }
   V.transposeInPlace();
   R.transposeInPlace();
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(V, Eigen::ComputeFullU | Eigen::ComputeFullV);
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(
+      V, Eigen::ComputeFullU | Eigen::ComputeFullV);
   Eigen::MatrixXd L = svd.solve(R).transpose();
   return L;
 }
@@ -281,58 +328,77 @@ template <typename Vec1, typename Vec2, typename Allocator>
 inline auto interpolate(Vec1&& s, Vec2&& t, Allocator&& allocator) {
   const auto r = s.size();
   const auto q = t.size();
-  auto V = eigen_arena_alloc(matrix_t<typename std::decay_t<Vec1>::Scalar>::Ones(r, r), allocator);
-  auto R = eigen_arena_alloc(matrix_t<typename std::decay_t<Vec2>::Scalar>::Ones(r, q), allocator);
-//  print("Vb", V);
-//  print("Rb", R);
-//  print("s", s);
-//  print("t", t);
+  auto V = eigen_arena_alloc(
+      matrix_t<typename std::decay_t<Vec1>::Scalar>::Ones(r, r), allocator);
+  auto R = eigen_arena_alloc(
+      matrix_t<typename std::decay_t<Vec2>::Scalar>::Ones(r, q), allocator);
+  //  print("Vb", V);
+  //  print("Rb", R);
+  //  print("s", s);
+  //  print("t", t);
   for (std::size_t i = 1; i < static_cast<std::size_t>(r); ++i) {
     V.row(i).array() = V.row(i - 1).array() * s.array().transpose();
   }
   for (std::size_t i = 1; i < static_cast<std::size_t>(r); ++i) {
     R.row(i).array() = R.row(i - 1).array() * t.array();
   }
-//  print("Ve", V);
-//  print("Re", R);
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(V, Eigen::ComputeFullU | Eigen::ComputeFullV);
+  //  print("Ve", V);
+  //  print("Re", R);
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(
+      V, Eigen::ComputeFullU | Eigen::ComputeFullV);
   auto L = eigen_arena_alloc(svd.solve(R).transpose(), allocator);
   return L;
 }
 
 /**
- * @brief Applies a spectral collocation method based on Chebyshev nodes for solving differential equations.
+ * @brief Applies a spectral collocation method based on Chebyshev nodes for
+ * solving differential equations.
  *
- * This function utilizes a spectral collocation method based on Chebyshev nodes to solve a differential equation over an interval from `x = x0` to `x = x0 + h`.
- * The solution starts from the initial conditions `y(x0) = y0` and `y'(x0) = dy0`. In each iteration of the spectral collocation method, the number of Chebyshev nodes used
- * increases, starting from `info.nini` and doubling until `info.nmax` is reached or the desired tolerance is met. The `niter` parameter keeps track of the number of iterations
- * and is used to retrieve pre-computed differentiation matrices and Chebyshev nodes from the `info` object.
+ * This function utilizes a spectral collocation method based on Chebyshev nodes
+ * to solve a differential equation over an interval from `x = x0` to `x = x0 +
+ * h`. The solution starts from the initial conditions `y(x0) = y0` and `y'(x0)
+ * = dy0`. In each iteration of the spectral collocation method, the number of
+ * Chebyshev nodes used increases, starting from `info.nini` and doubling until
+ * `info.nmax` is reached or the desired tolerance is met. The `niter` parameter
+ * keeps track of the number of iterations and is used to retrieve pre-computed
+ * differentiation matrices and Chebyshev nodes from the `info` object.
  *
- * @param info SolverInfo object - Contains pre-computed information for the solver, like differentiation matrices and Chebyshev nodes.
+ * @param info SolverInfo object - Contains pre-computed information for the
+ * solver, like differentiation matrices and Chebyshev nodes.
  * @param x0 float (real) - The starting value of the independent variable.
  * @param h float (real) - Step size for the spectral method.
  * @param y0 complex - Initial value of the dependent variable at `x0`.
  * @param dy0 complex - Initial derivative of the dependent variable at `x0`.
- * @param niter int - Counter for the number of iterations of the spectral collocation step performed.
- * @return std::tuple<std::vector<std::complex<double>>, std::vector<std::complex<double>>, Eigen::VectorXd> - A tuple containing:
- *         1. std::vector<std::complex<double>> - Numerical estimate of the solution at the end of the step, at `x0 + h`.
- *         2. std::vector<std::complex<double>> - Numerical estimate of the derivative of the solution at the end of the step, at `x0 + h`.
- *         3. Eigen::VectorXd (real) - Chebyshev nodes used for the current iteration of the spectral collocation method, scaled to lie in the interval `[x0, x0 + h]`.
+ * @param niter int - Counter for the number of iterations of the spectral
+ * collocation step performed.
+ * @return std::tuple<std::vector<std::complex<double>>,
+ * std::vector<std::complex<double>>, Eigen::VectorXd> - A tuple containing:
+ *         1. std::vector<std::complex<double>> - Numerical estimate of the
+ * solution at the end of the step, at `x0 + h`.
+ *         2. std::vector<std::complex<double>> - Numerical estimate of the
+ * derivative of the solution at the end of the step, at `x0 + h`.
+ *         3. Eigen::VectorXd (real) - Chebyshev nodes used for the current
+ * iteration of the spectral collocation method, scaled to lie in the interval
+ * `[x0, x0 + h]`.
  */
-template <typename SolverInfo, typename Scalar, typename YScalar, typename Integral, typename Allocator>
+template <typename SolverInfo, typename Scalar, typename YScalar,
+          typename Integral, typename Allocator>
 inline auto spectral_chebyshev(SolverInfo&& info, Scalar x0, Scalar h,
-                               YScalar y0,
-                               YScalar dy0, Integral niter, Allocator&& allocator) {
+                               YScalar y0, YScalar dy0, Integral niter,
+                               Allocator&& allocator) {
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
-  auto x_scaled = eigen_arena_alloc(riccati::scale(info.chebyshev_[niter].second, x0, h), allocator);
+  auto x_scaled = eigen_arena_alloc(
+      riccati::scale(info.chebyshev_[niter].second, x0, h), allocator);
   auto&& D = info.chebyshev_[niter].first;
   auto gs = info.gamma_fun_(x_scaled);
-  auto D2 = eigen_arena_alloc(4.0 / (h * h) * (D * D) + 4.0 / h * (gs.asDiagonal() * D), allocator);
+  auto D2 = eigen_arena_alloc(
+      4.0 / (h * h) * (D * D) + 4.0 / h * (gs.asDiagonal() * D), allocator);
   auto ws = info.omega_fun_(x_scaled);
   D2 += (ws.array().square()).matrix().asDiagonal();
   const auto n = std::round(info.ns_[niter]);
-  auto D2ic = eigen_arena_alloc(matrix_t<complex_t>::Zero(n + 3, n + 1), allocator);
+  auto D2ic
+      = eigen_arena_alloc(matrix_t<complex_t>::Zero(n + 3, n + 1), allocator);
   D2ic.topRows(n + 1) = D2;
   D2ic.row(n + 1) = 2.0 / h * D.row(D.rows() - 1);
   auto ic = eigen_arena_alloc(vectorc_t::Zero(n + 1), allocator);

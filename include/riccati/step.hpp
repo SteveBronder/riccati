@@ -10,28 +10,46 @@
 namespace riccati {
 
 /**
- * @brief Performs a single Chebyshev step with adaptive node count for solving differential equations.
+ * @brief Performs a single Chebyshev step with adaptive node count for solving
+ * differential equations.
  *
- * This function advances the solution of a differential equation from `x = x0` by a step of size `h`, starting from the initial conditions `y(x0) = y0` and `y'(x0) = dy0`.
- * It employs a Chebyshev spectral method with an adaptive number of nodes, starting with `info.nini` nodes and doubling the count in each iteration until the relative accuracy `epsres` is achieved or the number of nodes exceeds `info.nmax`.
- * The relative error is assessed by comparing the predicted values of the dependent variable at the end of the step for the current and previous iterations. If the desired accuracy isn't met with the maximum number of nodes,
- * step size `h` may need to be reduced, `info.nmax` increased, or a different numerical method considered.
+ * This function advances the solution of a differential equation from `x = x0`
+ * by a step of size `h`, starting from the initial conditions `y(x0) = y0` and
+ * `y'(x0) = dy0`. It employs a Chebyshev spectral method with an adaptive
+ * number of nodes, starting with `info.nini` nodes and doubling the count in
+ * each iteration until the relative accuracy `epsres` is achieved or the number
+ * of nodes exceeds `info.nmax`. The relative error is assessed by comparing the
+ * predicted values of the dependent variable at the end of the step for the
+ * current and previous iterations. If the desired accuracy isn't met with the
+ * maximum number of nodes, step size `h` may need to be reduced, `info.nmax`
+ * increased, or a different numerical method considered.
  *
- * @param info SolverInfo object - Object containing pre-computed information for the solver, like differentiation matrices and Chebyshev nodes, and methods for evaluating functions `w(x)` and `g(x)` over the interval `[x0, x0+h]`.
+ * @param info SolverInfo object - Object containing pre-computed information
+ * for the solver, like differentiation matrices and Chebyshev nodes, and
+ * methods for evaluating functions `w(x)` and `g(x)` over the interval `[x0,
+ * x0+h]`.
  * @param x0 float - The starting value of the independent variable.
  * @param h float - Step size for the spectral method.
  * @param y0 complex - Initial value of the dependent variable at `x0`.
  * @param dy0 complex - Initial derivative of the dependent variable at `x0`.
- * @param epsres float - Tolerance for the relative accuracy of the Chebyshev step.
- * @return std::tuple<std::complex<double>, std::complex<double>, float, int> - A tuple containing:
- *         1. std::complex<double> - Value of the dependent variable at the end of the step, at `x = x0 + h`.
- *         2. std::complex<double> - Value of the derivative of the dependent variable at the end of the step, at `x = x0 + h`.
- *         3. float - The (absolute) value of the relative difference of the dependent variable at the end of the step as predicted in the last and the previous iteration.
- *         4. int - Flag indicating success (`1`) if the asymptotic series has reached the desired `epsres` residual, `0` otherwise.
+ * @param epsres float - Tolerance for the relative accuracy of the Chebyshev
+ * step.
+ * @return std::tuple<std::complex<double>, std::complex<double>, float, int> -
+ * A tuple containing:
+ *         1. std::complex<double> - Value of the dependent variable at the end
+ * of the step, at `x = x0 + h`.
+ *         2. std::complex<double> - Value of the derivative of the dependent
+ * variable at the end of the step, at `x = x0 + h`.
+ *         3. float - The (absolute) value of the relative difference of the
+ * dependent variable at the end of the step as predicted in the last and the
+ * previous iteration.
+ *         4. int - Flag indicating success (`1`) if the asymptotic series has
+ * reached the desired `epsres` residual, `0` otherwise.
  */
-template <typename SolverInfo, typename Scalar, typename YScalar, typename Allocator>
-inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
-                        YScalar y0, YScalar dy0, Allocator&& allocator,
+template <typename SolverInfo, typename Scalar, typename YScalar,
+          typename Allocator>
+inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h, YScalar y0,
+                        YScalar dy0, Allocator &&allocator,
                         Scalar epsres = Scalar(1e-12)) {
   using complex_t = std::complex<Scalar>;
 
@@ -51,8 +69,7 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
                              maxerr, yprev, dyprev);
     }
     auto cheb_num = static_cast<int>(std::log2(N / info.nini_));
-    auto cheby2 = spectral_chebyshev(info, x0, h, y0, dy0,
-                               cheb_num, allocator);
+    auto cheby2 = spectral_chebyshev(info, x0, h, y0, dy0, cheb_num, allocator);
     auto y = std::get<0>(std::move(cheby2));
     auto dy = std::get<1>(std::move(cheby2));
     auto x = std::get<2>(std::move(cheby2));
@@ -62,41 +79,63 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
     }
     // TODO: Move this into arena matrix
     new (&yprev) std::decay_t<decltype(yprev)>(y.data(), y.rows(), y.cols());
-    new (&dyprev) std::decay_t<decltype(dyprev)>(dy.data(), dy.rows(), dy.cols());
+    new (&dyprev)
+        std::decay_t<decltype(dyprev)>(dy.data(), dy.rows(), dy.cols());
     new (&xprev) std::decay_t<decltype(xprev)>(x.data(), x.rows(), x.cols());
   }
-  return std::make_tuple(true, yprev(0), dyprev(0), maxerr, yprev,
-                         dyprev);
+  return std::make_tuple(true, yprev(0), dyprev(0), maxerr, yprev, dyprev);
 }
 
 /**
- * @brief Performs a single Riccati step for solving differential equations with oscillatory behavior.
+ * @brief Performs a single Riccati step for solving differential equations with
+ * oscillatory behavior.
  *
- * This function advances the solution from `x0` by `h`, starting from the initial conditions `y(x0) = y0` and `y'(x0) = dy0`, using an asymptotic expansion approach tailored for Riccati-type differential equations.
- * It iteratively increases the order of the asymptotic series used for the Riccati equation until a residual of `epsres` is reached or the residual stops decreasing, indicating that the asymptotic series cannot approximate the solution with the required accuracy over the given interval.
- * In such cases, it is recommended to reduce the step size `h` or consider an alternative approximation method. The function also computes the total phase change of the dependent variable over the step.
+ * This function advances the solution from `x0` by `h`, starting from the
+ * initial conditions `y(x0) = y0` and `y'(x0) = dy0`, using an asymptotic
+ * expansion approach tailored for Riccati-type differential equations. It
+ * iteratively increases the order of the asymptotic series used for the Riccati
+ * equation until a residual of `epsres` is reached or the residual stops
+ * decreasing, indicating that the asymptotic series cannot approximate the
+ * solution with the required accuracy over the given interval. In such cases,
+ * it is recommended to reduce the step size `h` or consider an alternative
+ * approximation method. The function also computes the total phase change of
+ * the dependent variable over the step.
  *
- * @param info SolverInfo object - Object containing pre-computed information for the solver, like differentiation matrices and methods for evaluating functions `w(x)` and `g(x)` over the interval `[x0, x0+h]`.
+ * @param info SolverInfo object - Object containing pre-computed information
+ * for the solver, like differentiation matrices and methods for evaluating
+ * functions `w(x)` and `g(x)` over the interval `[x0, x0+h]`.
  * @param x0 float - The starting value of the independent variable.
  * @param h float - Step size for the Riccati step.
  * @param y0 complex - Initial value of the dependent variable at `x0`.
  * @param dy0 complex - Initial derivative of the dependent variable at `x0`.
- * @param epsres float - Tolerance for the relative accuracy of the Riccati step.
- * @param plotting bool (optional) - Flag for enabling plotting (default is false).
- * @param k int (optional) - Number of terms to use in the expansion (used when `plotting` is true).
- * @return std::tuple<std::complex<double>, std::complex<double>, float, int, std::complex<double>> - A tuple containing:
- *         1. std::complex<double> - Value of the dependent variable at the end of the step, at `x = x0 + h`.
- *         2. std::complex<double> - Value of the derivative of the dependent variable at the end of the step, at `x = x0 + h`.
- *         3. float - Maximum value of the residual (after the final iteration of the asymptotic approximation) over the Chebyshev nodes across the interval.
- *         4. int - Flag indicating success (`1`) if the asymptotic series has reached the desired `epsres` residual, `0` otherwise.
- *         5. std::complex<double> - Total phase change (not mod 2π) of the dependent variable over the step.
- * @warning This function relies on `info.wn`, `info.gn` being set correctly for a step of size `h`. If `solve()` is calling this function, that is taken care of automatically, but it needs to be done manually otherwise.
+ * @param epsres float - Tolerance for the relative accuracy of the Riccati
+ * step.
+ * @param plotting bool (optional) - Flag for enabling plotting (default is
+ * false).
+ * @param k int (optional) - Number of terms to use in the expansion (used when
+ * `plotting` is true).
+ * @return std::tuple<std::complex<double>, std::complex<double>, float, int,
+ * std::complex<double>> - A tuple containing:
+ *         1. std::complex<double> - Value of the dependent variable at the end
+ * of the step, at `x = x0 + h`.
+ *         2. std::complex<double> - Value of the derivative of the dependent
+ * variable at the end of the step, at `x = x0 + h`.
+ *         3. float - Maximum value of the residual (after the final iteration
+ * of the asymptotic approximation) over the Chebyshev nodes across the
+ * interval.
+ *         4. int - Flag indicating success (`1`) if the asymptotic series has
+ * reached the desired `epsres` residual, `0` otherwise.
+ *         5. std::complex<double> - Total phase change (not mod 2π) of the
+ * dependent variable over the step.
+ * @warning This function relies on `info.wn`, `info.gn` being set correctly for
+ * a step of size `h`. If `solve()` is calling this function, that is taken care
+ * of automatically, but it needs to be done manually otherwise.
  */
-template <typename SolverInfo, typename OmegaVec, typename GammaVec, typename Scalar, typename YScalar>
-inline auto osc_step(SolverInfo &&info, OmegaVec&& omega_s, GammaVec&& gamma_s, Scalar x0, Scalar h,
-                     YScalar y0, YScalar dy0,
-                     Scalar epsres = Scalar(1e-12),
-                     int k = 0) {
+template <typename SolverInfo, typename OmegaVec, typename GammaVec,
+          typename Scalar, typename YScalar>
+inline auto osc_step(SolverInfo &&info, OmegaVec &&omega_s, GammaVec &&gamma_s,
+                     Scalar x0, Scalar h, YScalar y0, YScalar dy0,
+                     Scalar epsres = Scalar(1e-12), int k = 0) {
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
 

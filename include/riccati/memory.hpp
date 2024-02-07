@@ -11,7 +11,6 @@
 
 namespace riccati {
 
-
 namespace internal {
 /**
  * Return <code>true</code> if the specified pointer is aligned
@@ -74,12 +73,12 @@ class arena_alloc {
  private:
   using byte_t = unsigned char;
   std::vector<byte_t*> blocks_;  // storage for blocks,
-                               // may be bigger than cur_block_
-  std::vector<size_t> sizes_;  // could store initial & shift for others
-  size_t cur_block_;           // index into blocks_ for next alloc
+                                 // may be bigger than cur_block_
+  std::vector<size_t> sizes_;    // could store initial & shift for others
+  size_t cur_block_;             // index into blocks_ for next alloc
   byte_t* cur_block_end_;        // ptr to cur_block_ptr_ + sizes_[cur_block_]
   byte_t* next_loc_;             // ptr to next available spot in cur
-                               // block
+                                 // block
 
   /**
    * Moves us to the next block of memory, allocating that block
@@ -126,7 +125,8 @@ class arena_alloc {
    * @throws std::runtime_error if the underlying malloc is not 8-byte
    * aligned.
    */
-  RICCATI_NO_INLINE explicit arena_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
+  RICCATI_NO_INLINE explicit arena_alloc(size_t initial_nbytes
+                                         = internal::DEFAULT_INITIAL_NBYTES)
       : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
         sizes_(1, initial_nbytes),
         cur_block_(0),
@@ -279,7 +279,7 @@ struct arena_allocator {
   using value_type = T;
   arena_allocator(ArenaType* alloc) : alloc_(alloc) {}
 
-  arena_allocator(const arena_allocator& rhs) : alloc_(rhs.alloc_) {};
+  arena_allocator(const arena_allocator& rhs) : alloc_(rhs.alloc_){};
 
   template <typename U, typename UArena>
   arena_allocator(const arena_allocator<U, UArena>& rhs) : alloc_(rhs.alloc_) {}
@@ -298,9 +298,7 @@ struct arena_allocator {
   /**
    * Recovers memory
    */
-  void recover_memory() {
-    alloc_->recover_all();
-  }
+  void recover_memory() { alloc_->recover_all(); }
 
   /**
    * No-op. Memory is deallocated by calling `recover_memory()`.
@@ -327,8 +325,10 @@ template <typename Expr, typename Allocator>
 auto eigen_arena_alloc(Expr&& expr, Allocator&& alloc) {
   using expr_t = std::decay_t<Expr>;
   using scalar_t = typename expr_t::Scalar;
-  Eigen::Map<Eigen::Matrix<scalar_t, expr_t::RowsAtCompileTime, expr_t::ColsAtCompileTime>>
-    res(alloc.template allocate<scalar_t>(expr.size()), expr.rows(), expr.cols());
+  Eigen::Map<Eigen::Matrix<scalar_t, expr_t::RowsAtCompileTime,
+                           expr_t::ColsAtCompileTime>>
+      res(alloc.template allocate<scalar_t>(expr.size()), expr.rows(),
+          expr.cols());
   res.noalias() = std::forward<Expr>(expr);
   return res;
 }
