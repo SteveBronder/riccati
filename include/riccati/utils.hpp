@@ -122,6 +122,13 @@ inline void print(const char* name, const Eigen::Matrix<T, R, C>& x) {
   std::cout << x << std::endl;
 #endif
 }
+template <typename T, int R, int C>
+inline void print(const char* name, const Eigen::Map<Eigen::Matrix<T, R, C>>& x) {
+#ifdef RICCATI_DEBUG
+  std::cout << name << "(" << x.rows() << ", " << x.cols() << ")" << std::endl;
+  std::cout << x << std::endl;
+#endif
+}
 
 template <typename T, int R, int C>
 inline void print(const char* name, const Eigen::Array<T, R, C>& x) {

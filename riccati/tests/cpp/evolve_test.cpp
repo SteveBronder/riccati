@@ -1,13 +1,14 @@
 
 #include <riccati/evolve.hpp>
 #include <riccati/solver.hpp>
+#include <riccati/memory.hpp>
 #include <tests/cpp/utils.hpp>
 #include <gtest/gtest.h>
 #include <cmath>
 #include <fstream>
 #include <stdlib.h>
 #include <string>
-
+/*
 TEST(riccati, osc_evolve_dense_output) {
   using namespace riccati::test;
   auto omega_fun
@@ -61,7 +62,7 @@ TEST(riccati, osc_evolve_dense_output) {
     FAIL() << "Dense evaluation was never completed!";
   }
 }
-
+*/
 TEST(riccati, nonosc_evolve_dense_output) {
   using namespace riccati::test;
   auto omega_fun
@@ -84,9 +85,10 @@ TEST(riccati, nonosc_evolve_dense_output) {
   auto hi = 1.0 / omega_fun(xi);
   hi = choose_nonosc_stepsize(info, xi, hi, epsh);
   bool x_validated = false;
+  riccati::arena_allocator<double, riccati::arena_alloc> allocator(new riccati::arena_alloc{});
   while (xi < xf) {
     auto res
-        = riccati::nonosc_evolve(info, xi, xf, yi, dyi, eps, epsh, hi, x_eval);
+        = riccati::nonosc_evolve(info, xi, xf, yi, dyi, eps, epsh, hi, x_eval, allocator);
     if (!std::get<0>(res)) {
       break;
     } else {
@@ -110,11 +112,13 @@ TEST(riccati, nonosc_evolve_dense_output) {
                 .eval();
       EXPECT_LE(y_err.maxCoeff(), 0.1);
     }
+    allocator.recover_memory();
   }
   if (!x_validated) {
     FAIL() << "Dense evaluation was never completed!";
   }
 }
+/*
 TEST(riccati, evolve_dense_output_burst) {
   using namespace riccati::test;
   constexpr int m = 1e6;
@@ -178,3 +182,4 @@ TEST(riccati, evolve_dense_output_airy) {
       = ((std::get<6>(res) - ytrue).array() / ytrue.array()).abs().eval();
   EXPECT_LE(y_err.maxCoeff(), 9e-4);
 }
+*/

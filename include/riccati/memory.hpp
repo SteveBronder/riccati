@@ -1,6 +1,7 @@
 #ifndef INCLUDE_RICCATI_MEMORY_ARENA_ALLOC_HPP
 #define INCLUDE_RICCATI_MEMORY_ARENA_ALLOC_HPP
 
+#include <riccati/macros.hpp>
 #include <stdint.h>
 #include <cstdlib>
 #include <cstddef>
@@ -12,23 +13,6 @@ namespace riccati {
 
 
 namespace internal {
-constexpr size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
-
-// FIXME: enforce alignment
-// big fun to inline, but only called twice
-inline byte_t* eight_byte_aligned_malloc(size_t size) {
-  byte_t* ptr = static_cast<byte_t*>(malloc(size));
-  if (!ptr) {
-    return ptr;  // malloc failed to alloc
-  }
-  if (!is_aligned(ptr, 8U)) {
-    std::stringstream s;
-    s << "invalid alignment to 8 bytes, ptr="
-      << reinterpret_cast<uintptr_t>(ptr) << std::endl;
-    throw std::runtime_error(s.str());
-  }
-  return ptr;
-}
 /**
  * Return <code>true</code> if the specified pointer is aligned
  * on the number of bytes.
@@ -40,10 +24,31 @@ inline byte_t* eight_byte_aligned_malloc(size_t size) {
  * @return <code>true</code> if pointer is aligned.
  * @tparam Type of object to which pointer points.
  */
-template <typename T>
-bool is_aligned(T* ptr, unsigned int bytes_aligned) {
-  return (reinterpret_cast<uintptr_t>(ptr) % bytes_aligned) == 0U;
+template <unsigned int Alignment, typename T>
+RICCATI_ALWAYS_INLINE bool is_aligned(T* ptr) {
+  return (reinterpret_cast<uintptr_t>(ptr) % Alignment) == 0U;
 }
+
+constexpr size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
+
+// FIXME: enforce alignment
+// big fun to inline, but only called twice
+RICCATI_ALWAYS_INLINE unsigned char* eight_byte_aligned_malloc(size_t size) {
+  unsigned char* ptr = static_cast<unsigned char*>(malloc(size));
+  if (!ptr) {
+    return ptr;  // malloc failed to alloc
+  }
+  if (!is_aligned<8U>(ptr)) {
+    [](auto* ptr) RICCATI_COLD_PATH {
+      std::stringstream s;
+      s << "invalid alignment to 8 bytes, ptr="
+        << reinterpret_cast<uintptr_t>(ptr) << std::endl;
+      throw std::runtime_error(s.str());
+    }(ptr);
+  }
+  return ptr;
+}
+
 }  // namespace internal
 
 /**
@@ -65,7 +70,7 @@ bool is_aligned(T* ptr, unsigned int bytes_aligned) {
  * all struct values should be padded to 8-byte boundaries if they
  * contain an 8-byte member or a virtual function.
  */
-class arena_allocator {
+class arena_alloc {
  private:
   using byte_t = unsigned char;
   std::vector<byte_t*> blocks_;  // storage for blocks,
@@ -121,13 +126,13 @@ class arena_allocator {
    * @throws std::runtime_error if the underlying malloc is not 8-byte
    * aligned.
    */
-  explicit arena_allocator(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
+  RICCATI_NO_INLINE explicit arena_alloc(size_t initial_nbytes = internal::DEFAULT_INITIAL_NBYTES)
       : blocks_(1, internal::eight_byte_aligned_malloc(initial_nbytes)),
         sizes_(1, initial_nbytes),
         cur_block_(0),
         cur_block_end_(blocks_[0] + initial_nbytes),
         next_loc_(blocks_[0]) {
-    if (!blocks_[0]) {
+    if (unlikely(!blocks_[0])) {
       throw std::bad_alloc();  // no msg allowed in bad_alloc ctor
     }
   }
@@ -138,7 +143,7 @@ class arena_allocator {
    * This is implemented as a no-op as there is no destruction
    * required.
    */
-  ~arena_allocator() {
+  ~arena_alloc() {
     // free ALL blocks
     for (auto& block : blocks_) {
       if (block) {
@@ -254,6 +259,79 @@ class arena_allocator {
     return false;
   }
 };
+
+/**
+ * std library compatible allocator that uses AD stack.
+ * @tparam T type of scalar
+ *
+ * @warning The type T needs to be either trivially destructible or the dynamic
+allocations needs to be managed by the arena_allocator.
+ * For example this works: @code{.cpp}
+using my_matrix = std::vector<std::vector<double,
+stan::math::arena_allocator<double>>,
+stan::math::arena_allocator<std::vector<double,
+stan::math::arena_allocator<double>>>>;@endcode
+ *
+ */
+template <typename T, typename ArenaType>
+struct arena_allocator {
+  ArenaType* alloc_;
+  using value_type = T;
+  arena_allocator(ArenaType* alloc) : alloc_(alloc) {}
+
+  arena_allocator(const arena_allocator& rhs) : alloc_(rhs.alloc_) {};
+
+  template <typename U, typename UArena>
+  arena_allocator(const arena_allocator<U, UArena>& rhs) : alloc_(rhs.alloc_) {}
+
+  /**
+   * Allocates space for `n` items of type `T`.
+   *
+   * @param n number of items to allocate space for
+   * @return pointer to allocated space
+   */
+  template <typename T_ = T>
+  T_* allocate(std::size_t n) {
+    return alloc_->template alloc_array<T_>(n);
+  }
+
+  /**
+   * Recovers memory
+   */
+  void recover_memory() {
+    alloc_->recover_all();
+  }
+
+  /**
+   * No-op. Memory is deallocated by calling `recover_memory()`.
+   */
+  void deallocate(T* /*p*/, std::size_t /*n*/) noexcept {}
+
+  /**
+   * Equality comparison operator.
+   * @return true
+   */
+  constexpr bool operator==(const arena_allocator&) const noexcept {
+    return true;
+  }
+  /**
+   * Inequality comparison operator.
+   * @return false
+   */
+  constexpr bool operator!=(const arena_allocator&) const noexcept {
+    return false;
+  }
+};
+
+template <typename Expr, typename Allocator>
+auto eigen_arena_alloc(Expr&& expr, Allocator&& alloc) {
+  using expr_t = std::decay_t<Expr>;
+  using scalar_t = typename expr_t::Scalar;
+  Eigen::Map<Eigen::Matrix<scalar_t, expr_t::RowsAtCompileTime, expr_t::ColsAtCompileTime>>
+    res(alloc.template allocate<scalar_t>(expr.size()), expr.rows(), expr.cols());
+  res.noalias() = std::forward<Expr>(expr);
+  return res;
+}
 
 }  // namespace riccati
 #endif

@@ -59,9 +59,13 @@ inline auto choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
   vectord_t ws = info.omega_fun_(s);
   vectord_t gs = info.gamma_fun_(s);
   vectord_t omega_analytic = info.omega_fun_(t);
-  auto omega_estimate = info.L_ * ws;
+  std::cout << "G: " << __LINE__ << std::endl;
+  auto omega_estimate = info.L_.transpose() * ws;
+  std::cout << "G: " << __LINE__ << std::endl;
   vectord_t gamma_analytic = info.gamma_fun_(t);
-  auto gamma_estimate = info.L_ * gs;
+  std::cout << "G: " << __LINE__ << std::endl;
+  auto gamma_estimate = info.L_.transpose() * gs;
+  std::cout << "G: " << __LINE__ << std::endl;
   FloatingPoint max_omega_err
       = (((omega_estimate - omega_analytic).array() / omega_analytic.array())
              .abs())

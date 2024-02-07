@@ -43,6 +43,8 @@ TEST(riccati, nonosc_step_test) {
   auto yi = airy_bi(-xi);
   auto dyi = -airy_bi_prime(-xi);
   auto eps = 1e-12;
+  auto* allocator = new riccati::arena_alloc{};
+  riccati::arena_allocator<double, riccati::arena_alloc> allocator(allocator);
   auto res = riccati::nonosc_step(info, xi, h, yi, dyi, eps);
   auto y_ana = airy_bi(-xi - h);
   auto dy_ana = -airy_bi_prime(-xi - h);
@@ -50,4 +52,5 @@ TEST(riccati, nonosc_step_test) {
   auto dy_err = std::abs((std::get<2>(res) - dy_ana) / dy_ana);
   EXPECT_NEAR(y_err, 0, 1e-10);
   EXPECT_NEAR(dy_err, 0, 1e-10);
+  delete allocator;
 }

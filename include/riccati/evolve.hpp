@@ -2,6 +2,7 @@
 #define INCLUDE_riccati_EVOLVE_HPP
 
 #include <riccati/chebyshev.hpp>
+#include <riccati/memory.hpp>
 #include <riccati/step.hpp>
 #include <riccati/stepsize.hpp>
 #include <riccati/utils.hpp>
@@ -10,12 +11,12 @@
 #include <tuple>
 
 namespace riccati {
-
-template <typename SolverInfo, typename Scalar, typename Vec>
+/*
+template <typename SolverInfo, typename Scalar, typename Vec, typename Allocator>
 inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                        std::complex<Scalar> yi, std::complex<Scalar> dyi,
                        Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
-                       Vec &&x_eval, bool hard_stop = false,
+                       Vec &&x_eval, Allocator&& allocator, bool hard_stop = false,
                        bool warn = false) {
   int sign = init_stepsize > 0 ? 1 : -1;
   using complex_t = std::complex<Scalar>;
@@ -78,18 +79,16 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                            dense_size);
   }
 }
-
-template <typename SolverInfo, typename Scalar, typename Vec>
+*/
+template <typename SolverInfo, typename Scalar, typename Vec, typename Allocator>
 inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                           std::complex<Scalar> yi, std::complex<Scalar> dyi,
                           Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
-                          Vec &&x_eval, bool hard_stop = false,
+                          Vec &&x_eval, Allocator&& allocator, bool hard_stop = false,
                           bool warn = false) {
   int sign = init_stepsize > 0 ? 1 : -1;
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
-  auto xscaled = scale(info.xn_.array(), xi, init_stepsize).eval();
-  vectorc_t yeval;
   // TODO: Add this check to regular evolve
   if (sign * (xi + init_stepsize) > sign * xf) {
     throw std::out_of_range(
@@ -98,7 +97,7 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
         + std::to_string(xi) + std::string(", ") + std::to_string(xf)
         + std::string(")!"));
   }
-  auto nonosc_ret = nonosc_step(info, xi, init_stepsize, yi, dyi, eps);
+  auto nonosc_ret = nonosc_step(info, xi, init_stepsize, yi, dyi, allocator, eps);
   if (!std::get<0>(nonosc_ret)) {
     return std::make_tuple(false, xi, init_stepsize, nonosc_ret, vectorc_t(0),
                            static_cast<Eigen::Index>(0),
@@ -106,17 +105,17 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
   } else {
     Eigen::Index dense_size = 0;
     Eigen::Index dense_start = 0;
+    vectorc_t yeval;
     if (info.denseout_) {
       // Assuming x_eval is sorted we just want start and size
       std::tie(dense_start, dense_size)
           = get_slice(x_eval, sign * xi, sign * (xi + init_stepsize));
       if (dense_size != 0) {
-        auto x_eval_map = x_eval.segment(dense_start, dense_size);
-        auto xscaled = (xi + init_stepsize / 2
+        auto x_eval_map = x_eval.segment(dense_start, dense_size).eval();
+        auto xscaled = eigen_arena_alloc((xi + init_stepsize / 2
                         + init_stepsize / 2 * info.chebyshev_[1].second.array())
-                           .matrix()
-                           .eval();
-        auto Linterp = interpolate(xscaled, x_eval_map);
+                           .matrix(), allocator);
+        auto Linterp = interpolate(xscaled, x_eval_map, allocator);
         yeval = Linterp * std::get<4>(nonosc_ret);
       }
     }
@@ -178,6 +177,7 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
  * Riccati, 0 for Chebyshev).
  *         - Vector of interpolated values of the solution at x_eval (yeval).
  */
+/*
 template <typename SolverInfo, typename Scalar, typename Vec>
 inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                    std::complex<Scalar> yi, std::complex<Scalar> dyi,
@@ -396,7 +396,7 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
   }
   return std::make_tuple(xs, ys, dys, successes, phases, steptypes, yeval);
 }
-
+*/
 }  // namespace riccati
 
 #endif
