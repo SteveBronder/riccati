@@ -1,7 +1,21 @@
 #ifndef RICCATI_TESTS_CPP_UTILS_HPP
 #define RICCATI_TESTS_CPP_UTILS_HPP
+
 #include <boost/math/special_functions/airy.hpp>
+#include <riccati/memory.hpp>
+#include <gtest/gtest.h>
 #include <type_traits>
+
+struct Riccati : public testing::Test {
+  riccati::arena_alloc* arena{new riccati::arena_alloc{}};
+  riccati::arena_allocator<double, riccati::arena_alloc> allocator{arena};
+  void SetUp() {
+    // make sure memory's clean before starting each test
+  }
+  void TearDown() {
+    delete arena;
+  }
+};
 
 namespace riccati {
 namespace test {

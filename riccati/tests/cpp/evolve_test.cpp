@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string>
 
-TEST(riccati, osc_evolve_dense_output) {
+TEST_F(Riccati, osc_evolve_dense_output) {
   using namespace riccati::test;
   auto omega_fun
       = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
@@ -30,7 +30,7 @@ TEST(riccati, osc_evolve_dense_output) {
   bool x_validated = false;
   while (xi < xf) {
     auto res
-        = riccati::osc_evolve(info, xi, xf, yi, dyi, eps, epsh, hi, x_eval);
+        = riccati::osc_evolve(info, xi, xf, yi, dyi, eps, epsh, hi, x_eval, allocator);
     if (!std::get<0>(res)) {
       break;
     } else {
@@ -62,7 +62,7 @@ TEST(riccati, osc_evolve_dense_output) {
   }
 }
 
-TEST(riccati, nonosc_evolve_dense_output) {
+TEST_F(Riccati, nonosc_evolve_dense_output) {
   using namespace riccati::test;
   auto omega_fun
       = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
@@ -86,7 +86,7 @@ TEST(riccati, nonosc_evolve_dense_output) {
   bool x_validated = false;
   while (xi < xf) {
     auto res
-        = riccati::nonosc_evolve(info, xi, xf, yi, dyi, eps, epsh, hi, x_eval);
+        = riccati::nonosc_evolve(info, xi, xf, yi, dyi, eps, epsh, hi, x_eval, allocator);
     if (!std::get<0>(res)) {
       break;
     } else {
@@ -110,12 +110,13 @@ TEST(riccati, nonosc_evolve_dense_output) {
                 .eval();
       EXPECT_LE(y_err.maxCoeff(), 0.1);
     }
+    allocator.recover_memory();
   }
   if (!x_validated) {
     FAIL() << "Dense evaluation was never completed!";
   }
 }
-TEST(riccati, evolve_dense_output_burst) {
+TEST_F(Riccati, evolve_dense_output_burst) {
   using namespace riccati::test;
   constexpr int m = 1e6;
   auto omega_fun = [m](auto&& x) {
@@ -147,7 +148,7 @@ TEST(riccati, evolve_dense_output_burst) {
   Eigen::Index Neval = 1e3;
   riccati::vector_t<double> x_eval
       = riccati::vector_t<double>::LinSpaced(Neval, xi, xf);
-  auto res = riccati::evolve(info, xi, xf, yi, dyi, eps, epsh, 0.1, x_eval);
+  auto res = riccati::evolve(info, xi, xf, yi, dyi, eps, epsh, 0.1, x_eval, allocator);
   auto x_steps = Eigen::Map<Eigen::VectorXd>(std::get<0>(res).data(), std::get<0>(res).size());
   auto ytrue = x_steps.unaryExpr(burst_y).eval();
   auto y_steps = Eigen::Map<Eigen::Matrix<std::complex<double>, -1, 1>>(std::get<1>(res).data(), std::get<1>(res).size());
@@ -156,7 +157,7 @@ TEST(riccati, evolve_dense_output_burst) {
   // FRUSZINA: Doing dense evals here gives a max error of 0.0001 or so :(
   EXPECT_LE(y_err.maxCoeff(), 5e-9);
 }
-TEST(riccati, evolve_dense_output_airy) {
+TEST_F(Riccati, evolve_dense_output_airy) {
   using namespace riccati::test;
   auto omega_fun
       = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
@@ -173,8 +174,62 @@ TEST(riccati, evolve_dense_output_airy) {
   riccati::vector_t<double> x_eval
       = riccati::vector_t<double>::LinSpaced(Neval, xi, 1e2);
   auto ytrue = airy_i(x_eval.array()).matrix().eval();
-  auto res = riccati::evolve(info, xi, xf, yi, dyi, eps, epsh, 0.1, x_eval);
+  auto res = riccati::evolve(info, xi, xf, yi, dyi, eps, epsh, 0.1, x_eval, allocator);
   auto y_err
       = ((std::get<6>(res) - ytrue).array() / ytrue.array()).abs().eval();
   EXPECT_LE(y_err.maxCoeff(), 9e-4);
 }
+
+/**
+[==========] Running 21 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 21 tests from Riccati
+[ RUN      ] Riccati.chebyshev_coeffs_to_cheby_nodes_truth
+[       OK ] Riccati.chebyshev_coeffs_to_cheby_nodes_truth (0 ms)
+[ RUN      ] Riccati.chebyshev_cheby_nodes_to_coeffs_truth
+[       OK ] Riccati.chebyshev_cheby_nodes_to_coeffs_truth (0 ms)
+[ RUN      ] Riccati.coeffs_and_cheby_nodes
+[       OK ] Riccati.coeffs_and_cheby_nodes (0 ms)
+[ RUN      ] Riccati.chebyshev_integration_truth
+[       OK ] Riccati.chebyshev_integration_truth (0 ms)
+[ RUN      ] Riccati.quad_weights_test
+[       OK ] Riccati.quad_weights_test (0 ms)
+[ RUN      ] Riccati.chebyshev_chebyshev_truth
+[       OK ] Riccati.chebyshev_chebyshev_truth (0 ms)
+[ RUN      ] Riccati.chebyshev_integration
+[       OK ] Riccati.chebyshev_integration (0 ms)
+[ RUN      ] Riccati.interpolate_test
+[       OK ] Riccati.interpolate_test (1 ms)
+[ RUN      ] Riccati.spectral_chebyshev_test
+[       OK ] Riccati.spectral_chebyshev_test (2 ms)
+[ RUN      ] Riccati.osc_evolve_dense_output
+[       OK ] Riccati.osc_evolve_dense_output (20 ms)
+[ RUN      ] Riccati.nonosc_evolve_dense_output
+[       OK ] Riccati.nonosc_evolve_dense_output (2641 ms)
+[ RUN      ] Riccati.evolve_dense_output_burst
+[       OK ] Riccati.evolve_dense_output_burst (265 ms)
+[ RUN      ] Riccati.evolve_dense_output_airy
+[       OK ] Riccati.evolve_dense_output_airy (15 ms)
+[ RUN      ] Riccati.solver_make_solver_nondense
+[       OK ] Riccati.solver_make_solver_nondense (1 ms)
+[ RUN      ] Riccati.solver_make_solver_dense
+[       OK ] Riccati.solver_make_solver_dense (1 ms)
+[ RUN      ] Riccati.osc_step_test
+[       OK ] Riccati.osc_step_test (1 ms)
+[ RUN      ] Riccati.nonosc_step_test
+[       OK ] Riccati.nonosc_step_test (1 ms)
+[ RUN      ] Riccati.osc_stepsize_dense_output
+[       OK ] Riccati.osc_stepsize_dense_output (1 ms)
+[ RUN      ] Riccati.osc_stepsize_nondense_output
+[       OK ] Riccati.osc_stepsize_nondense_output (1 ms)
+[ RUN      ] Riccati.nonosc_stepsize_dense_output
+[       OK ] Riccati.nonosc_stepsize_dense_output (1 ms)
+[ RUN      ] Riccati.nonosc_stepsize_nondense_output
+[       OK ] Riccati.nonosc_stepsize_nondense_output (1 ms)
+[----------] 21 tests from Riccati (2958 ms total)
+
+[----------] Global test environment tear-down
+[==========] 21 tests from 1 test suite ran. (2958 ms total)
+[  PASSED  ] 21 tests.
+[sbronder@ccmlin064 build
+*/

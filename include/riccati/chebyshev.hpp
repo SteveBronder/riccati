@@ -1,6 +1,8 @@
 #ifndef INCLUDE_riccati_CHEBYSHEV_HPP
 #define INCLUDE_riccati_CHEBYSHEV_HPP
 
+#include <riccati/arena_matrix.hpp>
+#include <riccati/memory.hpp>
 #include <riccati/utils.hpp>
 #include <unsupported/Eigen/FFT>
 
@@ -260,20 +262,19 @@ inline auto chebyshev(Integral n) {
  * @return Eigen::MatrixXd (real) - The interpolation matrix `L`. If `s` has size `p` and `t` has size `q`, then `L` has size (q, p). `L` takes function values at source points `s` and yields the function evaluated at target points `t`.
  */
 
-template <typename Vec1, typename Vec2>
-inline auto interpolate(Vec1&& s, Vec2&& t) {
+template <typename Vec1, typename Vec2, typename Allocator>
+inline auto interpolate(Vec1&& s, Vec2&& t, Allocator&& alloc) {
   const auto r = s.size();
   const auto q = t.size();
-  auto V = matrix_t<typename std::decay_t<Vec1>::Scalar>::Ones(r, r).eval();
-  auto R = matrix_t<typename std::decay_t<Vec1>::Scalar>::Ones(q, r).eval();
+  auto V = to_arena(alloc, matrix_t<typename std::decay_t<Vec1>::Scalar>::Ones(r, r));
+  auto R = to_arena(alloc, matrix_t<typename std::decay_t<Vec1>::Scalar>::Ones(q, r));
   for (std::size_t i = 1; i < static_cast<std::size_t>(r); ++i) {
     V.col(i).array() = V.col(i - 1).array() * s.array();
     R.col(i).array() = R.col(i - 1).array() * t.array();
   }
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(
-      V.transpose(), Eigen::ComputeFullU | Eigen::ComputeFullV);
-  Eigen::MatrixXd L = svd.solve(R.transpose().eval()).transpose();
-  return L;
+      V.transpose(), Eigen::ComputeThinU | Eigen::ComputeThinV);
+  return svd.solve(R.transpose()).transpose().eval();
 }
 
 /**
@@ -295,31 +296,31 @@ inline auto interpolate(Vec1&& s, Vec2&& t) {
  *         2. std::vector<std::complex<double>> - Numerical estimate of the derivative of the solution at the end of the step, at `x0 + h`.
  *         3. Eigen::VectorXd (real) - Chebyshev nodes used for the current iteration of the spectral collocation method, scaled to lie in the interval `[x0, x0 + h]`.
  */
-template <typename SolverInfo, typename Scalar, typename YScalar, typename Integral>
+template <typename SolverInfo, typename Scalar, typename YScalar, typename Integral, typename Allocator>
 inline auto spectral_chebyshev(SolverInfo&& info, Scalar x0, Scalar h,
                                YScalar y0,
-                               YScalar dy0, Integral niter) {
+                               YScalar dy0, Integral niter, Allocator&& alloc) {
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
-  auto x_scaled = riccati::scale(info.chebyshev_[niter].second, x0, h).eval();
+  auto x_scaled = to_arena(alloc, riccati::scale(info.chebyshev_[niter].second, x0, h));
   auto&& D = info.chebyshev_[niter].first;
   auto ws = info.omega_fun_(x_scaled);
   auto gs = info.gamma_fun_(x_scaled);
-  auto w2 = (ws.array().square()).matrix();
-  auto D2 = (4.0 / (h * h) * (D * D) + 4.0 / h * (gs.asDiagonal() * D)).eval();
-  D2 += w2.asDiagonal();
+  auto D2 = to_arena(alloc, (4.0 / (h * h) * (D * D) + 4.0 / h * (gs.asDiagonal() * D)));
+  D2 += (ws.array().square()).matrix().asDiagonal();
   const auto n = std::round(info.ns_[niter]);
-  auto D2ic = matrix_t<complex_t>::Zero(n + 3, n + 1).eval();
+  auto D2ic = to_arena(alloc, matrix_t<complex_t>::Zero(n + 3, n + 1));
   D2ic.topRows(n + 1) = D2;
   D2ic.row(n + 1) = 2.0 / h * D.row(D.rows() - 1);
-  auto ic = vectorc_t::Zero(n + 1).eval();
+  auto ic = to_arena(alloc, vectorc_t::Zero(n + 1));
   ic.coeffRef(n) = complex_t{1.0, 0.0};
   D2ic.row(n + 2) = ic;
-  vectorc_t rhs = vectorc_t::Zero(n + 3);
+  auto rhs = to_arena(alloc, vectorc_t::Zero(n + 3));
   rhs.coeffRef(n + 1) = dy0;
   rhs.coeffRef(n + 2) = y0;
-  vectorc_t y1 = D2ic.colPivHouseholderQr().solve(rhs);
-  auto dy1 = (2.0 / h * (D * y1)).eval();
+  auto y1 = to_arena(alloc, D2ic.colPivHouseholderQr().solve(rhs));
+  auto dy1 = to_arena(alloc, 2.0 / h * (D * y1));
+
   return std::make_tuple(std::move(y1), std::move(dy1), std::move(x_scaled));
 }
 

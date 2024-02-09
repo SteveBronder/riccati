@@ -1,6 +1,8 @@
 #ifndef INCLUDE_riccati_SOLVER_HPP
 #define INCLUDE_riccati_SOLVER_HPP
 
+#include <riccati/arena_matrix.hpp>
+#include <riccati/memory.hpp>
 #include <riccati/chebyshev.hpp>
 #include <riccati/utils.hpp>
 #include <Eigen/Dense>
@@ -166,7 +168,7 @@ class SolverInfo {
                       .array())
                      .cos()
                      .matrix();
-    L_ = interpolate(xp_, xp_interp_);  // Assuming interp is a function that
+    L_ = interpolate(xp_, xp_interp_, dummy_allocator{});  // Assuming interp is a function that
                                         // creates the interpolation matrix
   }
 };

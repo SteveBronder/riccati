@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string>
 
-TEST(riccati, osc_step_test) {
+TEST_F(Riccati, osc_step_test) {
   using namespace riccati::test;
   auto omega_fun
       = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
@@ -31,7 +31,7 @@ TEST(riccati, osc_step_test) {
   EXPECT_NEAR(dy_err, 0, 1e-10);
 }
 
-TEST(riccati, nonosc_step_test) {
+TEST_F(Riccati, nonosc_step_test) {
   using namespace riccati::test;
   auto omega_fun
       = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
@@ -43,7 +43,7 @@ TEST(riccati, nonosc_step_test) {
   auto yi = airy_bi(-xi);
   auto dyi = -airy_bi_prime(-xi);
   auto eps = 1e-12;
-  auto res = riccati::nonosc_step(info, xi, h, yi, dyi, eps);
+  auto res = riccati::nonosc_step(info, xi, h, yi, dyi, eps, allocator);
   auto y_ana = airy_bi(-xi - h);
   auto dy_ana = -airy_bi_prime(-xi - h);
   auto y_err = std::abs((std::get<1>(res) - y_ana) / y_ana);

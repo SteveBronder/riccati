@@ -6,14 +6,14 @@
 #include <stdlib.h>
 #include <string>
 
-TEST(riccati, solver_make_solver_nondense) {
+TEST_F(Riccati, solver_make_solver_nondense) {
   auto omega_f = [](auto& x) { return riccati::test::sqrt(x); };
   auto gamma_f = [](auto& x) { return zero_like(x); };
   auto info = riccati::make_solver<false, double>(omega_f, gamma_f, 16UL, 32UL,
                                                   16UL, 32UL);
 }
 
-TEST(riccati, solver_make_solver_dense) {
+TEST_F(Riccati, solver_make_solver_dense) {
   auto omega_fun = [](auto&& x) { return x.sqrt().eval(); };
   auto gamma_fun = [](auto&& x) {
     using inp_t = std::decay_t<decltype(x)>;

@@ -29,19 +29,19 @@ namespace riccati {
  *         3. float - The (absolute) value of the relative difference of the dependent variable at the end of the step as predicted in the last and the previous iteration.
  *         4. int - Flag indicating success (`1`) if the asymptotic series has reached the desired `epsres` residual, `0` otherwise.
  */
-template <typename SolverInfo, typename Scalar, typename YScalar>
+template <typename SolverInfo, typename Scalar, typename YScalar, typename Allocator>
 inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
                         YScalar y0, YScalar dy0,
-                        Scalar epsres = Scalar(1e-12)) {
+                        Scalar epsres, Allocator&& alloc) {
   using complex_t = std::complex<Scalar>;
 
   Scalar maxerr = 10 * epsres;
   auto N = info.nini_;
   auto Nmax = info.nmax_;
-  auto cheby = spectral_chebyshev(info, x0, h, y0, dy0, 0);
-  auto&& yprev = std::get<0>(cheby);
-  auto&& dyprev = std::get<1>(cheby);
-  auto&& xprev = std::get<2>(cheby);
+  auto cheby = spectral_chebyshev(info, x0, h, y0, dy0, 0, alloc);
+  auto yprev = std::get<0>(cheby);
+  auto dyprev = std::get<1>(cheby);
+  auto xprev = std::get<2>(cheby);
   int iter = 0;
   while (maxerr > epsres) {
     iter++;
@@ -52,10 +52,10 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
     }
     auto cheb_num = static_cast<int>(std::log2(N / info.nini_));
     auto cheby2 = spectral_chebyshev(info, x0, h, y0, dy0,
-                               cheb_num);
-    auto &&y = std::get<0>(std::move(cheby2));
-    auto &&dy = std::get<1>(std::move(cheby2));
-    auto &&x = std::get<2>(std::move(cheby2));
+                               cheb_num, alloc);
+    auto y = std::get<0>(std::move(cheby2));
+    auto dy = std::get<1>(std::move(cheby2));
+    auto x = std::get<2>(std::move(cheby2));
     maxerr = std::abs((yprev(0) - y(0)) / y(0));
     if (std::isnan(maxerr)) {
       maxerr = std::numeric_limits<Scalar>::infinity();

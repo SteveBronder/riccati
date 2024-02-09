@@ -9,7 +9,7 @@
 
 #include <boost/math/special_functions/airy.hpp>
 
-TEST(riccati, osc_stepsize_dense_output) {
+TEST_F(Riccati, osc_stepsize_dense_output) {
   using namespace riccati::test;
   auto omega_fun
       = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
@@ -23,7 +23,7 @@ TEST(riccati, osc_stepsize_dense_output) {
   EXPECT_EQ(hi, 200.0);
 }
 
-TEST(riccati, osc_stepsize_nondense_output) {
+TEST_F(Riccati, osc_stepsize_nondense_output) {
   using namespace riccati::test;
   auto omega_fun
       = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
@@ -37,7 +37,7 @@ TEST(riccati, osc_stepsize_nondense_output) {
   EXPECT_EQ(hi, 200.0);
 }
 
-TEST(riccati, nonosc_stepsize_dense_output) {
+TEST_F(Riccati, nonosc_stepsize_dense_output) {
   using namespace riccati::test;
   auto omega_fun
       = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
@@ -51,7 +51,7 @@ TEST(riccati, nonosc_stepsize_dense_output) {
   EXPECT_EQ(hi, 0.5);
 }
 
-TEST(riccati, nonosc_stepsize_nondense_output) {
+TEST_F(Riccati, nonosc_stepsize_nondense_output) {
   using namespace riccati::test;
   auto omega_fun
       = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };

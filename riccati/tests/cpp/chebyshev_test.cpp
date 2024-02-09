@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string>
 
-TEST(riccati, chebyshev_coeffs_to_cheby_nodes_truth) {
+TEST_F(Riccati, chebyshev_coeffs_to_cheby_nodes_truth) {
   Eigen::Map<Eigen::Matrix<double, 16, 16>> truth(
       riccati::test::output::chebyshev_coeffs_to_cheby_nodes_truth.data());
   Eigen::Matrix<double, 16, 16> inp = Eigen::Matrix<double, 16, 16>::Identity();
@@ -21,7 +21,7 @@ TEST(riccati, chebyshev_coeffs_to_cheby_nodes_truth) {
   }
 }
 
-TEST(riccati, chebyshev_cheby_nodes_to_coeffs_truth) {
+TEST_F(Riccati, chebyshev_cheby_nodes_to_coeffs_truth) {
   Eigen::Map<Eigen::Matrix<double, 16, 16>> truth(
       riccati::test::output::chebyshev_cheby_nodes_to_coeffs_truth.data());
   Eigen::Matrix<double, 16, 16> inp
@@ -36,7 +36,7 @@ TEST(riccati, chebyshev_cheby_nodes_to_coeffs_truth) {
   }
 }
 
-TEST(riccati, coeffs_and_cheby_nodes) {
+TEST_F(Riccati, coeffs_and_cheby_nodes) {
   Eigen::Matrix<double, 16, 16> inp
       = Eigen::Matrix<double, 16, 16>::Identity(16, 16);
   auto result = riccati::coeffs_and_cheby_nodes(inp);
@@ -64,7 +64,7 @@ TEST(riccati, coeffs_and_cheby_nodes) {
   }
 }
 
-TEST(riccati, chebyshev_integration_truth) {
+TEST_F(Riccati, chebyshev_integration_truth) {
   constexpr Eigen::Index n = 16;
   Eigen::Map<Eigen::Matrix<double, 16, 16>> truth(
       riccati::test::output::chebyshev_integration_truth.data());
@@ -77,7 +77,7 @@ TEST(riccati, chebyshev_integration_truth) {
   }
 }
 
-TEST(riccati, quad_weights_test) {
+TEST_F(Riccati, quad_weights_test) {
   constexpr Eigen::Index n = 32;
   Eigen::Map<Eigen::Matrix<double, 33, 1>> truth(
       riccati::test::output::quad_weights_truth.data());
@@ -88,7 +88,7 @@ TEST(riccati, quad_weights_test) {
   }
 }
 
-TEST(riccati, chebyshev_chebyshev_truth) {
+TEST_F(Riccati, chebyshev_chebyshev_truth) {
   constexpr Eigen::Index n = 32;
   auto chebyshev_pair = riccati::chebyshev<double>(n);
   Eigen::Map<Eigen::Matrix<double, 33, 1>> x_truth(
@@ -109,7 +109,7 @@ TEST(riccati, chebyshev_chebyshev_truth) {
   }
 }
 
-TEST(riccati, chebyshev_integration) {
+TEST_F(Riccati, chebyshev_integration) {
   constexpr Eigen::Index n = 32;
   constexpr double a = 3.0;
   auto f = [a](auto x) {
@@ -128,7 +128,7 @@ TEST(riccati, chebyshev_integration) {
   EXPECT_NEAR(maxerr, 0.0, 1e-13);
 }
 
-TEST(riccati, interpolate_test) {
+TEST_F(Riccati, interpolate_test) {
   riccati::vector_t<double> x_scaled(33);
   x_scaled << 1.4880213, 1.4868464, 1.4833327, 1.4775143, 1.4694471, 1.4592089,
       1.4468981, 1.4326335, 1.4165523, 1.3988094, 1.3795757, 1.3590365,
@@ -138,7 +138,7 @@ TEST(riccati, interpolate_test) {
       1.0046886, 1.001175, 1;
   riccati::vector_t<double> x_dense(5);
   x_dense << 1., 1.0990991, 1.1981982, 1.2972973, 1.3963964;
-  auto ans = riccati::interpolate(x_scaled, x_dense);
+  auto ans = riccati::interpolate(x_scaled, x_dense, allocator);
   const auto r = x_scaled.size();
   const auto q = x_dense.size();
   auto V = riccati::matrix_t<double>::Ones(r, r).eval();
@@ -157,7 +157,7 @@ TEST(riccati, interpolate_test) {
   }
 }
 
-TEST(riccati, spectral_chebyshev_test) {
+TEST_F(Riccati, spectral_chebyshev_test) {
   using namespace riccati::test;
   auto omega_fun
       = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
@@ -170,7 +170,7 @@ TEST(riccati, spectral_chebyshev_test) {
   const auto dy0
       = std::complex<double>(0.010160567116645175, -0.5923756264227923);
   constexpr auto niter = 0;
-  auto ret = riccati::spectral_chebyshev(info, xi, h, y0, dy0, niter);
+  auto ret = riccati::spectral_chebyshev(info, xi, h, y0, dy0, niter, allocator);
   auto&& spec_y1 = riccati::test::output::spectral_cheby_y1;
   auto&& spec_dy1 = riccati::test::output::spectral_cheby_dy1;
   for (Eigen::Index i = 0; i < spec_y1.size(); ++i) {
