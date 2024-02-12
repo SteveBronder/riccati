@@ -49,25 +49,13 @@ def nonosc_step(info, x0, h, y0, dy0, epsres = 1e-12):
     N = info.nini
     Nmax = info.nmax
     yprev, dyprev, xprev = spectral_cheb(info, x0, h, y0, dy0, 0)
-#    print("yprev", yprev)
-#    print("dyprev", dyprev)
-#    print("xprev", xprev)
-    iter = 0
     while maxerr > epsres:
- #       print("Iter: ", iter)
-        iter = iter + 1
         N *= 2
         if N > Nmax:
             success = 0
             return 0, 0, maxerr, success
-        cheb_num = int(np.log2(N/info.nini))
-#        print("cheb_num", cheb_num)
-        y, dy, x = spectral_cheb(info, x0, h, y0, dy0, cheb_num)
-#        print("y", y)
-#        print("dy", dy)
-#        print("x", x)
+        y, dy, x = spectral_cheb(info, x0, h, y0, dy0, int(np.log2(N/info.nini)))
         maxerr = np.abs((yprev[0] - y[0])/y[0])
-#        print("maxerr", maxerr)
         if np.isnan(maxerr):
             maxerr = np.inf
         yprev = y

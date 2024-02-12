@@ -9,34 +9,57 @@ import mpmath
 import warnings
 import pytest
 
-m = int(1e6) # Frequency parameter
-w = lambda x: np.sqrt(m**2 - 1)/(1 + x**2)
+
+w = lambda x: np.sqrt(x)
 g = lambda x: np.zeros_like(x)
-bursty = lambda x: np.sqrt(1 + x**2)/m*(np.cos(m*np.arctan(x)) + 1j*np.sin(m*np.arctan(x)))
-burstdy = lambda x: 1/np.sqrt(1 + x**2)/m * ((x + 1j * m) * np.cos(m * np.arctan(x))\
-        + (-m + 1j*x)*np.sin(m*np.arctan(x)))
-xi = -m
-xf = m
-yi = bursty(xi)
-dyi = burstdy(xi)
-eps = 1e-10
-epsh = 1e-12
 info = solversetup(w, g, n = 32, p = 32)
-xs, ys, dys, ss, ps, types, yeval = solve(info, xi, xf, yi, dyi, eps = eps, epsh = epsh)
-xs = np.array(xs)
-ys = np.array(ys)
-ytrue = bursty(xs)
-yerr = np.abs((ytrue - ys))/np.abs(ytrue)
-maxerr = max(yerr)
-assert maxerr < 2e-7
+xi = 1e0
+xf = 4e1
+eps = 1e-12
+epsh = 2e-1 # Note different definition of epsh for Chebyshev steps!
+yi = sp.airy(-xi)[0] + 1j*sp.airy(-xi)[2]
+dyi = -sp.airy(-xi)[1] - 1j*sp.airy(-xi)[3]
+# Store things
+xs, ys, dys = [], [], []
+# Always necessary for setting info.y
+info.y = np.array([yi, dyi])
+# Necessary for getting an initial stepsize
+hi = 1/w(xi)
+hi = choose_nonosc_stepsize(info, xi, hi, epsh = epsh)
+info.h = hi
+# Not necessary here because info.x is already xi, but in general it might be:
+info.x = xi
+Neval = 1000
+xeval = np.linspace(xi, xf, Neval)
+ytrue_xeval = np.array([mpmath.airyai(-x) + 1j*mpmath.airybi(-x) for x in xeval])
+iter = 0
+while info.x < xf:
+    x_start = info.x
+    status, yeval = nonosc_evolve(info, info.x, xf, info.h, info.y, xeval, epsres = eps, epsh = epsh)
+    x_end = info.x
+    if status != 1:
+        break
+    xs.append(info.x)
+    ys.append(info.y[0])
+    ylen = len(yeval)
+    if ylen > 0:
+        positions = np.logical_or(np.logical_and(xeval >= x_start, xeval < x_end),
+                                    np.logical_and(xeval == x_end, xeval == x_start))
+        ytrue_slice = ytrue_xeval[positions]
+        yerr = np.abs((ytrue_slice - yeval)/ytrue_slice)
+        maxerr = max(yerr)
+        if (maxerr > 1e-10):
+            print("Nonosc evolve max error:", maxerr)
+    if iter > 5:
+        break
+    iter = iter + 1
 
 xs = np.array(xs)
 ys = np.array(ys)
 ytrue = np.array([mpmath.airyai(-x) + 1j*mpmath.airybi(-x) for x in xs])
 yerr = np.abs((ytrue - ys)/ytrue)
 maxerr = max(yerr)
-print("Forward osc evolve max error:", maxerr)
-assert maxerr < 1e-6
+print("Forward nonosc evolve max error:", maxerr)
 
 def test_integration():
     n = 16
@@ -255,7 +278,7 @@ def test_solve_burst():
     w = lambda x: np.sqrt(m**2 - 1)/(1 + x**2)
     g = lambda x: np.zeros_like(x)
     bursty = lambda x: np.sqrt(1 + x**2)/m*(np.cos(m*np.arctan(x)) + 1j*np.sin(m*np.arctan(x)))
-    burstdy = lambda x: 1/np.sqrt(1 + x**2)/m * ((x + 1j * m) * np.cos(m * np.arctan(x))\
+    burstdy = lambda x: 1/np.sqrt(1 + x**2)/m*((x + 1j*m)*np.cos(m*np.arctan(x))\
             + (-m + 1j*x)*np.sin(m*np.arctan(x)))
     xi = -m
     xf = m
@@ -326,12 +349,26 @@ def test_nonosc_evolve():
     info.h = hi
     # Not necessary here because info.x is already xi, but in general it might be:
     info.x = xi
+    Neval = 1000
+    xeval = np.linspace(xi, xf, Neval)
+    ytrue_xeval = np.array([mpmath.airyai(-x) + 1j*mpmath.airybi(-x) for x in xeval])
     while info.x < xf:
-        status = nonosc_evolve(info, info.x, xf, info.h, info.y, epsres = eps, epsh = epsh)
+        x_start = info.x
+        status, yeval = nonosc_evolve(info, info.x, xf, info.h, info.y, epsres = eps, epsh = epsh)
+        x_end = info.x
         if status != 1:
             break
         xs.append(info.x)
         ys.append(info.y[0])
+        ylen = len(yeval)
+        if ylen > 0:
+            positions = np.logical_or(np.logical_and(xeval >= x_start, xeval < x_end),
+                                       np.logical_and(xeval == x_end, xeval == x_start))
+            ytrue_slice = ytrue_xeval[positions]
+            yerr = np.abs((ytrue_slice - yeval)/ytrue_slice)
+            maxerr = max(yerr)
+            if (maxerr > 1e-10):
+                print("Nonosc evolve max error:", maxerr)
     xs = np.array(xs)
     ys = np.array(ys)
     ytrue = np.array([mpmath.airyai(-x) + 1j*mpmath.airybi(-x) for x in xs])

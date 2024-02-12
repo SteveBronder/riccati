@@ -48,19 +48,19 @@ inline FloatingPoint choose_nonosc_stepsize(SolverInfo&& info, FloatingPoint x0,
  * @param epsh float - Tolerance parameter defining the maximum relative error allowed in the Chebyshev interpolation of `w(x)` and `g(x)` over the proposed step.
  * @return float - The refined step size over which the Chebyshev interpolation of `w(x)` and `g(x)` satisfies the relative error tolerance `epsh`.
  */
-template <typename SolverInfo, typename FloatingPoint>
+template <typename SolverInfo, typename FloatingPoint, typename Allocator>
 inline auto choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
                                          FloatingPoint h,
-                                         FloatingPoint epsilon_h) {
-  auto t = riccati::scale(info.xp_interp_, x0, h).eval();
-  auto s = riccati::scale(info.xp_, x0, h).eval();
+                                         FloatingPoint epsilon_h, Allocator&& alloc) {
+  auto t = to_arena(alloc, riccati::scale(info.xp_interp_, x0, h));
+  auto s = to_arena(alloc, riccati::scale(info.xp_, x0, h));
   // TODO: Use a memory arena for these
   using vectord_t = vector_t<FloatingPoint>;
-  vectord_t ws = info.omega_fun_(s);
-  vectord_t gs = info.gamma_fun_(s);
-  vectord_t omega_analytic = info.omega_fun_(t);
+  auto ws = info.omega_fun_(s).eval();
+  auto gs = info.gamma_fun_(s).eval();
+  auto omega_analytic = to_arena(alloc, info.omega_fun_(t));
   auto omega_estimate = info.L_ * ws;
-  vectord_t gamma_analytic = info.gamma_fun_(t);
+  auto gamma_analytic = to_arena(alloc, info.gamma_fun_(t));
   auto gamma_estimate = info.L_ * gs;
   FloatingPoint max_omega_err
       = (((omega_estimate - omega_analytic).array() / omega_analytic.array())
@@ -73,7 +73,7 @@ inline auto choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
   FloatingPoint max_err = std::max(max_omega_err, max_gamma_err);
   if (max_err <= epsilon_h) {
     if (info.p_ != info.n_) {
-      vectord_t xn_scaled = riccati::scale(info.xn_, x0, h);
+      auto xn_scaled = to_arena(alloc, riccati::scale(info.xn_, x0, h));
       ws = info.omega_fun_(xn_scaled);
       gs = info.gamma_fun_(xn_scaled);
     }
@@ -81,7 +81,7 @@ inline auto choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
   } else {
     auto h_scaling = std::min(
         0.7, 0.9 * std::pow(epsilon_h / max_err, (1.0 / (info.p_ - 1.0))));
-    return choose_osc_stepsize(info, x0, h * h_scaling, epsilon_h);
+    return choose_osc_stepsize(info, x0, h * h_scaling, epsilon_h, alloc);
   }
 }
 

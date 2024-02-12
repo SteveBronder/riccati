@@ -47,9 +47,6 @@ class SolverInfo {
    * its derivative.
    */
   Eigen::Matrix<std::complex<Scalar>, 2, 1> y_;
-  // idk yet
-  vectorc_t un_;
-  std::pair<complex_t, complex_t> a_;
   // Number of nodes and diff matrices
   Integral n_nodes_{0};
   // Differentiation matrices and Vectors of Chebyshev nodes

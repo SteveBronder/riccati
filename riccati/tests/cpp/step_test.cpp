@@ -22,7 +22,7 @@ TEST_F(Riccati, osc_step_test) {
   auto gamma_n = info.gamma_fun_(xscaled).eval();
   auto y0 = airy_ai(-x0);
   auto dy0 = -airy_ai_prime(-x0);
-  auto res = riccati::osc_step(info, omega_n, gamma_n, x0, h, y0, dy0, eps);
+  auto res = riccati::osc_step(info, omega_n, gamma_n, x0, h, y0, dy0, eps, allocator);
   auto y_ana = airy_ai(-(x0 + h));
   auto dy_ana = -airy_ai_prime(-(x0 + h));
   auto y_err = std::abs((std::get<1>(res) - y_ana) / y_ana);

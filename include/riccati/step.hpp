@@ -81,8 +81,6 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
  * @param y0 complex - Initial value of the dependent variable at `x0`.
  * @param dy0 complex - Initial derivative of the dependent variable at `x0`.
  * @param epsres float - Tolerance for the relative accuracy of the Riccati step.
- * @param plotting bool (optional) - Flag for enabling plotting (default is false).
- * @param k int (optional) - Number of terms to use in the expansion (used when `plotting` is true).
  * @return std::tuple<std::complex<double>, std::complex<double>, float, int, std::complex<double>> - A tuple containing:
  *         1. std::complex<double> - Value of the dependent variable at the end of the step, at `x = x0 + h`.
  *         2. std::complex<double> - Value of the derivative of the dependent variable at the end of the step, at `x = x0 + h`.
@@ -91,17 +89,14 @@ inline auto nonosc_step(SolverInfo &&info, Scalar x0, Scalar h,
  *         5. std::complex<double> - Total phase change (not mod 2π) of the dependent variable over the step.
  * @warning This function relies on `info.wn`, `info.gn` being set correctly for a step of size `h`. If `solve()` is calling this function, that is taken care of automatically, but it needs to be done manually otherwise.
  */
-template <typename SolverInfo, typename OmegaVec, typename GammaVec, typename Scalar, typename YScalar>
+template <typename SolverInfo, typename OmegaVec, typename GammaVec, typename Scalar, typename YScalar, typename Allocator>
 inline auto osc_step(SolverInfo &&info, OmegaVec&& omega_s, GammaVec&& gamma_s, Scalar x0, Scalar h,
-                     YScalar y0, YScalar dy0,
-                     Scalar epsres = Scalar(1e-12),
-                     int k = 0) {
+                     YScalar y0, YScalar dy0, Scalar epsres, Allocator&& alloc) {
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
-
   bool success = true;
   auto &&Dn = info.Dn_;
-  vectorc_t y = complex_t(0.0, 1.0) * omega_s;
+  auto y = to_arena(alloc, complex_t(0.0, 1.0) * omega_s);
   auto delta = [&](const auto &r, const auto &y) {
     return (-r.array() / (2.0 * (y.array() + gamma_s.array()))).matrix().eval();
   };
@@ -113,7 +108,7 @@ inline auto osc_step(SolverInfo &&info, OmegaVec&& omega_s, GammaVec&& gamma_s, 
                 .eval();
   Scalar maxerr = Ry.array().abs().maxCoeff();
 
-  vectorc_t deltay;
+  arena_matrix<vectorc_t> deltay(alloc, Ry.size(), 1);
   Scalar prev_err = std::numeric_limits<Scalar>::infinity();
   while (maxerr > epsres) {
     deltay = delta(Ry, y);
@@ -126,36 +121,33 @@ inline auto osc_step(SolverInfo &&info, OmegaVec&& omega_s, GammaVec&& gamma_s, 
     }
     prev_err = maxerr;
   }
-  vectorc_t du1 = y;
   if (info.denseout_) {
-    vectorc_t u1 = h / 2.0 * (info.integration_matrix_ * du1);
-    vectorc_t f1 = (u1).array().exp();
-    auto f2 = f1.conjugate().eval();
-    auto du2 = du1.conjugate().eval();
+    auto u1 = to_arena(alloc, h / 2.0 * (info.integration_matrix_ * y));
+    auto f1 = to_arena(alloc, (u1).array().exp().matrix());
+    auto f2 = to_arena(alloc, f1.conjugate());
+    auto du2 = to_arena(alloc, y.conjugate());
     auto ap_top = (dy0 - y0 * du2(du2.size() - 1));
-    auto ap_bottom = (du1(du1.size() - 1) - du2(du2.size() - 1));
+    auto ap_bottom = (y(y.size() - 1) - du2(du2.size() - 1));
     auto ap = ap_top / ap_bottom;
-    auto am = (dy0 - y0 * du1(du1.size() - 1))
-              / (du2(du2.size() - 1) - du1(du1.size() - 1));
-    auto y1 = (ap * f1 + am * f2).eval();
-    auto dy1 = (ap * du1.cwiseProduct(f1) + am * du2.cwiseProduct(f2)).eval();
+    auto am = (dy0 - y0 * y(y.size() - 1))
+              / (du2(du2.size() - 1) - y(y.size() - 1));
+    auto y1 = to_arena(alloc, ap * f1 + am * f2);
+    auto dy1 = to_arena(alloc, ap * y.cwiseProduct(f1) + am * du2.cwiseProduct(f2));
     Scalar phase = std::imag(f1(0));
-    info.un_ = u1;
-    info.a_ = std::make_pair(ap, am);
-    return std::make_tuple(success, y1(0), dy1(0), maxerr, phase);
+    return std::make_tuple(success, y1(0), dy1(0), maxerr, phase, u1, std::make_pair(ap, am));
   } else {
-    complex_t f1 = std::exp(h / 2.0 * (info.quadwts_.dot(du1)));
+    complex_t f1 = std::exp(h / 2.0 * (info.quadwts_.dot(y)));
     auto f2 = std::conj(f1);
-    auto du2 = du1.conjugate().eval();
+    auto du2 = y.conjugate().eval();
     auto ap_top = (dy0 - y0 * du2(du2.size() - 1));
-    auto ap_bottom = (du1(du1.size() - 1) - du2(du2.size() - 1));
+    auto ap_bottom = (y(y.size() - 1) - du2(du2.size() - 1));
     auto ap = ap_top / ap_bottom;
-    auto am = (dy0 - y0 * du1(du1.size() - 1))
-              / (du2(du2.size() - 1) - du1(du1.size() - 1));
+    auto am = (dy0 - y0 * y(y.size() - 1))
+              / (du2(du2.size() - 1) - y(y.size() - 1));
     auto y1 = (ap * f1 + am * f2);
-    auto dy1 = (ap * du1 * f1 + am * du2 * f2).eval();
+    auto dy1 = (ap * y * f1 + am * du2 * f2).eval();
     Scalar phase = std::imag(f1);
-    return std::make_tuple(success, y1, dy1(0), maxerr, phase);
+    return std::make_tuple(success, y1, dy1(0), maxerr, phase, arena_matrix<vectorc_t>(alloc, y.size(), 0), std::make_pair(ap, am));
   }
 }
 

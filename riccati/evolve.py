@@ -80,7 +80,7 @@ def osc_evolve(info, x0, x1, h, y0, epsres = 1e-12, epsh = 1e-12):
         info.h = choose_osc_stepsize(info, info.x, hosc_ini, epsh = epsh)
     return success
 
-def nonosc_evolve(info, x0, x1, h, y0, epsres = 1e-12, epsh = 0.2):
+def nonosc_evolve(info, x0, x1, h, y0, xeval, epsres = 1e-12, epsh = 0.2):
     """
     Allows continuous evolution between the independent variable values `x0`
     and `x1`. Starting from `x0` and `y = [y0, yd0]` takes a Chebyshev step of
@@ -133,6 +133,10 @@ def nonosc_evolve(info, x0, x1, h, y0, epsres = 1e-12, epsh = 0.2):
     # info.y = y0
     # Check if we're stepping out of range
     sign = np.sign(h)
+    denselen = len(xeval)
+    if denselen > 0:
+        info.denseout = True
+        info.intmat = integrationm(info.n+1)
     if sign*(x0 + h) > sign*x1:
         # Step would be out of bounds, need to rescale and re-eval wn, gn
         h = x1 - x0
@@ -145,6 +149,20 @@ def nonosc_evolve(info, x0, x1, h, y0, epsres = 1e-12, epsh = 0.2):
         success = 0
     else:
         # Successful step
+        if denselen:
+            positions = np.logical_or(np.logical_and(sign*xeval >= sign*x0, sign*xeval < sign*(x0+h)), np.logical_and(xeval == x0, xeval == x0 + h))
+            xdense = xeval[positions]
+            xscaled = x0 + h/2 + h/2*info.nodes[1]
+            print("xi", x0)
+            print("Cheby", info.nodes[1])
+            print("xscaled", xscaled)
+            print("xeval", xdense)
+            Linterp = interp(xscaled, xdense)
+            print("Linterp", Linterp)
+            print("yn", info.yn)
+            yeval = Linterp @ info.yn
+        else:
+            yeval = np.empty(0)
         success = 1
         info.y = np.array([y10, y11])
         info.x += h
@@ -155,7 +173,7 @@ def nonosc_evolve(info, x0, x1, h, y0, epsres = 1e-12, epsh = 0.2):
         if sign*(info.x + hslo_ini) > sign*x1:
             hslo_ini = x1 - info.x
         info.h = choose_nonosc_stepsize(info, info.x, hslo_ini, epsh = epsh)
-    return success
+    return success, yeval
 
 def solve(info, xi, xf, yi, dyi, eps = 1e-12, epsh = 1e-12, xeval = np.array([]), hard_stop = False, warn = False):
     """
@@ -275,10 +293,7 @@ def solve(info, xi, xf, yi, dyi, eps = 1e-12, epsh = 1e-12, xeval = np.array([])
     xcurrent = xi
     wnext = wi
     dwnext = dwi
-    iter = 0
     while abs(xcurrent - xf) > 1e-8 and intdir*xcurrent < intdir*xf:
-        print("iter: ", iter)
-        iter += 1
         # Check how oscillatory the solution is
         #ty = np.abs(1/wnext)
         #tw = np.abs(wnext/dwnext)
@@ -323,10 +338,6 @@ def solve(info, xi, xf, yi, dyi, eps = 1e-12, epsh = 1e-12, xeval = np.array([])
         if info.denseout:
             positions = np.logical_or(np.logical_and(intdir*xeval >= intdir*xcurrent, intdir*xeval < intdir*(xcurrent+h)), np.logical_and(xeval == xf, xeval == xcurrent + h))
             xdense = xeval[positions]
-            print("xcurrent", xcurrent)
-            print("int dir * xcurrent", intdir*xcurrent)
-            print("xcurrent + h", xcurrent + h)
-            print("int dir * (xcurrent + h)", intdir*(xcurrent + h))
             if steptype == 1:
                 #xscaled = xcurrent + h/2 + h/2*info.xn
                 xscaled = 2/h*(xdense - xcurrent) - 1

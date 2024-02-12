@@ -272,9 +272,14 @@ inline auto interpolate(Vec1&& s, Vec2&& t, Allocator&& alloc) {
     V.col(i).array() = V.col(i - 1).array() * s.array();
     R.col(i).array() = R.col(i - 1).array() * t.array();
   }
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(
-      V.transpose(), Eigen::ComputeThinU | Eigen::ComputeThinV);
-  return svd.solve(R.transpose()).transpose().eval();
+  /*
+  return V.transpose().jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV)
+                .solve(R.transpose())
+                .transpose()
+                .eval();
+  */
+  //Eigen::PartialPivLU<std::decay_t<decltype(V)>> lu(V.transpose());
+  return V.transpose().partialPivLu().solve(R.transpose()).transpose().eval();
 }
 
 /**

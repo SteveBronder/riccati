@@ -22,6 +22,7 @@ class arena_matrix : public Eigen::Map<MatrixType> {
   using Scalar = typename std::decay_t<MatrixType>::Scalar;
   using Base = Eigen::Map<MatrixType>;
   using PlainObject = std::decay_t<MatrixType>;
+  typedef typename Eigen::internal::remove_all<Base>::type NestedExpression;
   static constexpr int RowsAtCompileTime = MatrixType::RowsAtCompileTime;
   static constexpr int ColsAtCompileTime = MatrixType::ColsAtCompileTime;
   using allocator_t = arena_allocator<Scalar, arena_alloc>;
@@ -146,15 +147,25 @@ inline auto to_arena(dummy_allocator& arena, const Expr& expr) noexcept {
   return eval(expr);
 }
 
+template <typename T>
+inline void print(const char* name, const arena_matrix<T>& x) {
+#ifdef RICCATI_DEBUG
+  std::cout << name << "(" << x.rows() << ", " << x.cols() << ")" << std::endl;
+  std::cout << x << std::endl;
+#endif
+}
+
+
 }  // namespace riccati
 
 namespace Eigen {
 namespace internal {
 
 template <typename T>
-struct traits<riccati::arena_matrix<T>> {
+struct traits<riccati::arena_matrix<T>> : traits<Eigen::Map<T>> {
   using base = traits<Eigen::Map<T>>;
   using XprKind = typename Eigen::internal::traits<std::decay_t<T>>::XprKind;
+  using Scalar = typename std::decay_t<T>::Scalar;
   enum {
     PlainObjectTypeInnerSize = base::PlainObjectTypeInnerSize,
     InnerStrideAtCompileTime = base::InnerStrideAtCompileTime,

@@ -26,7 +26,7 @@ TEST_F(Riccati, osc_evolve_dense_output) {
       = riccati::vector_t<double>::LinSpaced(Neval, xi, xf);
   auto ytrue = airy_i(x_eval.array()).matrix().eval();
   auto hi = 2.0 * xi;
-  hi = std::get<0>(choose_osc_stepsize(info, xi, hi, epsh));
+  hi = std::get<0>(choose_osc_stepsize(info, xi, hi, epsh, allocator));
   bool x_validated = false;
   while (xi < xf) {
     auto res
@@ -39,8 +39,8 @@ TEST_F(Riccati, osc_evolve_dense_output) {
       yi = std::get<1>(std::get<3>(res));
       dyi = std::get<2>(std::get<3>(res));
     }
-    auto airy_true = airy_i(std::get<1>(res));
-    auto airy_est = std::get<1>(std::get<3>(res));
+    auto airy_true = airy_i(xi);
+    auto airy_est = yi;
     auto err = std::abs((airy_true - airy_est) / airy_true);
     EXPECT_LE(err, 3e-7);
     auto start_y = std::get<5>(res);
@@ -56,6 +56,7 @@ TEST_F(Riccati, osc_evolve_dense_output) {
         EXPECT_LE(y_err[i], 2e-6);
       }
     }
+    allocator.recover_memory();
   }
   if (!x_validated) {
     FAIL() << "Dense evaluation was never completed!";
@@ -70,7 +71,7 @@ TEST_F(Riccati, nonosc_evolve_dense_output) {
   auto info = riccati::make_solver<true, double>(omega_fun, gamma_fun, 16, 32,
                                                  32, 32);
   auto xi = 1e0;
-  auto xf = 1e3;
+  auto xf = 4e1;
   auto eps = 1e-12;
   auto epsh = 0.2;
   auto yi = airy_i(xi);
@@ -95,8 +96,8 @@ TEST_F(Riccati, nonosc_evolve_dense_output) {
       yi = std::get<1>(std::get<3>(res));
       dyi = std::get<2>(std::get<3>(res));
     }
-    auto airy_true = airy_i(std::get<1>(res));
-    auto airy_est = std::get<1>(std::get<3>(res));
+    auto airy_true = airy_i(xi);
+    auto airy_est = yi;
     auto err = std::abs((airy_true - airy_est) / airy_true);
     EXPECT_LE(err, 5e-9);
     auto start_y = std::get<5>(res);
@@ -104,17 +105,47 @@ TEST_F(Riccati, nonosc_evolve_dense_output) {
     if (size_y > 0) {
       x_validated = true;
       auto y_true_slice = ytrue.segment(start_y, size_y);
+      auto&& y_est = std::get<4>(res);
       auto y_err
-          = ((std::get<4>(res) - y_true_slice).array() / y_true_slice.array())
+          = ((y_true_slice - y_est).array() / y_true_slice.array())
                 .abs()
                 .eval();
-      EXPECT_LE(y_err.maxCoeff(), 0.1);
+      for (int i = 0; i < y_err.size(); ++i) {
+        EXPECT_LE(y_err[i], 6e-6);
+      }
     }
     allocator.recover_memory();
   }
   if (!x_validated) {
     FAIL() << "Dense evaluation was never completed!";
   }
+}
+
+TEST_F(Riccati, evolve_dense_output_airy) {
+  using namespace riccati::test;
+  auto omega_fun
+      = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
+  auto gamma_fun = [](auto&& x) { return zero_like(x); };
+  auto info = riccati::make_solver<true, double>(omega_fun, gamma_fun, 16, 32,
+                                                 32, 32);
+  auto xi = 1e0;
+  auto xf = 1e6;
+  auto eps = 1e-12;
+  auto epsh = 1e-13;
+  auto yi = airy_i(xi);
+  auto dyi = airy_i_prime(xi);
+  Eigen::Index Neval = 1e3;
+  riccati::vector_t<double> x_eval
+      = riccati::vector_t<double>::LinSpaced(Neval, xi, 1e2);
+  auto ytrue = airy_i(x_eval.array()).matrix().eval();
+  auto res = riccati::evolve(info, xi, xf, yi, dyi, eps, epsh, 0.1, x_eval, allocator);
+  auto y_err
+      = ((std::get<6>(res) - ytrue).array() / ytrue.array()).abs().eval();
+  for (int i = 0; i < y_err.size(); ++i) {
+    EXPECT_LE(y_err[i], 9e-6) << "i = " << i << " x = " << x_eval[i] <<
+      " y = " << ytrue[i] << " y_est = " << std::get<6>(res)[i];
+  }
+  EXPECT_LE(y_err.maxCoeff(), 9e-6);
 }
 TEST_F(Riccati, evolve_dense_output_burst) {
   using namespace riccati::test;
@@ -156,28 +187,6 @@ TEST_F(Riccati, evolve_dense_output_burst) {
       = (((ytrue - y_steps).array()).abs() / (ytrue.array()).abs()).eval();
   // FRUSZINA: Doing dense evals here gives a max error of 0.0001 or so :(
   EXPECT_LE(y_err.maxCoeff(), 5e-9);
-}
-TEST_F(Riccati, evolve_dense_output_airy) {
-  using namespace riccati::test;
-  auto omega_fun
-      = [](auto&& x) { return eval(matrix(riccati::test::sqrt(array(x)))); };
-  auto gamma_fun = [](auto&& x) { return zero_like(x); };
-  auto info = riccati::make_solver<true, double>(omega_fun, gamma_fun, 16, 32,
-                                                 32, 32);
-  auto xi = 1e0;
-  auto xf = 1e6;
-  auto eps = 1e-12;
-  auto epsh = 1e-13;
-  auto yi = airy_i(xi);
-  auto dyi = airy_i_prime(xi);
-  Eigen::Index Neval = 1e3;
-  riccati::vector_t<double> x_eval
-      = riccati::vector_t<double>::LinSpaced(Neval, xi, 1e2);
-  auto ytrue = airy_i(x_eval.array()).matrix().eval();
-  auto res = riccati::evolve(info, xi, xf, yi, dyi, eps, epsh, 0.1, x_eval, allocator);
-  auto y_err
-      = ((std::get<6>(res) - ytrue).array() / ytrue.array()).abs().eval();
-  EXPECT_LE(y_err.maxCoeff(), 9e-4);
 }
 
 /**

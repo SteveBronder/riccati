@@ -9,10 +9,13 @@
 struct Riccati : public testing::Test {
   riccati::arena_alloc* arena{new riccati::arena_alloc{}};
   riccati::arena_allocator<double, riccati::arena_alloc> allocator{arena};
-  void SetUp() {
+  void SetUp() override {
     // make sure memory's clean before starting each test
   }
-  void TearDown() {
+  void TearDown() override {
+    allocator.recover_memory();
+  }
+  ~Riccati() {
     delete arena;
   }
 };

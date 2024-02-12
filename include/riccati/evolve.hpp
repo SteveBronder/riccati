@@ -20,10 +20,10 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
   int sign = init_stepsize > 0 ? 1 : -1;
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
-  auto xi_scaled = scale(info.xn_.array(), xi, init_stepsize).matrix().eval();
+  auto xi_scaled = to_arena(alloc, scale(info.xn_.array(), xi, init_stepsize).matrix());
   // Frequency and friction functions evaluated at n+1 Chebyshev nodes
-  auto omega_n = info.omega_fun_(xi_scaled).eval();
-  auto gamma_n = info.gamma_fun_(xi_scaled).eval();
+  auto omega_n = to_arena(alloc, info.omega_fun_(xi_scaled));
+  auto gamma_n = to_arena(alloc, info.gamma_fun_(xi_scaled));
   vectorc_t yeval;
   // TODO: Add this check to regular evolve
   if (sign * (xi + init_stepsize) > sign * xf) {
@@ -34,7 +34,7 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
         + std::string(")!"));
   }
   // o and g read here
-  auto osc_ret = osc_step(info, omega_n, gamma_n, xi, init_stepsize, yi, dyi, eps);
+  auto osc_ret = osc_step(info, omega_n, gamma_n, xi, init_stepsize, yi, dyi, eps, alloc);
   if (std::get<0>(osc_ret) == 0) {
     return std::make_tuple(false, xi, init_stepsize, osc_ret, vectorc_t(0),
                            static_cast<Eigen::Index>(0),
@@ -48,13 +48,11 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
           = get_slice(x_eval, sign * xi, sign * (xi + init_stepsize));
       if (dense_size != 0) {
         auto x_eval_map = x_eval.segment(dense_start, dense_size);
-        auto x_eval_scaled = (2.0 / init_stepsize * (x_eval_map.array() - xi) - 1.0)
-                           .matrix()
-                           .eval();
+        auto x_eval_scaled = to_arena(alloc, (2.0 / init_stepsize * (x_eval_map.array() - xi) - 1.0)
+                           .matrix());
         auto Linterp = interpolate(info.xn_, x_eval_scaled, alloc);
-        auto udense = (Linterp * info.un_).eval();
-        auto fdense = udense.array().exp().matrix().eval();
-        yeval = info.a_.first * fdense + info.a_.second * fdense.conjugate();
+        auto fdense = to_arena(alloc, (Linterp * std::get<5>(osc_ret)).array().exp().matrix());
+        yeval = std::get<6>(osc_ret).first * fdense + std::get<6>(osc_ret).second * fdense.conjugate();
       }
     }
     auto x_next = xi + init_stepsize;
@@ -70,7 +68,7 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
       hosc_ini = xf - x_next;
     }
     // o and g written here
-    auto h_next = choose_osc_stepsize(info, x_next, hosc_ini, epsilon_h);
+    auto h_next = choose_osc_stepsize(info, x_next, hosc_ini, epsilon_h, alloc);
     return std::make_tuple(true, x_next, std::get<0>(h_next), osc_ret, yeval, dense_start,
                            dense_size);
   }
@@ -108,8 +106,9 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
           = get_slice(x_eval, sign * xi, sign * (xi + init_stepsize));
       if (dense_size != 0) {
         auto x_eval_map = x_eval.segment(dense_start, dense_size);
+
         auto xi_scaled = (xi + init_stepsize / 2
-                        + init_stepsize / 2 * info.chebyshev_[1].second.array())
+                        + (init_stepsize / 2) * info.chebyshev_[1].second.array())
                            .matrix()
                            .eval();
         auto Linterp = interpolate(xi_scaled, x_eval_map, alloc);
@@ -180,12 +179,7 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                    Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
                    Vec &&x_eval, Allocator&& alloc, bool hard_stop = false,
                    bool warn = false) {
-  using complex_t = std::complex<Scalar>;
-  using vectorc_t = vector_t<complex_t>;
-  using matrixc_t = matrix_t<complex_t>;
   using vectord_t = vector_t<Scalar>;
-  using stdvecd_t = std::vector<Scalar>;
-  using stdvecc_t = std::vector<complex_t>;
   Scalar intdir = init_stepsize > 0 ? 1 : -1;
   if (init_stepsize * (xf - xi) < 0) {
     throw std::domain_error(
@@ -233,8 +227,11 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
 
   // Initialize vectors for storing results
   std::size_t output_size = 100;
+  using stdvecd_t = std::vector<Scalar>;
   stdvecd_t xs;
   xs.reserve(output_size);
+  using complex_t = std::complex<Scalar>;
+  using stdvecc_t = std::vector<complex_t>;
   stdvecc_t ys;
   ys.reserve(output_size);
   stdvecc_t dys;
@@ -245,6 +242,7 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
   steptypes.reserve(output_size);
   stdvecd_t phases;
   phases.reserve(output_size);
+  using vectorc_t = vector_t<complex_t>;
   vectorc_t yeval(x_eval.size());
 
   complex_t y = yi;
@@ -271,14 +269,18 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
   }
   auto hslo = choose_nonosc_stepsize(info, xi, hslo_ini, 0.2);
   // o and g written here
-  auto osc_step_tup = choose_osc_stepsize(info, xi, hosc_ini, epsilon_h);
+  auto osc_step_tup = choose_osc_stepsize(info, xi, hosc_ini, epsilon_h, alloc);
   auto hosc = std::get<0>(osc_step_tup);
+  // NOTE: Calling choose_osc_stepsize will update these values
   auto&& omega_n = std::get<1>(osc_step_tup);
   auto&& gamma_n = std::get<2>(osc_step_tup);
   Scalar xcurrent = xi;
   Scalar wnext = wi;
+  using matrixc_t = matrix_t<complex_t>;
   matrixc_t y_eval;
   matrixc_t dy_eval;
+  arena_matrix<vectorc_t> un(alloc, omega_n.size(), 1);
+  std::pair<complex_t, complex_t> a_pair;
   while (std::abs(xcurrent - xf) > Scalar(1e-8)
          && intdir * xcurrent < intdir * xf) {
     Scalar phase{0.0};
@@ -299,8 +301,8 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
         }
       }
       // o and g read here
-      std::tie(success, y, dy, err, phase)
-          = osc_step(info, omega_n, gamma_n, xcurrent, hosc, yprev, dyprev, eps);
+      std::tie(success, y, dy, err, phase, un, a_pair)
+          = osc_step(info, omega_n, gamma_n, xcurrent, hosc, yprev, dyprev, eps, alloc);
       steptype = 1;
     }
     while (!success) {
@@ -329,10 +331,9 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
         if (steptype) {
           auto x_eval_scaled = to_arena(alloc,(2.0 / h * (x_eval_map.array() - xcurrent) - 1.0).matrix());
           auto Linterp = interpolate(info.xn_, x_eval_scaled, alloc);
-          auto udense = to_arena(alloc, Linterp * info.un_);
-          auto fdense = udense.array().exp().matrix();
+          auto fdense = to_arena(alloc, (Linterp * un).array().exp().matrix());
           y_eval_map
-              = info.a_.first * fdense + info.a_.second * fdense.conjugate();
+              = a_pair.first * fdense + a_pair.second * fdense.conjugate();
         } else {
           auto xc_scaled = to_arena(alloc, scale(info.chebyshev_[1].second, xcurrent, h).matrix());
           auto Linterp = interpolate(xc_scaled, x_eval_map, alloc);
@@ -377,7 +378,7 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
         }
       }
       // o and g written here
-      osc_step_tup = choose_osc_stepsize(info, xcurrent, hosc_ini, epsilon_h);
+      osc_step_tup = choose_osc_stepsize(info, xcurrent, hosc_ini, epsilon_h, alloc);
       hosc = std::get<0>(osc_step_tup);
       hslo = choose_nonosc_stepsize(info, xcurrent, hslo_ini, 0.2);
       yprev = y;
