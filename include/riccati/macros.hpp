@@ -2,7 +2,12 @@
 #define INCLUDE_RICCATI_MACROS_HPP
 
 namespace riccati {
+
 #ifdef __GNUC__
+/**
+ * If statements predicate tagged with this attribute are expected to
+ * be true most of the time. This effects inlining decisions.
+ */
 #ifndef likely
 #define likely(x) __builtin_expect(!!(x), 1)
 #endif
@@ -25,12 +30,6 @@ namespace riccati {
 #ifndef RICCATI_COLD_PATH
 #define RICCATI_COLD_PATH
 #endif
-#ifndef likely
-#define likely(x) x
-#endif
-#ifndef unlikely
-#define unlikely(x) x
-#endif
 
 #ifndef RICCATI_NO_INLINE
 #define RICCATI_NO_INLINE __attribute__((noinline))
@@ -40,6 +39,10 @@ namespace riccati {
 #define RICCATI_ALWAYS_INLINE __attribute__((always_inline)) inline
 #endif
 
+/**
+ * Functions tagged with this attribute are pure functions, i.e. they
+ * do not modify any global state and only depend on their input arguments.
+ */
 #ifndef RICCATI_PURE
 #define RICCATI_PURE __attribute__((pure))
 #endif

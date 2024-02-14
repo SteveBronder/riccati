@@ -35,8 +35,7 @@ class arena_matrix : public Eigen::Map<MatrixType> {
       : Base::Map(nullptr,
                   RowsAtCompileTime == Eigen::Dynamic ? 0 : RowsAtCompileTime,
                   ColsAtCompileTime == Eigen::Dynamic ? 0 : ColsAtCompileTime),
-                  allocator_(allocator) {
-  }
+        allocator_(allocator) {}
 
   /**
    * Constructs `arena_matrix` with given number of rows and columns.
@@ -44,10 +43,10 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    * @param cols number of columns
    */
   template <typename T>
-  arena_matrix(arena_allocator<T, arena_alloc>& allocator, Eigen::Index rows, Eigen::Index cols)
-      : Base::Map(
-          allocator.template allocate<Scalar>(rows * cols),
-          rows, cols), allocator_(allocator) {}
+  arena_matrix(arena_allocator<T, arena_alloc>& allocator, Eigen::Index rows,
+               Eigen::Index cols)
+      : Base::Map(allocator.template allocate<Scalar>(rows * cols), rows, cols),
+        allocator_(allocator) {}
 
   /**
    * Constructs `arena_matrix` with given size. This only works if
@@ -56,19 +55,18 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    */
   template <typename T>
   arena_matrix(arena_allocator<T, arena_alloc>& allocator, Eigen::Index size)
-      : Base::Map(
-          allocator_.template allocate<Scalar>(size),
-          size), allocator_(allocator) {}
+      : Base::Map(allocator_.template allocate<Scalar>(size), size),
+        allocator_(allocator) {}
 
   /**
    * Constructs `arena_matrix` from an expression.
    * @param other expression
    */
   template <typename T, typename Expr>
-  arena_matrix(arena_allocator<T, arena_alloc>& allocator, const Expr& other)  // NOLINT
+  arena_matrix(arena_allocator<T, arena_alloc>& allocator,
+               const Expr& other)  // NOLINT
       : Base::Map(
-          allocator.template allocate<Scalar>(
-              other.size()),
+          allocator.template allocate<Scalar>(other.size()),
           (RowsAtCompileTime == 1 && Expr::ColsAtCompileTime == 1)
                   || (ColsAtCompileTime == 1 && Expr::RowsAtCompileTime == 1)
               ? other.cols()
@@ -76,7 +74,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
           (RowsAtCompileTime == 1 && Expr::ColsAtCompileTime == 1)
                   || (ColsAtCompileTime == 1 && Expr::RowsAtCompileTime == 1)
               ? other.rows()
-              : other.cols()), allocator_(allocator) {
+              : other.cols()),
+        allocator_(allocator) {
     (*this).noalias() = other;
   }
 
@@ -94,7 +93,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
    */
   arena_matrix(const arena_matrix<MatrixType>& other)
       : Base::Map(const_cast<Scalar*>(other.data()), other.rows(),
-                  other.cols()), allocator_(other.allocator_) {}
+                  other.cols()),
+        allocator_(other.allocator_) {}
 
   // without this using, compiler prefers combination of implicit construction
   // and copy assignment to the inherited operator when assigned an expression
@@ -124,14 +124,12 @@ class arena_matrix : public Eigen::Map<MatrixType> {
     if ((RowsAtCompileTime == 1 && T::ColsAtCompileTime == 1)
         || (ColsAtCompileTime == 1 && T::RowsAtCompileTime == 1)) {
       // placement new changes what data map points to - there is no allocation
-      new (this) Base(
-          allocator_.template allocate<Scalar>(a.size()),
-          a.cols(), a.rows());
+      new (this) Base(allocator_.template allocate<Scalar>(a.size()), a.cols(),
+                      a.rows());
 
     } else {
-      new (this) Base(
-          allocator_.template allocate<Scalar>(a.size()),
-          a.rows(), a.cols());
+      new (this) Base(allocator_.template allocate<Scalar>(a.size()), a.rows(),
+                      a.cols());
     }
     Base::operator=(a);
     return *this;
@@ -139,7 +137,8 @@ class arena_matrix : public Eigen::Map<MatrixType> {
 };
 
 template <typename T, typename Expr>
-inline auto to_arena(arena_allocator<T, arena_alloc>& arena, const Expr& expr) noexcept {
+inline auto to_arena(arena_allocator<T, arena_alloc>& arena,
+                     const Expr& expr) noexcept {
   return arena_matrix<typename std::decay_t<Expr>::PlainObject>(arena, expr);
 }
 template <typename Expr>
@@ -154,7 +153,6 @@ inline void print(const char* name, const arena_matrix<T>& x) {
   std::cout << x << std::endl;
 #endif
 }
-
 
 }  // namespace riccati
 

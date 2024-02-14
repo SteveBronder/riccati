@@ -11,16 +11,54 @@
 
 namespace riccati {
 
-template <typename SolverInfo, typename Scalar, typename Vec, typename Allocator>
+/**
+ * @brief Solves the differential equation y'' + 2gy' + w^2y = 0 over a given
+ * interval.
+ *
+ * This function solves the differential equation on the interval (xi, xf),
+ * starting from the initial conditions y(xi) = yi and y'(xi) = dyi. It keeps
+ * the residual of the ODE below eps, and returns an interpolated solution
+ * (dense output) at the points specified in x_eval.
+ *
+ * @tparam SolverInfo Type of the solver info object containing differentiation
+ * matrices, etc.
+ * @tparam Scalar Numeric scalar type, typically float or double.
+ * @tparam Vec Type of the vector for dense output values, should match Scalar
+ * type.
+ *
+ * @tparam SolverInfo Type of the solver info object containing differentiation
+ * matrices, etc.
+ * @tparam Scalar Numeric scalar type, typically float or double.
+ * @tparam Vec Type of the vector for dense output values.
+ * @tparam Allocator Type of the allocator for the arena memory pool.
+ * @param[in] info SolverInfo object containing necessary information for the
+ * solver.
+ * @param[in] xi Starting value of the independent variable.
+ * @param[in] xf Ending value of the independent variable.
+ * @param[in] yi Initial value of the dependent variable at xi.
+ * @param[in] dyi Initial derivative of the dependent variable at xi.
+ * @param[in] eps Relative tolerance for the local error of both Riccati and
+ * Chebyshev type steps.
+ * @param[in] epsilon_h Relative tolerance for choosing the stepsize of Riccati
+ * steps.
+ * @param[in] x_eval List of x-values where the solution is to be interpolated
+ * (dense output) and returned.
+ * @param alloc Allocator for the memory pool.
+ * @param[in] hard_stop If true, forces the solver to have a potentially smaller
+ * last stepsize to stop exactly at xf.
+ */
+template <typename SolverInfo, typename Scalar, typename Vec,
+          typename Allocator>
 inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                        std::complex<Scalar> yi, std::complex<Scalar> dyi,
                        Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
-                       Vec &&x_eval, Allocator&& alloc, bool hard_stop = false,
-                       bool warn = false) {
+                       Vec &&x_eval, Allocator &&alloc,
+                       bool hard_stop = false) {
   int sign = init_stepsize > 0 ? 1 : -1;
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
-  auto xi_scaled = to_arena(alloc, scale(info.xn_.array(), xi, init_stepsize).matrix());
+  auto xi_scaled
+      = to_arena(alloc, scale(info.xn().array(), xi, init_stepsize).matrix());
   // Frequency and friction functions evaluated at n+1 Chebyshev nodes
   auto omega_n = to_arena(alloc, info.omega_fun_(xi_scaled));
   auto gamma_n = to_arena(alloc, info.gamma_fun_(xi_scaled));
@@ -34,7 +72,8 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
         + std::string(")!"));
   }
   // o and g read here
-  auto osc_ret = osc_step(info, omega_n, gamma_n, xi, init_stepsize, yi, dyi, eps, alloc);
+  auto osc_ret = osc_step(info, omega_n, gamma_n, xi, init_stepsize, yi, dyi,
+                          eps, alloc);
   if (std::get<0>(osc_ret) == 0) {
     return std::make_tuple(false, xi, init_stepsize, osc_ret, vectorc_t(0),
                            static_cast<Eigen::Index>(0),
@@ -48,19 +87,22 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
           = get_slice(x_eval, sign * xi, sign * (xi + init_stepsize));
       if (dense_size != 0) {
         auto x_eval_map = x_eval.segment(dense_start, dense_size);
-        auto x_eval_scaled = to_arena(alloc, (2.0 / init_stepsize * (x_eval_map.array() - xi) - 1.0)
-                           .matrix());
-        auto Linterp = interpolate(info.xn_, x_eval_scaled, alloc);
-        auto fdense = to_arena(alloc, (Linterp * std::get<5>(osc_ret)).array().exp().matrix());
-        yeval = std::get<6>(osc_ret).first * fdense + std::get<6>(osc_ret).second * fdense.conjugate();
+        auto x_eval_scaled = to_arena(
+            alloc,
+            (2.0 / init_stepsize * (x_eval_map.array() - xi) - 1.0).matrix());
+        auto Linterp = interpolate(info.xn(), x_eval_scaled, alloc);
+        auto fdense = to_arena(
+            alloc, (Linterp * std::get<5>(osc_ret)).array().exp().matrix());
+        yeval = std::get<6>(osc_ret).first * fdense
+                + std::get<6>(osc_ret).second * fdense.conjugate();
       }
     }
     auto x_next = xi + init_stepsize;
     // o and g read here
     auto wnext = omega_n[0];
     auto gnext = gamma_n[0];
-    auto dwnext = 2.0 / init_stepsize * info.Dn_.row(0).dot(omega_n);
-    auto dgnext = 2.0 / init_stepsize * info.Dn_.row(0).dot(gamma_n);
+    auto dwnext = 2.0 / init_stepsize * info.Dn().row(0).dot(omega_n);
+    auto dgnext = 2.0 / init_stepsize * info.Dn().row(0).dot(gamma_n);
     auto hosc_ini = sign
                     * std::min(std::min(1e8, std::abs(wnext / dwnext)),
                                std::abs(gnext / dgnext));
@@ -69,17 +111,54 @@ inline auto osc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
     }
     // o and g written here
     auto h_next = choose_osc_stepsize(info, x_next, hosc_ini, epsilon_h, alloc);
-    return std::make_tuple(true, x_next, std::get<0>(h_next), osc_ret, yeval, dense_start,
-                           dense_size);
+    return std::make_tuple(true, x_next, std::get<0>(h_next), osc_ret, yeval,
+                           dense_start, dense_size);
   }
 }
 
-template <typename SolverInfo, typename Scalar, typename Vec, typename Allocator>
+/**
+ * @brief Solves the differential equation y'' + 2gy' + w^2y = 0 over a given
+ * interval.
+ *
+ * This function solves the differential equation on the interval (xi, xf),
+ * starting from the initial conditions y(xi) = yi and y'(xi) = dyi. It keeps
+ * the residual of the ODE below eps, and returns an interpolated solution
+ * (dense output) at the points specified in x_eval.
+ *
+ * @tparam SolverInfo Type of the solver info object containing differentiation
+ * matrices, etc.
+ * @tparam Scalar Numeric scalar type, typically float or double.
+ * @tparam Vec Type of the vector for dense output values, should match Scalar
+ * type.
+ *
+ * @tparam SolverInfo Type of the solver info object containing differentiation
+ * matrices, etc.
+ * @tparam Scalar Numeric scalar type, typically float or double.
+ * @tparam Vec Type of the vector for dense output values.
+ * @tparam Allocator Type of the allocator for the arena memory pool.
+ * @param[in] info SolverInfo object containing necessary information for the
+ * solver.
+ * @param[in] xi Starting value of the independent variable.
+ * @param[in] xf Ending value of the independent variable.
+ * @param[in] yi Initial value of the dependent variable at xi.
+ * @param[in] dyi Initial derivative of the dependent variable at xi.
+ * @param[in] eps Relative tolerance for the local error of both Riccati and
+ * Chebyshev type steps.
+ * @param[in] epsilon_h Relative tolerance for choosing the stepsize of Riccati
+ * steps.
+ * @param[in] x_eval List of x-values where the solution is to be interpolated
+ * (dense output) and returned.
+ * @param alloc Allocator for the memory pool.
+ * @param[in] hard_stop If true, forces the solver to have a potentially smaller
+ * last stepsize to stop exactly at xf.
+ */
+template <typename SolverInfo, typename Scalar, typename Vec,
+          typename Allocator>
 inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                           std::complex<Scalar> yi, std::complex<Scalar> dyi,
                           Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
-                          Vec &&x_eval, Allocator&& alloc, bool hard_stop = false,
-                          bool warn = false) {
+                          Vec &&x_eval, Allocator &&alloc,
+                          bool hard_stop = false) {
   using complex_t = std::complex<Scalar>;
   using vectorc_t = vector_t<complex_t>;
   vectorc_t yeval;
@@ -107,10 +186,11 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
       if (dense_size != 0) {
         auto x_eval_map = x_eval.segment(dense_start, dense_size);
 
-        auto xi_scaled = (xi + init_stepsize / 2
-                        + (init_stepsize / 2) * info.chebyshev_[1].second.array())
-                           .matrix()
-                           .eval();
+        auto xi_scaled
+            = (xi + init_stepsize / 2
+               + (init_stepsize / 2) * info.chebyshev_[1].second.array())
+                  .matrix()
+                  .eval();
         auto Linterp = interpolate(xi_scaled, x_eval_map, alloc);
         yeval = Linterp * std::get<4>(nonosc_ret);
       }
@@ -142,6 +222,11 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
  * @tparam Vec Type of the vector for dense output values, should match Scalar
  * type.
  *
+ * @tparam SolverInfo Type of the solver info object containing differentiation
+ * matrices, etc.
+ * @tparam Scalar Numeric scalar type, typically float or double.
+ * @tparam Vec Type of the vector for dense output values.
+ * @tparam Allocator Type of the allocator for the arena memory pool.
  * @param[in] info SolverInfo object containing necessary information for the
  * solver.
  * @param[in] xi Starting value of the independent variable.
@@ -154,10 +239,9 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
  * steps.
  * @param[in] x_eval List of x-values where the solution is to be interpolated
  * (dense output) and returned.
+ * @param alloc Allocator for the memory pool.
  * @param[in] hard_stop If true, forces the solver to have a potentially smaller
  * last stepsize to stop exactly at xf.
- * @param[in] warn If true, displays warnings during the run; otherwise,
- * warnings are silenced.
  *
  * @return Tuple containing:
  *         - Vector of x-values at internal steps of the solver (xs).
@@ -173,14 +257,14 @@ inline auto nonosc_evolve(SolverInfo &&info, Scalar xi, Scalar xf,
  * Riccati, 0 for Chebyshev).
  *         - Vector of interpolated values of the solution at x_eval (yeval).
  */
-template <typename SolverInfo, typename Scalar, typename Vec, typename Allocator>
+template <typename SolverInfo, typename Scalar, typename Vec,
+          typename Allocator>
 inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
                    std::complex<Scalar> yi, std::complex<Scalar> dyi,
                    Scalar eps, Scalar epsilon_h, Scalar init_stepsize,
-                   Vec &&x_eval, Allocator&& alloc, bool hard_stop = false,
-                   bool warn = false) {
+                   Vec &&x_eval, Allocator &&alloc, bool hard_stop = false) {
   using vectord_t = vector_t<Scalar>;
-  Scalar intdir = init_stepsize > 0 ? 1 : -1;
+  Scalar direction = init_stepsize > 0 ? 1 : -1;
   if (init_stepsize * (xf - xi) < 0) {
     throw std::domain_error(
         "Direction of integration does not match stepsize sign,"
@@ -192,10 +276,10 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
       throw std::domain_error("Dense output requested but x_eval is size 0!");
     }
     // TODO: Better error messages
-    auto x_eval_max = (intdir * x_eval.maxCoeff());
-    auto x_eval_min = (intdir * x_eval.minCoeff());
-    auto xi_intdir = intdir * xi;
-    auto xf_intdir = intdir * xf;
+    auto x_eval_max = (direction * x_eval.maxCoeff());
+    auto x_eval_min = (direction * x_eval.minCoeff());
+    auto xi_intdir = direction * xi;
+    auto xf_intdir = direction * xf;
     const bool high_range_err = xf_intdir < x_eval_max;
     const bool low_range_err = xi_intdir > x_eval_min;
     if (high_range_err || low_range_err) {
@@ -249,31 +333,33 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
   complex_t dy = dyi;
   complex_t yprev = y;
   complex_t dyprev = dy;
-  auto scale_xi = scale(info.xp_.array(), xi, init_stepsize).eval();
+  auto scale_xi = scale(info.xp().array(), xi, init_stepsize).eval();
   auto omega_is = info.omega_fun_(scale_xi).eval();
   auto gamma_is = info.gamma_fun_(scale_xi).eval();
   Scalar wi = omega_is.mean();
   Scalar gi = gamma_is.mean();
-  Scalar dwi = (2.0 / init_stepsize * (info.Dn_ * omega_is)).mean();
-  Scalar dgi = (2.0 / init_stepsize * (info.Dn_ * gamma_is)).mean();
+  Scalar dwi = (2.0 / init_stepsize * (info.Dn() * omega_is)).mean();
+  Scalar dgi = (2.0 / init_stepsize * (info.Dn() * gamma_is)).mean();
   Scalar hslo_ini
-      = intdir * std::min(static_cast<Scalar>(1e8), std::abs(1.0 / wi));
+      = direction * std::min(static_cast<Scalar>(1e8), std::abs(1.0 / wi));
   Scalar hosc_ini
-      = intdir
+      = direction
         * std::min(std::min(static_cast<Scalar>(1e8), std::abs(wi / dwi)),
                    std::abs(gi / dgi));
 
   if (hard_stop) {
-    hosc_ini = (intdir * (xi + hosc_ini) > intdir * xf) ? xf - xi : hosc_ini;
-    hslo_ini = (intdir * (xi + hslo_ini) > intdir * xf) ? xf - xi : hslo_ini;
+    hosc_ini
+        = (direction * (xi + hosc_ini) > direction * xf) ? xf - xi : hosc_ini;
+    hslo_ini
+        = (direction * (xi + hslo_ini) > direction * xf) ? xf - xi : hslo_ini;
   }
   auto hslo = choose_nonosc_stepsize(info, xi, hslo_ini, 0.2);
   // o and g written here
   auto osc_step_tup = choose_osc_stepsize(info, xi, hosc_ini, epsilon_h, alloc);
   auto hosc = std::get<0>(osc_step_tup);
   // NOTE: Calling choose_osc_stepsize will update these values
-  auto&& omega_n = std::get<1>(osc_step_tup);
-  auto&& gamma_n = std::get<2>(osc_step_tup);
+  auto &&omega_n = std::get<1>(osc_step_tup);
+  auto &&gamma_n = std::get<2>(osc_step_tup);
   Scalar xcurrent = xi;
   Scalar wnext = wi;
   using matrixc_t = matrix_t<complex_t>;
@@ -282,27 +368,27 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
   arena_matrix<vectorc_t> un(alloc, omega_n.size(), 1);
   std::pair<complex_t, complex_t> a_pair;
   while (std::abs(xcurrent - xf) > Scalar(1e-8)
-         && intdir * xcurrent < intdir * xf) {
+         && direction * xcurrent < direction * xf) {
     Scalar phase{0.0};
     bool success = false;
     bool steptype = true;
     Scalar err;
-    if ((intdir * hosc > intdir * hslo * 5.0)
-        && (intdir * hosc * wnext / (2.0 * pi<Scalar>()) > 1.0)) {
+    if ((direction * hosc > direction * hslo * 5.0)
+        && (direction * hosc * wnext / (2.0 * pi<Scalar>()) > 1.0)) {
       if (hard_stop) {
-        if (intdir * (xcurrent + hosc) > intdir * xf) {
+        if (direction * (xcurrent + hosc) > direction * xf) {
           hosc = xf - xcurrent;
-          auto xp_scaled = scale(info.xp_.array(), xcurrent, hosc).eval();
+          auto xp_scaled = scale(info.xp().array(), xcurrent, hosc).eval();
           omega_n = info.omega_fun_(xp_scaled);
           gamma_n = info.gamma_fun_(xp_scaled);
         }
-        if (intdir * (xcurrent + hslo) > intdir * xf) {
+        if (direction * (xcurrent + hslo) > direction * xf) {
           hslo = xf - xcurrent;
         }
       }
       // o and g read here
-      std::tie(success, y, dy, err, phase, un, a_pair)
-          = osc_step(info, omega_n, gamma_n, xcurrent, hosc, yprev, dyprev, eps, alloc);
+      std::tie(success, y, dy, err, phase, un, a_pair) = osc_step(
+          info, omega_n, gamma_n, xcurrent, hosc, yprev, dyprev, eps, alloc);
       steptype = 1;
     }
     while (!success) {
@@ -312,7 +398,7 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
       if (!success) {
         hslo *= 0.5;
       }
-      if (intdir * hslo < 1e-16) {
+      if (direction * hslo < 1e-16) {
         throw std::domain_error("Stepsize became to small error");
       }
     }
@@ -322,20 +408,23 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
       Eigen::Index dense_start = 0;
       // Assuming x_eval is sorted we just want start and size
       std::tie(dense_start, dense_size)
-          = get_slice(x_eval, intdir * xcurrent, intdir * (xcurrent + h));
+          = get_slice(x_eval, direction * xcurrent, direction * (xcurrent + h));
       if (dense_size != 0) {
         auto x_eval_map
             = Eigen::Map<vectord_t>(x_eval.data() + dense_start, dense_size);
         auto y_eval_map
             = Eigen::Map<vectorc_t>(yeval.data() + dense_start, dense_size);
         if (steptype) {
-          auto x_eval_scaled = to_arena(alloc,(2.0 / h * (x_eval_map.array() - xcurrent) - 1.0).matrix());
-          auto Linterp = interpolate(info.xn_, x_eval_scaled, alloc);
+          auto x_eval_scaled = to_arena(
+              alloc,
+              (2.0 / h * (x_eval_map.array() - xcurrent) - 1.0).matrix());
+          auto Linterp = interpolate(info.xn(), x_eval_scaled, alloc);
           auto fdense = to_arena(alloc, (Linterp * un).array().exp().matrix());
           y_eval_map
               = a_pair.first * fdense + a_pair.second * fdense.conjugate();
         } else {
-          auto xc_scaled = to_arena(alloc, scale(info.chebyshev_[1].second, xcurrent, h).matrix());
+          auto xc_scaled = to_arena(
+              alloc, scale(info.chebyshev_[1].second, xcurrent, h).matrix());
           auto Linterp = interpolate(xc_scaled, x_eval_map, alloc);
           y_eval_map = Linterp * y_eval;
         }
@@ -354,38 +443,40 @@ inline auto evolve(SolverInfo &&info, Scalar xi, Scalar xf,
     if (steptype) {
       wnext = omega_n[0];
       gnext = gamma_n[0];
-      dwnext = 2.0 / h * info.Dn_.row(0).dot(omega_n);
-      dgnext = 2.0 / h * info.Dn_.row(0).dot(gamma_n);
+      dwnext = 2.0 / h * info.Dn().row(0).dot(omega_n);
+      dgnext = 2.0 / h * info.Dn().row(0).dot(gamma_n);
     } else {
       wnext = info.omega_fun_(xcurrent + h);
       gnext = info.gamma_fun_(xcurrent + h);
-      auto xn_scaled = scale(info.xn_.array(), xcurrent, h).eval();
-      dwnext = 2.0 / h * info.Dn_.row(0).dot(info.omega_fun_(xn_scaled).matrix());
-      dgnext = 2.0 / h * info.Dn_.row(0).dot(info.gamma_fun_((xn_scaled).matrix()));
+      auto xn_scaled = scale(info.xn().array(), xcurrent, h).eval();
+      dwnext
+          = 2.0 / h * info.Dn().row(0).dot(info.omega_fun_(xn_scaled).matrix());
+      dgnext = 2.0 / h
+               * info.Dn().row(0).dot(info.gamma_fun_((xn_scaled).matrix()));
     }
     xcurrent += h;
-    if (intdir * xcurrent < intdir * xf) {
-      hslo_ini = intdir * std::min(1e8, std::abs(1.0 / wnext));
-      hosc_ini = intdir
+    if (direction * xcurrent < direction * xf) {
+      hslo_ini = direction * std::min(1e8, std::abs(1.0 / wnext));
+      hosc_ini = direction
                  * std::min(std::min(1e8, std::abs(wnext / dwnext)),
                             std::abs(gnext / dgnext));
       if (hard_stop) {
-        if (intdir * (xcurrent + hosc_ini) > intdir * xf) {
+        if (direction * (xcurrent + hosc_ini) > direction * xf) {
           hosc_ini = xf - xcurrent;
         }
-        if (intdir * (xcurrent + hslo_ini) > intdir * xf) {
+        if (direction * (xcurrent + hslo_ini) > direction * xf) {
           hslo_ini = xf - xcurrent;
         }
       }
       // o and g written here
-      osc_step_tup = choose_osc_stepsize(info, xcurrent, hosc_ini, epsilon_h, alloc);
+      osc_step_tup
+          = choose_osc_stepsize(info, xcurrent, hosc_ini, epsilon_h, alloc);
       hosc = std::get<0>(osc_step_tup);
       hslo = choose_nonosc_stepsize(info, xcurrent, hslo_ini, 0.2);
       yprev = y;
       dyprev = dy;
     }
     alloc.recover_memory();
-
   }
   return std::make_tuple(xs, ys, dys, successes, phases, steptypes, yeval);
 }

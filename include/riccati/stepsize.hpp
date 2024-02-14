@@ -27,7 +27,7 @@ template <typename SolverInfo, typename FloatingPoint>
 inline FloatingPoint choose_nonosc_stepsize(SolverInfo&& info, FloatingPoint x0,
                                             FloatingPoint h,
                                             FloatingPoint epsilon_h) {
-  auto ws = info.omega_fun_(riccati::scale(info.xp_, x0, h));
+  auto ws = info.omega_fun_(riccati::scale(info.xp(), x0, h));
   if (ws.maxCoeff() > (1 + epsilon_h) / std::abs(h)) {
     return choose_nonosc_stepsize(info, x0, h / 2.0, epsilon_h);
   } else {
@@ -36,32 +36,42 @@ inline FloatingPoint choose_nonosc_stepsize(SolverInfo&& info, FloatingPoint x0,
 }
 
 /**
- * @brief Chooses an appropriate step size for the Riccati step based on the accuracy of Chebyshev interpolation of w(x) and g(x).
+ * @brief Chooses an appropriate step size for the Riccati step based on the
+ * accuracy of Chebyshev interpolation of w(x) and g(x).
  *
- * This function determines an optimal step size `h` over which the functions `w(x)` and `g(x)` can be represented with sufficient accuracy by evaluating their values at `p+1` Chebyshev nodes.
- * It performs interpolation to `p` points halfway between these nodes and compares the interpolated values with the actual values of `w(x)` and `g(x)`. If the largest relative error in `w` or `g` exceeds the tolerance `epsh`,
- * the step size `h` is reduced. This process ensures that the Chebyshev interpolation of `w(x)` and `g(x)` over the step [`x0`, `x0+h`] has a relative error no larger than `epsh`.
+ * This function determines an optimal step size `h` over which the functions
+ * `w(x)` and `g(x)` can be represented with sufficient accuracy by evaluating
+ * their values at `p+1` Chebyshev nodes. It performs interpolation to `p`
+ * points halfway between these nodes and compares the interpolated values with
+ * the actual values of `w(x)` and `g(x)`. If the largest relative error in `w`
+ * or `g` exceeds the tolerance `epsh`, the step size `h` is reduced. This
+ * process ensures that the Chebyshev interpolation of `w(x)` and `g(x)` over
+ * the step [`x0`, `x0+h`] has a relative error no larger than `epsh`.
  *
- * @param info SolverInfo object - Object containing pre-computed information and methods for evaluating functions `w(x)` and `g(x)`, as well as interpolation matrices and node positions.
+ * @param info SolverInfo object - Object containing pre-computed information
+ * and methods for evaluating functions `w(x)` and `g(x)`, as well as
+ * interpolation matrices and node positions.
  * @param x0 float - The current value of the independent variable.
  * @param h float - The initial estimate of the step size.
- * @param epsh float - Tolerance parameter defining the maximum relative error allowed in the Chebyshev interpolation of `w(x)` and `g(x)` over the proposed step.
- * @return float - The refined step size over which the Chebyshev interpolation of `w(x)` and `g(x)` satisfies the relative error tolerance `epsh`.
+ * @param epsh float - Tolerance parameter defining the maximum relative error
+ * allowed in the Chebyshev interpolation of `w(x)` and `g(x)` over the proposed
+ * step.
+ * @return float - The refined step size over which the Chebyshev interpolation
+ * of `w(x)` and `g(x)` satisfies the relative error tolerance `epsh`.
  */
 template <typename SolverInfo, typename FloatingPoint, typename Allocator>
 inline auto choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
-                                         FloatingPoint h,
-                                         FloatingPoint epsilon_h, Allocator&& alloc) {
-  auto t = to_arena(alloc, riccati::scale(info.xp_interp_, x0, h));
-  auto s = to_arena(alloc, riccati::scale(info.xp_, x0, h));
+                                FloatingPoint h, FloatingPoint epsilon_h,
+                                Allocator&& alloc) {
+  auto t = to_arena(alloc, riccati::scale(info.xp_interp(), x0, h));
+  auto s = to_arena(alloc, riccati::scale(info.xp(), x0, h));
   // TODO: Use a memory arena for these
-  using vectord_t = vector_t<FloatingPoint>;
   auto ws = info.omega_fun_(s).eval();
   auto gs = info.gamma_fun_(s).eval();
   auto omega_analytic = to_arena(alloc, info.omega_fun_(t));
-  auto omega_estimate = info.L_ * ws;
+  auto omega_estimate = info.L() * ws;
   auto gamma_analytic = to_arena(alloc, info.gamma_fun_(t));
-  auto gamma_estimate = info.L_ * gs;
+  auto gamma_estimate = info.L() * gs;
   FloatingPoint max_omega_err
       = (((omega_estimate - omega_analytic).array() / omega_analytic.array())
              .abs())
@@ -73,7 +83,7 @@ inline auto choose_osc_stepsize(SolverInfo&& info, FloatingPoint x0,
   FloatingPoint max_err = std::max(max_omega_err, max_gamma_err);
   if (max_err <= epsilon_h) {
     if (info.p_ != info.n_) {
-      auto xn_scaled = to_arena(alloc, riccati::scale(info.xn_, x0, h));
+      auto xn_scaled = to_arena(alloc, riccati::scale(info.xn(), x0, h));
       ws = info.omega_fun_(xn_scaled);
       gs = info.gamma_fun_(xn_scaled);
     }

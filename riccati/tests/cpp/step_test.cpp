@@ -17,7 +17,7 @@ TEST_F(Riccati, osc_step_test) {
   auto x0 = 10.0;
   auto h = 20.0;
   auto eps = 1e-12;
-  auto xscaled = (x0 + h / 2.0 + h / 2.0 * info.xn_.array()).matrix().eval();
+  auto xscaled = (x0 + h / 2.0 + h / 2.0 * info.xn().array()).matrix().eval();
   auto omega_n = info.omega_fun_(xscaled).eval();
   auto gamma_n = info.gamma_fun_(xscaled).eval();
   auto y0 = airy_ai(-x0);

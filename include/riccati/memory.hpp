@@ -19,6 +19,8 @@ namespace internal {
  *
  * This doesn't really make sense other than for powers of 2.
  *
+ * @tparam Alignment Number of bytes of alignment required.
+ * @tparam T Type of object to which pointer points.
  * @param ptr Pointer to test.
  * @param bytes_aligned Number of bytes of alignment required.
  * @return <code>true</code> if pointer is aligned.
@@ -31,8 +33,11 @@ RICCATI_ALWAYS_INLINE bool is_aligned(T* ptr) {
 
 constexpr size_t DEFAULT_INITIAL_NBYTES = 1 << 16;  // 64KB
 
-// FIXME: enforce alignment
-// big fun to inline, but only called twice
+/**
+ * Allocates a block of memory of the specified size, returning
+ * a pointer to the block if successful.
+ * @param size Number of bytes to allocate.
+ */
 RICCATI_ALWAYS_INLINE unsigned char* eight_byte_aligned_malloc(size_t size) {
   unsigned char* ptr = static_cast<unsigned char*>(malloc(size));
   if (!ptr) {
@@ -89,7 +94,7 @@ class arena_alloc {
    * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  byte_t* move_to_next_block(size_t len) {
+  RICCATI_NO_INLINE byte_t* move_to_next_block(size_t len) {
     byte_t* result;
     ++cur_block_;
     // Find the next block (if any) containing at least len bytes.
@@ -144,7 +149,7 @@ class arena_alloc {
    * This is implemented as a no-op as there is no destruction
    * required.
    */
-  ~arena_alloc() {
+  RICCATI_NO_INLINE ~arena_alloc() {
     // free ALL blocks
     for (auto& block : blocks_) {
       if (block) {
@@ -167,7 +172,7 @@ class arena_alloc {
    * @param len Number of bytes to allocate.
    * @return A pointer to the allocated memory.
    */
-  inline void* alloc(size_t len) {
+  RICCATI_ALWAYS_INLINE void* alloc(size_t len) {
     size_t pad = len % 8 == 0 ? 0 : 8 - len % 8;
 
     // Typically, just return and increment the next location.
@@ -189,17 +194,30 @@ class arena_alloc {
    * @return new array allocated on the arena.
    */
   template <typename T>
-  inline T* alloc_array(size_t n) {
+  RICCATI_ALWAYS_INLINE T* alloc_array(size_t n) {
     return static_cast<T*>(alloc(n * sizeof(T)));
   }
 
   /**
    * Recover all the memory used by the stack allocator.  The stack
    * of memory blocks allocated so far will be available for further
-   * allocations.  To free memory back to the system, use the
+   * allocations. If more than one block exists, all memory is freed
+   * and then one large allocation takes place to allow only a single
+   * block of memory. To free memory back to the system, use the
    * function free_all().
    */
-  inline void recover_all() {
+  RICCATI_ALWAYS_INLINE void recover_all() {
+    if (unlikely(blocks_.size() > 1)) {
+      std::size_t sum = 0;
+      for (size_t i = 1; i < blocks_.size(); ++i) {
+        sum += sizes_[i];
+        free(blocks_[i]);
+      }
+      blocks_.clear();
+      sizes_.clear();
+      blocks_.push_back(internal::eight_byte_aligned_malloc(sum));
+      sizes_.push_back(sum);
+    }
     cur_block_ = 0;
     next_loc_ = blocks_[0];
     cur_block_end_ = next_loc_ + sizes_[0];
@@ -278,12 +296,14 @@ template <typename T, typename ArenaType>
 struct arena_allocator {
   ArenaType* alloc_;
   using value_type = T;
-  arena_allocator(ArenaType* alloc) : alloc_(alloc) {}
+  RICCATI_NO_INLINE arena_allocator(ArenaType* alloc) : alloc_(alloc) {}
 
-  arena_allocator(const arena_allocator& rhs) : alloc_(rhs.alloc_){};
+  RICCATI_NO_INLINE arena_allocator(const arena_allocator& rhs)
+      : alloc_(rhs.alloc_){};
 
   template <typename U, typename UArena>
-  arena_allocator(const arena_allocator<U, UArena>& rhs) : alloc_(rhs.alloc_) {}
+  RICCATI_NO_INLINE arena_allocator(const arena_allocator<U, UArena>& rhs)
+      : alloc_(rhs.alloc_) {}
 
   /**
    * Allocates space for `n` items of type `T`.
@@ -292,14 +312,16 @@ struct arena_allocator {
    * @return pointer to allocated space
    */
   template <typename T_ = T>
-  inline T_* allocate(std::size_t n) {
+  RICCATI_ALWAYS_INLINE T_* allocate(std::size_t n) {
     return alloc_->template alloc_array<T_>(n);
   }
 
   /**
    * Recovers memory
    */
-  inline void recover_memory() noexcept { alloc_->recover_all(); }
+  RICCATI_ALWAYS_INLINE void recover_memory() noexcept {
+    alloc_->recover_all();
+  }
 
   /**
    * No-op. Memory is deallocated by calling `recover_memory()`.
@@ -322,17 +344,18 @@ struct arena_allocator {
   }
 };
 
-  template <typename T, typename ArenaType, typename Expr>
-  inline auto eval(arena_allocator<T, ArenaType>& alloc, Expr&& expr) {
-    using expr_t = std::decay_t<Expr>;
-    using scalar_t = typename expr_t::Scalar;
-    Eigen::Map<Eigen::Matrix<scalar_t, expr_t::RowsAtCompileTime,
-                            expr_t::ColsAtCompileTime>>
-        res(alloc.template allocate<scalar_t>(expr.size()), expr.rows(),
-            expr.cols());
-    res.noalias() = std::forward<Expr>(expr);
-    return res;
-  }
+template <typename T, typename ArenaType, typename Expr>
+RICCATI_ALWAYS_INLINE auto eval(arena_allocator<T, ArenaType>& alloc,
+                                Expr&& expr) {
+  using expr_t = std::decay_t<Expr>;
+  using scalar_t = typename expr_t::Scalar;
+  Eigen::Map<Eigen::Matrix<scalar_t, expr_t::RowsAtCompileTime,
+                           expr_t::ColsAtCompileTime>>
+      res(alloc.template allocate<scalar_t>(expr.size()), expr.rows(),
+          expr.cols());
+  res.noalias() = std::forward<Expr>(expr);
+  return res;
+}
 
 struct dummy_allocator {
   std::vector<void*> ptrs_;
@@ -358,10 +381,10 @@ struct dummy_allocator {
   }
 };
 
-  template <typename Expr>
-  static inline auto eval(dummy_allocator& alloc, Expr&& expr) {
-    return eval(std::forward<Expr>(expr));
-  }
+template <typename Expr>
+RICCATI_ALWAYS_INLINE auto eval(dummy_allocator& alloc, Expr&& expr) {
+  return eval(std::forward<Expr>(expr));
+}
 
 }  // namespace riccati
 #endif
